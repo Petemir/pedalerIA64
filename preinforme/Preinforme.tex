@@ -1,0 +1,142 @@
+\documentclass[a4paper,spanish,12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{vmargin}
+\usepackage{float}
+\usepackage{lastpage}
+\usepackage{caratula}
+\usepackage{url}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Para que las imagenes queden en donde esta el comando poner esto en el       %
+% preambulo y usar los flags de posicion htp o htpb                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Alter some LaTeX defaults for better treatment of figures:
+% See p.105 of "TeX Unbound" for suggested values.
+% See pp. 199-200 of Lamport's "LaTeX" book for details.
+%   General parameters, for ALL pages:
+\renewcommand{\topfraction}{0.9}	% max fraction of floats at top
+\renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
+%   Parameters for TEXT pages (not float pages):
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}     % 2 may work better
+\setcounter{dbltopnumber}{2}    % for 2-column pages
+\renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
+\renewcommand{\textfraction}{0.07}	% allow minimal text w. figs
+%   Parameters for FLOAT pages (not text pages):
+\renewcommand{\floatpagefraction}{0.7}	% require fuller float pages
+% N.B.: floatpagefraction MUST be less than topfraction !!
+\renewcommand{\dblfloatpagefraction}{0.7}	% require fuller float pages
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ECO Para jugar con el footer. 		%
+\usepackage{fancyhdr}					%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%\usepackage{hyphenat}
+%%\exhyphenpenalty=10000
+%%\hyphenpenalty=10000
+\setmarginsrb{10mm}% left margin
+{15mm}% top margin
+{15mm}% right margin
+{10mm}% bottom margin
+{0mm}{20mm}{0mm}{30mm}% we needed -- related to headers and footers
+
+%%%%%%%%%
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[LO, CE]{Organizaci\'on del Computador II}
+\fancyhead[RO, CE]{Laporte Matías}
+\fancyfoot[C]{ \thepage\ de \pageref{LastPage} }
+
+
+%%%%%%%%%%
+
+\begin{document}
+
+
+%*************************************************************%
+%                                                             %
+% CARATULA                                                    %
+%                                                             %
+%*************************************************************%
+    \materia{Organizaci\'on del Computador II}
+
+    \titulo{Trabajo Práctico Final: PedalerIA64}
+    \subtitulo{\textit{Preinforme}}
+
+    \integrante{Laporte Matías}{686/09}{matiaslaporte@gmail.com}
+    
+    \maketitle
+    
+%*************************************************************%
+%                                                             %
+% INFORME                                                     %
+%                                                             %
+%*************************************************************%
+
+\section{Motivación}
+\indent La motivación del presente Trabajo Práctico Final (de ahora en más, \textbf{TP}) surge de poder aplicar los contenidos teóricos de la materia en un entorno que no se haya incursionado en la misma, como es el procesamiento de audio. Se eligió tal contexto por motivos personales del programador, el poder explorar y vincular dos intereses propios (música y programación).
+
+\section{Objetivos}
+\indent La idea del TP es implementar una serie de algoritmos que produzcan efectos sobre audio, en los lenguajes $C$ y $ASM$ (mediante el uso de instrucciones $SSE$), para proceder a la comparación del rendimiento de ambos (mediante la metodología utilizada -contar ticks del procesador- en el TP2 de la materia, 1er. cuatrimestre de 2011). El TP consistirá en lo siguiente:
+\begin{itemize}
+\item Base teórica: conceptos de procesamiento de señales y de audio en particular, herramientas utilizadas (librerías, lenguajes).
+\item Utilización del programa: requerimientos a instalar para el programa, ejemplos de cómo correrlo
+\item Desarrollo: explicación de cada uno de los efectos implementados con pseudocódigo y prosa, cuál es el efecto que generan.
+\item Conclusiones: resultados obtenidos, comparación con lo esperado, dificultades encontradas a la hora de desarrollar el TP, etc.
+\end{itemize}
+
+\indent Todavía no se encuentran definidas todos los efectos que se implementarán. Por lo pronto, ya se realizaron (visibles en el código adjunto) una función de copiado del archivo (sin efecto), y otra de delay simple sin feedback, ambas muy básicas. Se esperan desarrollar efectos que involucren FTT \footnote{\url{http://www.dspguide.com/ch12/2.htm}} (Fast Fourier Transform) y Convolución \footnote{\url{http://en.wikipedia.org/wiki/Convolution$_$reverb}} (que utiliza la FTT); ambos, procesos fundacionales en procesamiento de audio.
+
+\indent Una prueba que me gustaría hacer para la entrega final es ver si lo desarrollado se puede aplicar en audio en tiempo real, algo que todavía no fue experimentado (principalmente porque el manejo de audio en tiempo real varía mucho según la instalación de Linux, la placa de audio, el soft que use el OS para Audio (ALSA, OSS, etc.), etc.).
+
+\section{Uso del código adjunto}
+\indent Como se dijo previamente, como ejemplo se adjuntó el código base para empezar a desarrollar el TP entero, con dos funciones, una de copiado, y otra de delay simple sin feedback, ambas implementadas tanto en $C$ como $ASM$. Para probarlo, se necesita instalar el paquete \textbf{libsndfile1}, que se encuentra en los repositorios de Ubuntu. Dicha librería se utiliza para el manejo (lectura/escritura) de los archivos de audio.
+ 
+\indent Una vez instalado el paquete, compilar el programa con el makefile (comando: \textit{make}). Ejemplos de uso del programa: \newline \newline
+\textbf{Ver opciones}: \textit{./main} \newline
+\textbf{Copiado de archivo en C}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -c} \newline
+\textbf{Copiado de archivo en ASM}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -C} \newline
+\textbf{Delay de 1.5 segundos con 0.6 de decay en C}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -d 1.5 0.6} \newline
+\textbf{Delay de 1.5 segundos con 0.6 de decay en ASM}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -D 1.5 0.6} \newline\newline
+
+Se incluyen archivos de Audio de ejemplo en la carpeta \textit{inputExamples}.
+
+\newpage
+
+\section{Bibliografía tentativa}
+\subsection{Libros}
+\begin{thebibliography}{9}
+ \bibitem{moore90}
+  F. Richard Moore,
+  \emph{Elements of Computer Music},
+  1990, Prentice Hall, New Jersey
+
+ \bibitem{boulanger11}
+  Richard Boulanger, Victor Lazzarini
+  \emph{The Audio Programming Book},
+  2011, The MIT Press, Massachussets
+
+  \bibitem{smith99}
+  Steven W. Smith,
+  \emph{The Scientist and Engineer's Guide to Digital Signal Processing},
+  Second Edition, 1999, California Technical Publishing, California
+\end{thebibliography}
+  
+\subsection{Internet}
+
+\begin{itemize}
+\item \url{http://www.mega-nerd.com/libsndfile/api.html}
+\item \url{http://stackoverflow.com}
+\item \url{https://ccrma.stanford.edu/~jos/}
+\item \url{http://www.musicdsp.org/}
+\item \url{http://www.kvraudio.org/}
+\end{itemize}
+
+\end{document}

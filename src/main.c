@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
             break;
         }
 
-        sf_seek(inFilePtr, 0, SEEK_SET);
+        sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo
 
         switch (argv[siguienteOpcion][1]) {
             case 'c':
