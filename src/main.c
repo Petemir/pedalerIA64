@@ -52,7 +52,6 @@ int main(int argc, char* argv[]) {
     // [/Archivo de salida]
 
     cantCiclos = 0;  // Inicializo contador de ticks de procesador
-
     while (siguienteOpcion < argc) {
         if ((strlen(argv[siguienteOpcion]) != 2) || (argv[siguienteOpcion][0] != '-')) {
             printf("Opción inválida. \n");
@@ -63,6 +62,22 @@ int main(int argc, char* argv[]) {
         sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo
 
         switch (argv[siguienteOpcion][1]) {
+            case 'v':
+                printf("Change volume c.\n");
+                volume_c(atof(argv[siguienteOpcion+1]));
+                siguienteOpcion+=2;
+                break;
+            case 'n':
+                printf("Normalize file c.\n");  // dbval < 0.0
+                normalization_c(atof(argv[siguienteOpcion+1]));
+                siguienteOpcion+=2;
+                break;
+            case 'p':
+                printf("Stereo Panning c.\n");  // -1.0 < panpos < 1.0 // check it's mono
+                outFileStr.channels = 2;
+                panning_c(atof(argv[siguienteOpcion+1]));
+                siguienteOpcion+=2;
+                break;
             case 'c':
                 printf("Copy c.\n");
                 copy_c();
@@ -75,12 +90,12 @@ int main(int argc, char* argv[]) {
                 break;
             case 'd':
                 printf("Delay c.\n");
-                delay_c(atof(argv[4]), atof(argv[5]));  // delay, decay
+                delay_c(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
             case 'D':
                 printf("Delay asm.\n");
-                delay_asm_caller(atof(argv[4]), atof(argv[5]));  // delay, decay
+                delay_asm_caller(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
         }

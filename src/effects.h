@@ -28,12 +28,34 @@ SNDFILE *outFilePtr;
 SF_INFO inFileStr;
 SF_INFO outFileStr;
 
+typedef struct PANPOS {
+    double left;
+    double right;
+} PANPOS;
 // [/Variables globales]
+
+
+// [Auxiliares]
+void volume_c(double ampfac);
+void normalization_c(double dbval);
+
+double maxsamp(double *bufferIn, int bufferLen);
+void sin(double *)
 
 void copy_c();
 void copy_asm_caller();
+extern int copy_asm(double *bufferIn, double *bufferOut, int bufferLen) __asm__("copy_asm");
+// [/Auxiliares]
+
+
+// [Efectos]
+PANPOS simplepan_c(double position);
+
 void delay_c(double delayInSec, double decay);
 void delay_asm_caller(double delayInSec, double decay);
-
-extern int copy_asm(double *bufferIn, double *bufferOut, int bufferLen) __asm__("copy_asm");
 extern int delay_asm(double *bufferIn, double *bufferOut, double *bufferEffect, int bufferLen, double *decay) __asm__("delay_asm");
+// [/Efectos]
+
+
+8237895
+
