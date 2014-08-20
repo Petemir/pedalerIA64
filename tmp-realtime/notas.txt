@@ -1,0 +1,3 @@
+ parec-simple.c: para leer desde el micrófono y grabar a archivo. Se compila con gcc CODIGO -o OUTPUT -lpulse-simple -lpulse
+
+ Fijarse de mezclarlo en la salida con libsndfile, para que grabe a WAV, y además ver de aplicarle algún efecto. 
