@@ -50,8 +50,8 @@
 \pagestyle{fancy}
 \fancyhf{}
 
-\fancyhead[LO, CE]{Organizaci\'on del Computador II}
-\fancyhead[RO, CE]{Laporte Matías}
+\fancyhead[LO, C]{PedalerIA64 (Organización del Computador II)}
+\fancyhead[RO, C]{Laporte Matías}
 \fancyfoot[C]{ \thepage\ de \pageref{LastPage} }
 
 
@@ -67,7 +67,7 @@
 %*************************************************************%
     \materia{Organizaci\'on del Computador II}
 
-    \titulo{Trabajo Práctico Final}
+    \titulo{Trabajo Práctico Final: PedalerIA64}
     \subtitulo{\textit{Preinforme}}
 
     \integrante{Laporte Matías}{686/09}{matiaslaporte@gmail.com}
@@ -94,31 +94,49 @@
 
 \indent Todavía no se encuentran definidas todos los efectos que se implementarán. Por lo pronto, ya se realizaron (visibles en el código adjunto) una función de copiado del archivo (sin efecto), y otra de delay simple sin feedback, ambas muy básicas. Se esperan desarrollar efectos que involucren FTT \footnote{\url{http://www.dspguide.com/ch12/2.htm}} (Fast Fourier Transform) y Convolución \footnote{\url{http://en.wikipedia.org/wiki/Convolution$_$reverb}} (que utiliza la FTT); ambos, procesos fundacionales en procesamiento de audio.
 
-\section{Uso del código adjunto}
-\indent Como se dijo previamente, como ejemplo se adjuntó el código base para empezar a desarrollar el TP entero, con dos funciones, una de copiado, y otra de delay simple sin feedback, ambas implementadas tanto en $C$ como $ASM$. Para probarlo, se necesita instalar el paquete \textbf{libsndfile1}, que se encuentra en los repositorios de Ubuntu. Dicha librería se utiliza para el manejo (lectura/escritura) de los archivos de audio.
- 
-\indent Una vez instalado el paquete, compilar el programa con el makefile (comando: \textit{make}). Para hacer uso del programa:
+\indent Una prueba que me gustaría hacer para la entrega final es ver si lo desarrollado se puede aplicar en audio en tiempo real, algo que todavía no fue experimentado (principalmente porque el manejo de audio en tiempo real varía mucho según la instalación de Linux, la placa de audio, el soft que use el OS para Audio (ALSA, OSS, etc.), etc.).
 
+\section{Uso del código adjunto}
+\indent Como se dijo previamente, como ejemplo se adjuntó el código base para empezar a desarrollar el TP entero, con dos funciones, una de copiado, y otra de delay simple sin feedback, ambas implementadas tanto en $C$ como $ASM$. Para probarlo, se necesita instalar el paquete \textbf{libsndfile1}, que se encuentra en los repositorios de Ubuntu. Dicha librería se utiliza para el manejo (lectura/escritura) de los archivos de audio. Se utilizará el formato WAV, pues no presenta compresión \footnote{\url{http://en.wikipedia.org/wiki/WAV_file}}.
+ 
+\indent Una vez instalado el paquete, compilar el programa con el makefile (comando: \textit{make}). Ejemplos de uso del programa: \newline \newline
+\textbf{Ver opciones}: \textit{./main} \newline
+\textbf{Copiado de archivo en C}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -c} \newline
+\textbf{Copiado de archivo en ASM}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -C} \newline
+\textbf{Delay de 1.5 segundos con 0.6 de decay en C}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -d 1.5 0.6} \newline
+\textbf{Delay de 1.5 segundos con 0.6 de decay en ASM}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -D 1.5 0.6} \newline\newline
+
+Se incluyen archivos de Audio de ejemplo en la carpeta \textit{inputExamples}.
 
 \newpage
 
 \section{Bibliografía tentativa}
 \subsection{Libros}
 \begin{thebibliography}{9}
- \bibitem{moore90}
-  F. Richard Moore,
-  \emph{Elements of Computer Music},
-  1990, Prentice Hall, New Jersey
-
  \bibitem{boulanger11}
   Richard Boulanger, Victor Lazzarini
   \emph{The Audio Programming Book},
-  2011, The MIT Press, Massachussets
+  2011, The MIT Press, Massachussets (USA)
+ 
+ \bibitem{moore90}
+  F. Richard Moore,
+  \emph{Elements of Computer Music},
+  1990, Prentice Hall, New Jersey (USA)
 
+  \bibitem{orfanidis10}
+  Sophocles J. Orfanidis,
+  \emph{Introduction to Signal Processing},
+  \url{http://www.ece.rutgers.edu/~orfanidi/intro2sp/}
+  
   \bibitem{smith99}
   Steven W. Smith,
   \emph{The Scientist and Engineer's Guide to Digital Signal Processing},
-  Second Edition, 1999, California Technical Publishing, California
+  Second Edition, 1999, California Technical Publishing, California (USA)
+  
+  \bibitem{zolzer11}
+  Udo Zölzer,
+  \emph{DAFX: Digital Audio Effects}
+  Second Edition, 2011, Wiley and Sons, Hamburg (Germany)
 \end{thebibliography}
   
 \subsection{Internet}

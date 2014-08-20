@@ -97,7 +97,7 @@
 \indent Una prueba que me gustaría hacer para la entrega final es ver si lo desarrollado se puede aplicar en audio en tiempo real, algo que todavía no fue experimentado (principalmente porque el manejo de audio en tiempo real varía mucho según la instalación de Linux, la placa de audio, el soft que use el OS para Audio (ALSA, OSS, etc.), etc.).
 
 \section{Uso del código adjunto}
-\indent Como se dijo previamente, como ejemplo se adjuntó el código base para empezar a desarrollar el TP entero, con dos funciones, una de copiado, y otra de delay simple sin feedback, ambas implementadas tanto en $C$ como $ASM$. Para probarlo, se necesita instalar el paquete \textbf{libsndfile1}, que se encuentra en los repositorios de Ubuntu. Dicha librería se utiliza para el manejo (lectura/escritura) de los archivos de audio.
+\indent Como se dijo previamente, como ejemplo se adjuntó el código base para empezar a desarrollar el TP entero, con dos funciones, una de copiado, y otra de delay simple sin feedback, ambas implementadas tanto en $C$ como $ASM$. Para probarlo, se necesita instalar los paquetes \textbf{libsndfile1-dev} y \textbf{nasm} (sudo apt-get install libsndfile1-dev nasm), que se encuentra en los repositorios de Ubuntu. El paquete \textbf{libsndfile1-dev} es la librería que se utiliza para el manejo (lectura/escritura) de los archivos de audio. Se utilizará el formato WAV, pues no utiliza compresión y facilita el procesamiento de los datos \footnote{\url{http://en.wikipedia.org/wiki/WAV_file}}.
  
 \indent Una vez instalado el paquete, compilar el programa con el makefile (comando: \textit{make}). Ejemplos de uso del programa: \newline \newline
 \textbf{Ver opciones}: \textit{./main} \newline
@@ -113,20 +113,39 @@ Se incluyen archivos de Audio de ejemplo en la carpeta \textit{inputExamples}.
 \section{Bibliografía tentativa}
 \subsection{Libros}
 \begin{thebibliography}{9}
- \bibitem{moore90}
-  F. Richard Moore,
-  \emph{Elements of Computer Music},
-  1990, Prentice Hall, New Jersey
-
  \bibitem{boulanger11}
   Richard Boulanger, Victor Lazzarini
   \emph{The Audio Programming Book},
-  2011, The MIT Press, Massachussets
+  2011, The MIT Press, Massachussets (USA)
+ 
+ \bibitem{moore90}
+  F. Richard Moore,
+  \emph{Elements of Computer Music},
+  1990, Prentice Hall, New Jersey (USA)
 
+  \bibitem{orfanidis10}
+  Sophocles J. Orfanidis,
+  \emph{Introduction to Signal Processing},
+  \url{http://www.ece.rutgers.edu/~orfanidi/intro2sp/}
+  
+  \bibitem{roads96}
+  Curtis Roads,
+  \emph{The Computer Music Tutorial},
+  1996, The MIT Press, Massachussets (USA)
+  \bibitem{rocchesso03}
+  Davide Rocchesso,
+  \emph{Introduction to Sound Processing},
+  \url{profs.sci.univr.it/~rocchess/SP/sp.pdf}
+  
   \bibitem{smith99}
   Steven W. Smith,
   \emph{The Scientist and Engineer's Guide to Digital Signal Processing},
-  Second Edition, 1999, California Technical Publishing, California
+  Second Edition, 1999, California Technical Publishing, California (USA)
+  
+  \bibitem{zolzer11}
+  Udo Zölzer,
+  \emph{DAFX: Digital Audio Effects}
+  Second Edition, 2011, Wiley and Sons, Hamburg (Germany)
 \end{thebibliography}
   
 \subsection{Internet}
