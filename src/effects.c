@@ -227,29 +227,43 @@ void delay_c(double delayInSec, double decay) {
     unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);  // Frames de delay
     unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;  // Tamaño del buffer en frames
     unsigned int bufferSize = bufferFrameSize*sizeof(double);       // Tamaño del buffer en bytes
-    
+    unsigned int bufferFrameSizeOut = delayInFrames*2;
+    unsigned int bufferSizeOut = bufferFrameSize*bufferFrameSizeOut;
+
     dataBuffIn = (double*)malloc(bufferSize);
-    dataBuffOut = (double*)malloc(bufferSize);
+    dataBuffOut = (double*)malloc(bufferSizeOut);
     double *dataBuffEffect = (double*)malloc(bufferSize);
     // Limpio buffers
     for (unsigned int i = 0; i < bufferFrameSize; i++) {
         dataBuffIn[i] = 0;
-        dataBuffOut[i] = 0;
         dataBuffEffect[i] = 0;
+    }
+    for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
+        dataBuffOut[i] = 0;
     }
 
     unsigned long int start, end, cantCiclos = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, delayInFrames))) {
         MEDIR_TIEMPO_START(start);
-        for (unsigned int i = 0; i < bufferFrameSize; i++) {
-            dataBuffOut[i] = dataBuffIn[i] + dataBuffEffect[i];
+        for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            if (inFileStr.channels == 2)
+            {
+                dataBuffOut[out_i++] = 0.5 * (dataBuffIn[i] + dataBuffIn[i+1]);
+                dataBuffOut[out_i++] = 0.5 * (dataBuffEffect[i] + dataBuffEffect[i+1]);
+                i++;
+            } else {
+                dataBuffOut[out_i++] = dataBuffIn[i];
+                dataBuffOut[out_i++] = dataBuffEffect[i];
+            }
+
+            /*dataBuffOut[i] = dataBuffIn[i] + dataBuffEffect[i]; */
             dataBuffEffect[i] = dataBuffIn[i] * decay;  // Delay simple
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-        framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
+        framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*2);
         sf_write_sync(outFilePtr);
     }
     // [/Lecto-escritura de datos]
@@ -270,22 +284,26 @@ void delay_c(double delayInSec, double decay) {
 void delay_asm_caller(double delayInSec, double decay) {
     unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);  // Frames de delay
     unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;  // Tamaño del buffer en frames
-    unsigned int bufferSize = bufferFrameSize*sizeof(double);         // Tamaño del buffer en bytes
+    unsigned int bufferSize = bufferFrameSize*sizeof(double);       // Tamaño del buffer en bytes
+    unsigned int bufferFrameSizeOut = delayInFrames*2;
+    unsigned int bufferSizeOut = bufferFrameSize*bufferFrameSizeOut;
 
     dataBuffIn = (double*)malloc(bufferSize);
-    dataBuffOut = (double*)malloc(bufferSize);
+    dataBuffOut = (double*)malloc(bufferSizeOut);
     double *dataBuffEffect = (double*)malloc(bufferSize);
     // Limpio buffers
     for (unsigned int i = 0; i < bufferFrameSize; i++) {
         dataBuffIn[i] = 0;
-        dataBuffOut[i] = 0;
         dataBuffEffect[i] = 0;
+    }
+    for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
+        dataBuffOut[i] = 0;
     }
 
     unsigned long int start, end = 0;
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, delayInFrames))) {
         MEDIR_TIEMPO_START(start);
-        delay_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay);
+        delay_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos+= end-start;
 

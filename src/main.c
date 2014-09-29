@@ -41,7 +41,8 @@ int main(int argc, char* argv[]) {
 
     // [Archivo de salida]
     outFileStr.format = inFileStr.format;
-    outFileStr.channels = inFileStr.channels;
+    outFileStr.channels = 2;  // inFileStr.channels;  // La salida es siempre stereo, por 1 canal el original y por el otro el efecto
+                                                    // TODO -> ¿Sólo en el caso del delay? ¿O en todos?
     outFileStr.samplerate = inFileStr.samplerate;
     // Manejo de errores en la apertura del archivo
     if (!(outFilePtr = sf_open(outFileName, SFM_WRITE, &outFileStr))) {
@@ -74,7 +75,6 @@ int main(int argc, char* argv[]) {
                 break;
             case 'p':
                 printf("Stereo Panning c.\n");  // -1.0 < panpos < 1.0 // check it's mono
-                outFileStr.channels = 2;
                 panning_c(atof(argv[siguienteOpcion+1]));
                 siguienteOpcion+=2;
                 break;

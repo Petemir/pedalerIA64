@@ -40,7 +40,6 @@ void volume_c(double ampfac);
 void normalization_c(double dbval);
 
 double maxsamp(double *bufferIn, int bufferLen);
-void sin(double *)
 
 void copy_c();
 void copy_asm_caller();
@@ -53,9 +52,5 @@ PANPOS simplepan_c(double position);
 
 void delay_c(double delayInSec, double decay);
 void delay_asm_caller(double delayInSec, double decay);
-extern int delay_asm(double *bufferIn, double *bufferOut, double *bufferEffect, int bufferLen, double *decay) __asm__("delay_asm");
+extern int delay_asm(double *bufferIn, double *bufferOut, double *bufferEffect, int bufferLen, double *decay, int channels) __asm__("delay_asm");
 // [/Efectos]
-
-
-8237895
-
