@@ -237,17 +237,27 @@ void delay_c(double delayInSec, double decay) {
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, delayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            
+            // Original por el canal izquierdo, efecto por el derecho; 
+            /*
             if (inFileStr.channels == 2)
             {
                 dataBuffOut[out_i++] = 0.5 * (dataBuffIn[i] + dataBuffIn[i+1]);
                 dataBuffOut[out_i++] = 0.5 * (dataBuffEffect[i] + dataBuffEffect[i+1]);
+
+                dataBuffOut[out_i++] = dataBuffIn[i]
                 i++;
             } else {
                 dataBuffOut[out_i++] = dataBuffIn[i];
                 dataBuffOut[out_i++] = dataBuffEffect[i];
+            }*/
+
+            if (debug) {
+                dataBuffOut[i] = dataBuffEffect[i];
+            } else {
+                dataBuffOut[i] = dataBuffIn[i] + dataBuffEffect[i];
             }
 
-            /*dataBuffOut[i] = dataBuffIn[i] + dataBuffEffect[i]; */
             dataBuffEffect[i] = dataBuffIn[i] * decay;  // Delay simple
         }
         MEDIR_TIEMPO_STOP(end);
@@ -288,9 +298,15 @@ void delay_asm_caller(double delayInSec, double decay) {
 
     unsigned long int start, end = 0;
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, delayInFrames))) {
-        MEDIR_TIEMPO_START(start);
-        delay_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
-        MEDIR_TIEMPO_STOP(end);
+        if (debug) {
+            MEDIR_TIEMPO_START(start);
+            delay_debug_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
+            MEDIR_TIEMPO_STOP(end);
+        } else {
+            MEDIR_TIEMPO_START(start);
+            delay_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
+            MEDIR_TIEMPO_STOP(end);
+        }
         cantCiclos+= end-start;
 
         framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);

@@ -98,6 +98,12 @@ int main(int argc, char* argv[]) {
                 delay_asm_caller(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
+            case 'x':  // TODO -> Borrar
+                printf("Debug.\n");
+                debug = 1;
+                siguienteOpcion+=1;
+                break;
+
         }
     }
 
