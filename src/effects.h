@@ -13,6 +13,7 @@
 // [Variables globales]
 int distValue;
 
+unsigned int debug = 0; // TODO _> BORRAR
 unsigned int bufferSize = 0;
 unsigned int framesWritten = 0;
 unsigned int framesRead = 0;
@@ -38,6 +39,8 @@ typedef struct PANPOS {
 // [Auxiliares]
 void volume_c(double ampfac);
 void normalization_c(double dbval);
+
+void clean_buffer(double *buffer, int bufferLen);
 
 double maxsamp(double *bufferIn, int bufferLen);
 

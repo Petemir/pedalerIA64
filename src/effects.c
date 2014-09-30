@@ -1,6 +1,12 @@
 // PedalerIA64 Copyright [2014] <Matias Laporte>
 #include "./effects.h"
 
+void clean_buffer(double *buffer, int bufferLen) {
+    for (int i = 0; i < bufferLen; i++) {
+        buffer[i] = 0;
+    }
+}
+
 double maxsamp(double *bufferIn, int bufferLen) {
     double absval, peak = 0.0;
 
@@ -36,12 +42,8 @@ void panning_c(double panpos) {
     if (dataBuffOut == NULL) exit (1);
 
     // Limpio buffers
-    for (unsigned int i = 0; i < bufferSizeIn; i++) {
-        dataBuffIn[i] = 0;
-    }
-    for (unsigned int i = 0; i < bufferSizeOut; i++) {
-        dataBuffOut[i] = 0;
-    }
+    clean_buffer(dataBuffIn, bufferSizeIn);
+    clean_buffer(dataBuffOut, bufferSizeOut);
 
     unsigned long int start, end, cantCiclos = 0;
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, bufferSizeIn))) {
@@ -71,10 +73,8 @@ void normalization_c(double dbval) {
     if (dataBuffOut == NULL) exit (1);
 
     // Limpio buffers
-    for (unsigned int i = 0; i < bufferSize; i++) {
-        dataBuffIn[i] = 0;
-        dataBuffOut[i] = 0;
-    }
+    clean_buffer(dataBuffIn, bufferSize);
+    clean_buffer(dataBuffOut, bufferSize);
 
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         double thispeak = maxsamp(dataBuffIn, bufferSize);
@@ -121,10 +121,8 @@ void volume_c(double ampfac) {
     if (dataBuffOut == NULL) exit (1);
 
     // Limpio buffers
-    for (unsigned int i = 0; i < bufferSize; i++) {
-        dataBuffIn[i] = 0;
-        dataBuffOut[i] = 0;
-    }
+    clean_buffer(dataBuffIn, bufferSize);
+    clean_buffer(dataBuffOut, bufferSize);
 
     unsigned long int start, end, cantCiclos = 0;
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {
@@ -160,10 +158,8 @@ void copy_c() {
     if (dataBuffOut == NULL) exit (1);
 
     // Limpio buffers
-    for (unsigned int i = 0; i < bufferSize; i++) {
-        dataBuffIn[i] = 0;
-        dataBuffOut[i] = 0;
-    }
+    clean_buffer(dataBuffIn, bufferSize);
+    clean_buffer(dataBuffOut, bufferSize);
 
     unsigned long int start, end, cantCiclos = 0;
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {
@@ -196,10 +192,8 @@ void copy_asm_caller() {
     dataBuffOut = (double*)malloc(bufferSize*sizeof(double));
 
     // Limpio buffers
-    for (unsigned int i = 0; i < bufferSize; i++) {
-        dataBuffIn[i] = 0;
-        dataBuffOut[i] = 0;
-    }
+    clean_buffer(dataBuffIn, bufferSize);
+    clean_buffer(dataBuffOut, bufferSize);
 
     unsigned long int start, end, cantCiclos = 0;
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {        
@@ -234,13 +228,9 @@ void delay_c(double delayInSec, double decay) {
     dataBuffOut = (double*)malloc(bufferSizeOut);
     double *dataBuffEffect = (double*)malloc(bufferSize);
     // Limpio buffers
-    for (unsigned int i = 0; i < bufferFrameSize; i++) {
-        dataBuffIn[i] = 0;
-        dataBuffEffect[i] = 0;
-    }
-    for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
-        dataBuffOut[i] = 0;
-    }
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffOut, bufferFrameSize);
+    clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
     unsigned long int start, end, cantCiclos = 0;
     // [Lecto-escritura de datos]
@@ -292,13 +282,9 @@ void delay_asm_caller(double delayInSec, double decay) {
     dataBuffOut = (double*)malloc(bufferSizeOut);
     double *dataBuffEffect = (double*)malloc(bufferSize);
     // Limpio buffers
-    for (unsigned int i = 0; i < bufferFrameSize; i++) {
-        dataBuffIn[i] = 0;
-        dataBuffEffect[i] = 0;
-    }
-    for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
-        dataBuffOut[i] = 0;
-    }
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffOut, bufferFrameSize);
+    clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
     unsigned long int start, end = 0;
     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, delayInFrames))) {
