@@ -17,13 +17,17 @@ void imprimir_ayuda() {
 }
 
 int main(int argc, char* argv[]) {
+    float variable;
+
+    printf("%ld\n",sizeof(variable));
+    exit(0);
+
     nombrePrograma = argv[0];
     if (argc < 4) {  // Necesito por lo menos 4 argumentos, nombre de programa, archivo entrada, archivo salida y opcion
         imprimir_ayuda();
         return 1;
     }
     int siguienteOpcion = 3;  // Sé que hay, por lo menos, 4 argumentos ya
-
     // [Declaración de variables de archivo]
     char *inFileName = argv[1];
     char *outFileName = argv[2];
@@ -98,6 +102,9 @@ int main(int argc, char* argv[]) {
                 delay_asm_caller(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
+            case 's':
+                printf("Saturacion c.\n");
+                saturation_c();  // atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  //
             case 'x':  // TODO -> Borrar
                 printf("Debug.\n");
                 debug = 1;

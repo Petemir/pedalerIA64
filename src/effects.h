@@ -57,4 +57,7 @@ void delay_c(double delayInSec, double decay);
 void delay_asm_caller(double delayInSec, double decay);
 extern int delay_asm(double *bufferIn, double *bufferOut, double *bufferEffect, int bufferLen, double *decay, int channels) __asm__("delay_asm");
 extern int delay_debug_asm(double *bufferIn, double *bufferOut, double *bufferEffect, int bufferLen, double *decay, int channels) __asm__("delay_debug_asm");
+
+void saturation_c();
+
 // [/Efectos]

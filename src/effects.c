@@ -252,9 +252,10 @@ void delay_c(double delayInSec, double decay) {
                 dataBuffOut[out_i++] = dataBuffEffect[i];
             }*/
 
+            // Si estamos en debug, mando el efecto al archivo de output
             if (debug) {
                 dataBuffOut[i] = dataBuffEffect[i];
-            } else {
+            } else {  // Si no estamos en debug, todo junto
                 dataBuffOut[i] = dataBuffIn[i] + dataBuffEffect[i];
             }
 
@@ -319,8 +320,12 @@ void delay_asm_caller(double delayInSec, double decay) {
     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
+    
     free(dataBuffIn);
     free(dataBuffOut);
     free(dataBuffEffect);
+}
+
+void saturation_c() {
+    exit(0);
 }
