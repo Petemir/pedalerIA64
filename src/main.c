@@ -17,11 +17,6 @@ void imprimir_ayuda() {
 }
 
 int main(int argc, char* argv[]) {
-    float variable;
-
-    printf("%ld\n",sizeof(variable));
-    exit(0);
-
     nombrePrograma = argv[0];
     if (argc < 4) {  // Necesito por lo menos 4 argumentos, nombre de programa, archivo entrada, archivo salida y opcion
         imprimir_ayuda();
