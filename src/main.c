@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
         sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo
 
         switch (argv[siguienteOpcion][1]) {
-            case 'v':
+/*            case 'v':
                 printf("Change volume c.\n");
                 volume_c(atof(argv[siguienteOpcion+1]));
                 siguienteOpcion+=2;
@@ -87,17 +87,17 @@ int main(int argc, char* argv[]) {
                 printf("Copy asm.\n");
                 copy_asm_caller();
                 siguienteOpcion+=1;
-                break;
+                break;*/
             case 'd':
                 printf("Delay c.\n");
                 delay_c(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
-            case 'D':
+            /*case 'D':
                 printf("Delay asm.\n");
                 delay_asm_caller(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
-                break;
+                break;*/
             case 'x':  // TODO -> Borrar
                 printf("Debug.\n");
                 debug = 1;
