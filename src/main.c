@@ -90,12 +90,12 @@ int main(int argc, char* argv[]) {
                 break;*/
             case 'd':
                 printf("Delay c.\n");
-                delay_c(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
+                delay_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
             case 'D':
                 printf("Delay asm.\n");
-                delay_asm_caller(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
+                delay_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
             case 'x':  // TODO -> Borrar
