@@ -24,33 +24,33 @@ int main(int argc, char* argv[]) {
     }
     int siguienteOpcion = 3;  // Sé que hay, por lo menos, 4 argumentos ya
 
-    // [Declaración de variables de archivo]
+// [Declaración de variables de archivo]
     char *inFileName = argv[1];
     char *outFileName = argv[2];
-    // [/Declaración de variables de archivo]
+// [/Declaración de variables de archivo]
 
-    // [Archivo de entrada]
+// [Archivo de entrada]
     inFileStr.format = 0;  // Según API libsndfile
-    // Manejo de errores en la apertura del archivo
+    // Manejo de errores en la apertura del archivo entrada
     if (!(inFilePtr = sf_open(inFileName, SFM_READ, &inFileStr))) {
         printf("No se pudo abrir el archivo %s.\n", inFileName);
         puts(sf_strerror(NULL));
         return 1;
     }
-    // [/Archivo de entrada]
+// [/Archivo de entrada]
 
-    // [Archivo de salida]
+// [Archivo de salida]
     outFileStr.format = inFileStr.format;
-    outFileStr.channels = 2;  // inFileStr.channels;  // La salida es siempre stereo, por 1 canal el original y por el otro el efecto
-                                                    // TODO -> ¿Sólo en el caso del delay? ¿O en todos?
+    outFileStr.channels = 2;  // inFileStr.channels; // La salida es siempre stereo, por 1 canal el original y por el otro el efecto
+    // TODO -> ¿Sólo en el caso del delay? ¿O en todos?
     outFileStr.samplerate = inFileStr.samplerate;
-    // Manejo de errores en la apertura del archivo
+    // Manejo de errores en la apertura del archivo de salida
     if (!(outFilePtr = sf_open(outFileName, SFM_WRITE, &outFileStr))) {
         printf("No se pudo abrir el archivo %s.\n", outFileName);
         puts(sf_strerror(NULL));
         return 1;
     }
-    // [/Archivo de salida]
+// [/Archivo de salida]
 
     cantCiclos = 0;  // Inicializo contador de ticks de procesador
     while (siguienteOpcion < argc) {
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
             break;
         }
 
-        sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo
+        sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo de entrada
 
         switch (argv[siguienteOpcion][1]) {
 /*            case 'v':
@@ -93,11 +93,11 @@ int main(int argc, char* argv[]) {
                 delay_c(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
-            /*case 'D':
+            case 'D':
                 printf("Delay asm.\n");
                 delay_asm_caller(atof(argv[siguienteOpcion+1]), atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
-                break;*/
+                break;
             case 'x':  // TODO -> Borrar
                 printf("Debug.\n");
                 debug = 1;
