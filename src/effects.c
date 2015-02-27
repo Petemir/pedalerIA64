@@ -242,9 +242,10 @@ void delay_c(float delayInSec, float decay) {
             // Original por el canal izquierdo, efecto por el derecho; 
             if (inFileStr.channels == 2)
             {
-                dataBuffOut[out_i++] = 0.5 * (dataBuffIn[i] + dataBuffIn[i+1]);
-                dataBuffOut[out_i++] = 0.5 * (dataBuffEffect[i] + dataBuffEffect[i+1]);
+                dataBuffOut[out_i++] = 0.5 * dataBuffIn[i] + 0.5 * dataBuffIn[i+1];
+                dataBuffOut[out_i++] = 0.5 * dataBuffEffect[i] + 0.5 * dataBuffEffect[i+1];
 
+                dataBuffEffect[i] = dataBuffIn[i] * decay;
                 i++;    // Avanzo de a dos en dataBuffIn
             } else {
                 dataBuffOut[out_i++] = dataBuffIn[i];
@@ -274,71 +275,6 @@ void delay_c(float delayInSec, float decay) {
     // [/Limpieza]
 }
 
-// Double
-// void delay_c(double delayInSec, double decay) {
-//     unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);  // Frames de delay
-//     unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;  // Tamaño del buffer en frames
-//     unsigned int bufferSize = bufferFrameSize*sizeof(double);       // Tamaño del buffer en bytes
-//     unsigned int bufferFrameSizeOut = delayInFrames*2;
-//     unsigned int bufferSizeOut = bufferFrameSize*bufferFrameSizeOut;
-
-//     dataBuffIn = (double*)malloc(bufferSize);
-//     dataBuffOut = (double*)malloc(bufferSizeOut);
-//     double *dataBuffEffect = (double*)malloc(bufferSize);
-//     // Limpio buffers
-//     clean_buffer(dataBuffIn, bufferFrameSize);
-//     clean_buffer(dataBuffEffect, bufferFrameSize);
-//     clean_buffer(dataBuffOut, bufferFrameSizeOut);
-
-//     unsigned long int start, end, cantCiclos = 0;
-//     // [Lecto-escritura de datos]
-//     while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, delayInFrames))) {
-//         MEDIR_TIEMPO_START(start);
-//         for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            
-//             // Original por el canal izquierdo, efecto por el derecho; 
-            
-//             if (inFileStr.channels == 2)
-//             {
-//                 dataBuffOut[out_i++] = 0.5 * (dataBuffIn[i] + dataBuffIn[i+1]);
-//                 dataBuffOut[out_i++] = 0.5 * (dataBuffEffect[i] + dataBuffEffect[i+1]);
-
-//                 dataBuffOut[out_i++] = dataBuffIn[i]
-//                 i++;
-//             } else {
-//                 dataBuffOut[out_i++] = dataBuffIn[i];
-//                 dataBuffOut[out_i++] = dataBuffEffect[i];
-//             }
-
-//             if (debug) {
-//                 dataBuffOut[i] = dataBuffEffect[i];
-//             } else {
-//                 dataBuffOut[i] = dataBuffIn[i] + dataBuffEffect[i];
-//             }
-
-//             dataBuffEffect[i] = dataBuffIn[i] * decay;  // Delay simple
-//         }
-//         MEDIR_TIEMPO_STOP(end);
-//         cantCiclos += end-start;
-
-//         framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*2);
-//         sf_write_sync(outFilePtr);
-//     }
-//     // [/Lecto-escritura de datos]
-//     printf("\tTiempo de ejecución:\n");
-//     printf("\t  Comienzo                          : %lu\n", start);
-//     printf("\t  Fin                               : %lu\n", end);
-//     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-//     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-//     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
- 
-//     // [Limpieza]
-//     free(dataBuffIn);
-//     free(dataBuffOut);
-//     free(dataBuffEffect);
-//     // [/Limpieza]
-// }
-
 // Float
 void delay_asm_caller(float delayInSec, float decay) {
     unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);  // Frames de delay
@@ -366,10 +302,9 @@ void delay_asm_caller(float delayInSec, float decay) {
             delay_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
             MEDIR_TIEMPO_STOP(end);
         }
-        cantCiclos+= end-start;
+        cantCiclos += end-start;
 
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
-        printf("%d.", framesWritten);
         sf_write_sync(outFilePtr);
     }
 
@@ -384,49 +319,3 @@ void delay_asm_caller(float delayInSec, float decay) {
     free(dataBuffOut);
     free(dataBuffEffect);
 }
-
-// Double
-/*void delay_asm_caller(double delayInSec, double decay) {
-    unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);  // Frames de delay
-    unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;  // Tamaño del buffer en frames
-    unsigned int bufferSize = bufferFrameSize*sizeof(double);       // Tamaño del buffer en bytes
-    unsigned int bufferFrameSizeOut = delayInFrames*2;
-    unsigned int bufferSizeOut = bufferFrameSize*bufferFrameSizeOut;
-
-    dataBuffIn = (double*)malloc(bufferSize);
-    dataBuffOut = (double*)malloc(bufferSizeOut);
-    double *dataBuffEffect = (double*)malloc(bufferSize);
-    // Limpio buffers
-    clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, bufferFrameSize);
-    clean_buffer(dataBuffOut, bufferFrameSizeOut);
-
-    unsigned long int start, end = 0;
-    while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, delayInFrames))) {
-        if (debug) {
-            MEDIR_TIEMPO_START(start);
-        //    delay_debug_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
-            MEDIR_TIEMPO_STOP(end);
-        } else {
-            MEDIR_TIEMPO_START(start);
-            delay_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
-            MEDIR_TIEMPO_STOP(end);
-        }
-        cantCiclos+= end-start;
-
-        framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
-        sf_write_sync(outFilePtr);
-    }
-
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
-    free(dataBuffIn);
-    free(dataBuffOut);
-    free(dataBuffEffect);
-}
-*/
