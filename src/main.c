@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 
 // [Archivo de salida]
     outFileStr.format = inFileStr.format;
-    outFileStr.channels = 2;  // inFileStr.channels; // La salida es siempre stereo, por 1 canal el original y por el otro el efecto
+    outFileStr.channels = 2;  // La salida es siempre stereo, por 1 canal el original y por el otro el efecto
 
     outFileStr.samplerate = inFileStr.samplerate;
     // Manejo de errores en la apertura del archivo de salida
