@@ -9,16 +9,18 @@
 #include "./tiempo.h"
 
 #define BUFFERSIZE 8192  // en frames
+ #define M_PI 3.14159265358979323846264338327
 
 // [Variables globales]
 int distValue;
 
-unsigned int debug = 0;  // TODO _> BORRAR
 unsigned int bufferSize = 0;
 unsigned int framesWritten = 0;
 unsigned int framesRead = 0;
 unsigned int framesReadTotal = 0;  // TODO -> Borrar
 unsigned long int cantCiclos = 0;
+unsigned long int start = 0;
+unsigned long int end = 0;
 
 float *dataBuffIn;
 float *dataBuffOut;
@@ -57,15 +59,9 @@ void clean_buffer(float *buffer, int bufferLen);
 // PANPOS simplepan_c(double position);
 
 void delay_c(float delayInSec, float decay);
-// Double delay
-/*
-void delay_asm_caller(double delayInSec, double decay);
-extern int delay_asm(double *bufferIn, double *bufferOut, double *bufferEffect, int bufferLen, float *decay, int channels) __asm__("delay_asm");
-*/
-// Float delay
+void flanger_c(float delay, float rate, float amp);
 
 void delay_asm_caller(float delayInSec, float decay);
 extern int delay_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float *decay, int channels) __asm__("delay_asm");
 
-//extern int delay_debug_asm(double *bufferIn, double *bufferOut, double *bufferEffect, int bufferLen, double *decay, int channels) __asm__("delay_debug_asm");
 // [/Efectos]

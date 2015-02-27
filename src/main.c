@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 // [Archivo de salida]
     outFileStr.format = inFileStr.format;
     outFileStr.channels = 2;  // inFileStr.channels; // La salida es siempre stereo, por 1 canal el original y por el otro el efecto
-    // TODO -> ¿Sólo en el caso del delay? ¿O en todos?
+
     outFileStr.samplerate = inFileStr.samplerate;
     // Manejo de errores en la apertura del archivo de salida
     if (!(outFilePtr = sf_open(outFileName, SFM_WRITE, &outFileStr))) {
@@ -98,12 +98,12 @@ int main(int argc, char* argv[]) {
                 delay_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
-            case 'x':  // TODO -> Borrar
-                printf("Debug.\n");
-                debug = 1;
-                siguienteOpcion+=1;
+            case 'f':
+                printf("Flanger c.\n");
+                printf("Parametros: %f, %f, %f\n",(float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));
+                flanger_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
+                siguienteOpcion+=4;
                 break;
-
         }
     }
 
