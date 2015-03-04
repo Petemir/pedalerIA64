@@ -21,3 +21,10 @@
 *.i*86
 *.x86_64
 *.hex
+
+# R objects
+.Rhistory
+
+# WAV Files
+gibson-*.wav
+guitar-*.wav
