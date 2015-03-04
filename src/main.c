@@ -104,6 +104,11 @@ int main(int argc, char* argv[]) {
                 flanger_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
                 siguienteOpcion+=4;
                 break;
+            case 'F':
+                printf("Flanger asm.\n");
+                flanger_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
+                siguienteOpcion+=4;
+                break;
         }
     }
 

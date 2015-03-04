@@ -65,4 +65,7 @@ void flanger_c(float delay, float rate, float amp);
 void delay_asm_caller(float delayInSec, float decay);
 extern int delay_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float *decay, int channels) __asm__("delay_asm");
 
+void flanger_asm_caller(float delay, float rate, float amp);
+extern int flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float delay, float rate, float amp, int channels);
+
 // [/Efectos]
