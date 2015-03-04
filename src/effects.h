@@ -9,7 +9,7 @@
 #include "./tiempo.h"
 
 #define BUFFERSIZE 8192  // en frames
- #define M_PI 3.14159265358979323846264338327
+#define M_PI 3.14159265358979323846264338327
 
 // [Variables globales]
 int distValue;
