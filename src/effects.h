@@ -45,6 +45,7 @@ typedef struct PANPOS {
 //void volume_c(double ampfac);
 //void normalization_c(double dbval);
 
+void clean_buffer_int(int *buffer, int bufferLen);  // TODO -> Sacar
 void clean_buffer(float *buffer, int bufferLen);
 
 //double maxsamp(double *bufferIn, int bufferLen);

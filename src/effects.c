@@ -1,11 +1,18 @@
 // PedalerIA64 Copyright [2014] <Matias Laporte>
 #include "./effects.h"
 
+void clean_buffer_int(int *buffer, int bufferLen) {     // TODO -> Sacar
+    for (int i = 0; i < bufferLen; i++) {
+        buffer[i] = 0;
+    }
+}
+
 void clean_buffer(float *buffer, int bufferLen) {
     for (int i = 0; i < bufferLen; i++) {
         buffer[i] = 0;
     }
 }
+
 /*
 double maxsamp(double *bufferIn, int bufferLen) {
     double absval, peak = 0.0;
@@ -284,7 +291,7 @@ void flanger_c(float delayInMsec, float rate, float amp) {
 
     dataBuffIn = (float*)malloc(bufferSize);
     dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float)); // El buffer de efecto sólo va a contener el canal derecho de la salida
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
@@ -298,33 +305,35 @@ void flanger_c(float delayInMsec, float rate, float amp) {
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            // if ((framesReadTotal+1+i)%maxDelayInFrames>framesRead) { break; }
+
             float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+i)*(rate/inFileStr.samplerate)));
             unsigned int current_delay = ceil(current_sin*delayInFrames);
-            unsigned int eff_index = (((framesReadTotal+1)+i)-current_delay);  // Indice del efecto
+            unsigned int eff_index = (((framesReadTotal)+i)-current_delay);  // Indice del efecto
 
             if (inFileStr.channels == 2) {
-                float next_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+i+1)*(rate/inFileStr.samplerate)));
+                float next_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+(i+1))*(rate/inFileStr.samplerate)));
                 unsigned int next_delay = ceil(next_sin*delayInFrames);
-                unsigned int next_eff_index = (((framesReadTotal+1)+i+1)-next_delay);
+                unsigned int next_eff_index = (((framesReadTotal)+(i+1))-next_delay);
 
                 dataBuffEffect[eff_i++] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1]);
 
                 dataBuffOut[out_i++] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                dataBuffOut[out_i++] = 0.5 * (amp*dataBuffIn[i] + amp*dataBuffEffect[eff_index%maxDelayInFrames]) + 0.5 * (amp*dataBuffIn[i+1] + amp*dataBuffEffect[next_eff_index%maxDelayInFrames]);
+                dataBuffOut[out_i++] = 0.5 * (amp*dataBuffIn[i] + amp*dataBuffIn[i+1]) + 0.5 * (amp*dataBuffEffect[eff_index%maxDelayInFrames] + amp*dataBuffEffect[next_eff_index%maxDelayInFrames]);
+                // printf("%f, %d, %f\n", amp * (dataBuffIn[i]/65536), current_delay, dataBuffEffect[eff_index%maxDelayInFrames]/65536.0);  // , dataBuffEffect[eff_index%maxDelayInFrames]/65536);
 
                 i++;    // Avanzo de a dos en dataBuffIn
             } else {
-                dataBuffOut[out_i++] = dataBuffIn[i];   // Canal Izquierdo/Sonido original
-                dataBuffOut[out_i++] = amp * dataBuffIn[i] + amp * dataBuffEffect[eff_index%maxDelayInFrames];  // Canal Derecho/Efecto
-
                 dataBuffEffect[eff_i++] = dataBuffIn[i];
+                dataBuffOut[out_i++] = dataBuffIn[i];   // Canal Izquierdo/Sonido original
+                dataBuffOut[out_i++] = amp*dataBuffIn[i] + amp*dataBuffEffect[eff_index%maxDelayInFrames];  // Canal Derecho/Efecto
+                // printf("%f, %d, %f\n", amp * (dataBuffIn[i]/65536), current_delay, dataBuffEffect[eff_index%maxDelayInFrames]/65536.0);  // , dataBuffEffect[eff_index%maxDelayInFrames]/65536);
             }
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
         
         framesReadTotal += framesRead;
-        printf("%d\n", framesReadTotal);
    
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
