@@ -240,7 +240,7 @@ void delay_c(float delayInSec, float decay) {
             // Original por el canal izquierdo, efecto por el derecho;
             if (inFileStr.channels == 2) {
                 dataBuffOut[out_i++] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                dataBuffOut[out_i++] = 0.5 * dataBuffEffect[i] + 0.5 * dataBuffEffect[i+1];
+                dataBuffOut[out_i++] = 0.5*dataBuffEffect[i] + 0.5*dataBuffEffect[i+1];
 
                 dataBuffEffect[i] = dataBuffIn[i] * decay;
                 dataBuffEffect[i+1] = dataBuffIn[i+1] * decay;
@@ -276,42 +276,46 @@ void delay_c(float delayInSec, float decay) {
 
 void flanger_c(float delayInMsec, float rate, float amp) {
     unsigned int delayInFrames = floor(delayInMsec*inFileStr.samplerate);
-    unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;
+    unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
+    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
     unsigned int bufferSize = bufferFrameSize*sizeof(float);
-    unsigned int bufferFrameSizeOut = delayInFrames*outFileStr.channels;
+    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
     unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);
 
     dataBuffIn = (float*)malloc(bufferSize);
     dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(bufferSizeOut);
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float)); // El buffer de efecto sólo va a contener el canal derecho de la salida
+
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, bufferFrameSizeOut/2);
+    clean_buffer(dataBuffEffect, maxDelayInFrames);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
     printf("Delay in frames: %d.\n", delayInFrames);
-    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, delayInFrames))) {
+    printf("Max delay in frames: %d.\n", maxDelayInFrames);
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            float current_sin = sinf(2*M_PI*(framesReadTotal+i)*(rate/inFileStr.samplerate));
+            float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+i)*(rate/inFileStr.samplerate)));
             unsigned int current_delay = ceil(current_sin*delayInFrames);
+            unsigned int eff_index = (((framesReadTotal+1)+i)-current_delay);  // Indice del efecto
 
             if (inFileStr.channels == 2) {
-                float next_sin = sinf(2*M_PI*(framesReadTotal+i+1)*(rate/inFileStr.samplerate));
+                float next_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+i+1)*(rate/inFileStr.samplerate)));
                 unsigned int next_delay = ceil(next_sin*delayInFrames);
-
-                
-                dataBuffOut[out_i++] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                dataBuffOut[out_i++] = 0.5 * (amp*dataBuffIn[i] + amp*dataBuffEffect[(eff_i-current_delay)%bufferFrameSize]) + 0.5 * (amp*dataBuffIn[i+1] + amp*dataBuffEffect[(eff_i+1-next_delay)%bufferFrameSize]);
+                unsigned int next_eff_index = (((framesReadTotal+1)+i+1)-next_delay);
 
                 dataBuffEffect[eff_i++] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1]);
 
+                dataBuffOut[out_i++] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                dataBuffOut[out_i++] = 0.5 * (amp*dataBuffIn[i] + amp*dataBuffEffect[eff_index%maxDelayInFrames]) + 0.5 * (amp*dataBuffIn[i+1] + amp*dataBuffEffect[next_eff_index%maxDelayInFrames]);
+
                 i++;    // Avanzo de a dos en dataBuffIn
             } else {
-                dataBuffOut[out_i++] = dataBuffIn[i];   // Sonido original
-                dataBuffOut[out_i++] = amp * dataBuffIn[i] + amp * dataBuffEffect[(i-current_delay)%bufferFrameSize];  // Efecto
+                dataBuffOut[out_i++] = dataBuffIn[i];   // Canal Izquierdo/Sonido original
+                dataBuffOut[out_i++] = amp * dataBuffIn[i] + amp * dataBuffEffect[eff_index%maxDelayInFrames];  // Canal Derecho/Efecto
 
                 dataBuffEffect[eff_i++] = dataBuffIn[i];
             }
