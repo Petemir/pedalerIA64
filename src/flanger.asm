@@ -1,15 +1,17 @@
-global delay_asm
+global flanger_asm
 
 ; input 
 ; rdi: *dataBuffIn
 ; rsi: *dataBuffOut
 ; rdx: dataBuffEffect
 ; rcx: framesRead
-; r8: decay
-; r9: channels
+; xmm0: delay
+; xmm1: rate
+; xmm2: amp
+; r8:   channels
 
 section .text
-    delay_asm:
+    flanger_asm:
     push rbp        ; convención C
     mov rbp, rsp
     push rbx
@@ -18,7 +20,7 @@ section .text
     push r14
     push r15
 
-    cmp r9, 1
+    cmp r8, 1
     je cycle_mono
 
     mov eax,  0x3F000000 ; 0.5 en eax
@@ -27,18 +29,23 @@ section .text
 
     jmp cycle_stereo
 
-; TODO -> FIJARSE SI SE PUEDE CORREGIR PARA QUE HAGA LO MISMO TANTO EN STEREO COMO MONO, Y SOLO VARIE LO QUE SE GUARDA EN EL BUFFER EFECTO
     cycle_mono:
     cmp rcx, 0  ; ya recorrí todo el buffer?
     je fin
     cmp rcx, 4  ; caso borde: cantidad de frames restantes menor que 4
     jl odd_frames_mono
 
-    ; dataBuffOut[i] = dataBuffIn[i]
-    ; dataBuffOut[i+1] = dataBuffEffect[i]
+    ; dataBuffEffect[eff_i] = dataBuffIn[i];
+    ; dataBuffOut[out_i] = dataBuffEffect[eff_i];  
+    ; dataBuffOut[out_i+1] = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];
 
-    movaps xmm0, [rdi]  ; xmm0 = dataBuffIn[0..3]
-    movaps xmm1, [rdx]  ; xmm1 = dataBuffEffect[0..3]
+    movaps xmm3, [rdi]  ; xmm3 = dataBuffIn[0..3]
+    movaps xmm4, [rdx]  ; xmm4 = dataBuffEffect[0..3]
+
+    shufps xmm0, xmm0, 0x00  ; xmm0 = delay | delay | delay | delay |
+    shufps xmm2, xmm2, 0x00  ; xmm2 = amp | amp | amp | amp |
+    
+    jmp fin
 
     movaps xmm2, xmm0   ; trabajo en xmm2 para no ensuciar xmm0
     punpckldq xmm2, xmm1; mezclo en xmm2 las partes bajas de xmm2 y xmm1

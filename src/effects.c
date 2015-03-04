@@ -233,32 +233,32 @@ void delay_c(float delayInSec, float decay) {
 
     dataBuffIn = (float*)malloc(bufferSize);
     dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(bufferSize);
+    float *dataBuffEffect = (float*)malloc(bufferSizeOut/2);  // El buffer de efecto sólo va a contener el canal derecho de la salida
+
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, bufferFrameSize);
+    clean_buffer(dataBuffEffect, bufferFrameSizeOut/2);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
     start = end = cantCiclos = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, delayInFrames))) {
         MEDIR_TIEMPO_START(start);
-        for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            // Original por el canal izquierdo, efecto por el derecho;
+        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            dataBuffOut[out_i+1] = dataBuffEffect[eff_i]*decay;  // En el canal derecho, va el efecto (entrada ciclo anterior*decay)
+
+            // Stereo: promedio de los dos canales; Mono: entrada normal
             if (inFileStr.channels == 2) {
-                dataBuffOut[out_i++] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                dataBuffOut[out_i++] = 0.5*dataBuffEffect[i] + 0.5*dataBuffEffect[i+1];
-
-                dataBuffEffect[i] = dataBuffIn[i] * decay;
-                dataBuffEffect[i+1] = dataBuffIn[i+1] * decay;
-
+                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
                 i++;    // Avanzo de a dos en dataBuffIn
             } else {
-                dataBuffOut[out_i++] = dataBuffIn[i];
-                dataBuffOut[out_i++] = dataBuffEffect[i];
-
-                dataBuffEffect[i] = dataBuffIn[i] * decay;  // Delay simple
+                dataBuffEffect[eff_i] = dataBuffIn[i];
             }
+
+            dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // En el canal izquierdo, va la entrada sin efecto (entrada ciclo actual)
+
+            out_i++;
+            eff_i++;
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
@@ -291,7 +291,7 @@ void flanger_c(float delayInMsec, float rate, float amp) {
 
     dataBuffIn = (float*)malloc(bufferSize);
     dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float)); 
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
@@ -304,25 +304,21 @@ void flanger_c(float delayInMsec, float rate, float amp) {
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            // if ((framesReadTotal+1+i)%maxDelayInFrames>framesRead) { break; }
-
             float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate)));
             unsigned int current_delay = ceil(current_sin*delayInFrames);
             unsigned int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
 
             if (inFileStr.channels == 2) {
                 dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Promedio de los dos canales originales en el canal izquierdo
-                dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];
-
-                eff_i++;
                 i++;    // Avanzo de a dos en dataBuffIn
             } else {
-                dataBuffEffect[eff_i++] = dataBuffIn[i];
-                dataBuffOut[out_i++] = dataBuffIn[i];   // Canal Izquierdo/Sonido original
-                dataBuffOut[out_i++] = amp*dataBuffIn[i] + amp*dataBuffEffect[eff_index%maxDelayInFrames];  // Canal Derecho/Efecto
-                // printf("%f, %d, %f\n", amp * (dataBuffIn[i]/65536), current_delay, dataBuffEffect[eff_index%maxDelayInFrames]/65536.0);  // , dataBuffEffect[eff_index%maxDelayInFrames]/65536);
+                dataBuffEffect[eff_i] = dataBuffIn[i];
             }
+
+            dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
+            dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];  // Audio con efecto
+
+            eff_i++;
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
@@ -384,4 +380,71 @@ void delay_asm_caller(float delayInSec, float decay) {
     free(dataBuffIn);
     free(dataBuffOut);
     free(dataBuffEffect);
+}
+
+void flanger_asm_caller(float delayInMsec, float rate, float amp) {
+    unsigned int delayInFrames = floor(delayInMsec*inFileStr.samplerate);
+    unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
+    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
+    unsigned int bufferSize = bufferFrameSize*sizeof(float);
+    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
+    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);
+
+    dataBuffIn = (float*)malloc(bufferSize);
+    dataBuffOut = (float*)malloc(bufferSizeOut);
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
+
+    // Limpio buffers
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffEffect, maxDelayInFrames);
+    clean_buffer(dataBuffOut, bufferFrameSizeOut);
+
+    start = end = cantCiclos = 0;
+    framesReadTotal = 0;
+    // [Lecto-escritura de datos
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
+        MEDIR_TIEMPO_START(start);
+        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            // if ((framesReadTotal+1+i)%maxDelayInFrames>framesRead) { break; }
+            flanger_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, delayInMsec, rate, amp, inFileStr.channels);
+/*
+            float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate)));
+            unsigned int current_delay = ceil(current_sin*delayInFrames);
+            unsigned int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
+
+            if (inFileStr.channels == 2) {
+                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Promedio de los dos canales originales en el canal izquierdo
+                dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];
+
+                eff_i++;
+                i++;    // Avanzo de a dos en dataBuffIn
+            } else {
+                dataBuffEffect[eff_i++] = dataBuffIn[i];
+                dataBuffOut[out_i++] = dataBuffIn[i];   // Canal Izquierdo/Sonido original
+                dataBuffOut[out_i++] = amp*dataBuffIn[i] + amp*dataBuffEffect[eff_index%maxDelayInFrames];  // Canal Derecho/Efecto
+                // printf("%f, %d, %f\n", amp * (dataBuffIn[i]/65536), current_delay, dataBuffEffect[eff_index%maxDelayInFrames]/65536.0);  // , dataBuffEffect[eff_index%maxDelayInFrames]/65536);
+            }
+  */      }
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
+        framesReadTotal += framesRead;
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+    // [/Lecto-escritura de datos]
+    printf("\tTiempo de ejecución:\n");
+    printf("\t  Comienzo                          : %lu\n", start);
+    printf("\t  Fin                               : %lu\n", end);
+    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
+    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
+    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
+
+    // [Limpieza]
+    free(dataBuffIn);
+    free(dataBuffOut);
+    free(dataBuffEffect);
+    // [/Limpieza]
 }
