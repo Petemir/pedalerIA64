@@ -300,28 +300,22 @@ void flanger_c(float delayInMsec, float rate, float amp) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-    printf("Delay in frames: %d.\n", delayInFrames);
-    printf("Max delay in frames: %d.\n", maxDelayInFrames);
+    // [Lecto-escritura de datos
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
             // if ((framesReadTotal+1+i)%maxDelayInFrames>framesRead) { break; }
 
-            float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+i)*(rate/inFileStr.samplerate)));
+            float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate)));
             unsigned int current_delay = ceil(current_sin*delayInFrames);
-            unsigned int eff_index = (((framesReadTotal)+i)-current_delay);  // Indice del efecto
+            unsigned int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
 
             if (inFileStr.channels == 2) {
-                float next_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+(i+1))*(rate/inFileStr.samplerate)));
-                unsigned int next_delay = ceil(next_sin*delayInFrames);
-                unsigned int next_eff_index = (((framesReadTotal)+(i+1))-next_delay);
+                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Promedio de los dos canales originales en el canal izquierdo
+                dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];
 
-                dataBuffEffect[eff_i++] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1]);
-
-                dataBuffOut[out_i++] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                dataBuffOut[out_i++] = 0.5 * (amp*dataBuffIn[i] + amp*dataBuffIn[i+1]) + 0.5 * (amp*dataBuffEffect[eff_index%maxDelayInFrames] + amp*dataBuffEffect[next_eff_index%maxDelayInFrames]);
-                // printf("%f, %d, %f\n", amp * (dataBuffIn[i]/65536), current_delay, dataBuffEffect[eff_index%maxDelayInFrames]/65536.0);  // , dataBuffEffect[eff_index%maxDelayInFrames]/65536);
-
+                eff_i++;
                 i++;    // Avanzo de a dos en dataBuffIn
             } else {
                 dataBuffEffect[eff_i++] = dataBuffIn[i];
@@ -332,9 +326,8 @@ void flanger_c(float delayInMsec, float rate, float amp) {
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
-        
+
         framesReadTotal += framesRead;
-   
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
