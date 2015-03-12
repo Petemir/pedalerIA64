@@ -393,39 +393,50 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     dataBuffIn = (float*)malloc(bufferSize);
     dataBuffOut = (float*)malloc(bufferSizeOut);
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
+    unsigned int *dataBuffIndex = (unsigned int*)malloc(maxDelayInFrames*sizeof(unsigned int));
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, maxDelayInFrames);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer(dataBuffEffect, maxDelayInFrames);
+    clean_buffer_int((int*)dataBuffIndex, maxDelayInFrames);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
+
+    printf("Length dbi: %d.\n", bufferFrameSize);
+    printf("Length dbo: %d.\n", bufferFrameSizeOut);
+    printf("Length dbe: %d.\n", maxDelayInFrames);
+    printf("Length dbix: %d.\n", maxDelayInFrames);
     // [Lecto-escritura de datos
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
-        MEDIR_TIEMPO_START(start);
-        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            // if ((framesReadTotal+1+i)%maxDelayInFrames>framesRead) { break; }
-            flanger_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, delayInMsec, rate, amp, inFileStr.channels);
-/*
-            float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate)));
-            unsigned int current_delay = ceil(current_sin*delayInFrames);
-            unsigned int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
+        for (unsigned int eff_i = 0; eff_i < bufferFrameSize; eff_i = eff_i) {
+            v4sf index_vector;
 
-            if (inFileStr.channels == 2) {
-                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Promedio de los dos canales originales en el canal izquierdo
-                dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];
-
+            // Número que se utiliza para calcular el índice que se usará para el efecto
+            for (unsigned int j = 0; j < 4; j++) {
+                index_vector[j] = 2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate);
                 eff_i++;
-                i++;    // Avanzo de a dos en dataBuffIn
-            } else {
-                dataBuffEffect[eff_i++] = dataBuffIn[i];
-                dataBuffOut[out_i++] = dataBuffIn[i];   // Canal Izquierdo/Sonido original
-                dataBuffOut[out_i++] = amp*dataBuffIn[i] + amp*dataBuffEffect[eff_index%maxDelayInFrames];  // Canal Derecho/Efecto
-                // printf("%f, %d, %f\n", amp * (dataBuffIn[i]/65536), current_delay, dataBuffEffect[eff_index%maxDelayInFrames]/65536.0);  // , dataBuffEffect[eff_index%maxDelayInFrames]/65536);
             }
-  */      }
+
+            MEDIR_TIEMPO_START(start);
+            index_vector = sin_ps(index_vector);
+            MEDIR_TIEMPO_STOP(end);
+            MEDIR_TIEMPO_START(start);
+            index_vector = _mm_and_ps(index_vector, *(v4sf*)_ps_inv_sign_mask);
+            MEDIR_TIEMPO_STOP(end);
+
+            // Guardo los índices en el buffer que se le pasará a la rutina en ASM
+            for (int j = 3; j >= 0; j--) {
+                // printf("%d %d\n", eff_i-j, (int) ((framesReadTotal+(eff_i-j)-ceil(index_vector[3-j]*delayInFrames)))%maxDelayInFrames);
+                dataBuffIndex[eff_i-j] = (int) ((framesReadTotal+(eff_i-j)-ceil(index_vector[3-j]*delayInFrames)))%maxDelayInFrames;
+            }
+
+            cantCiclos += end-start;
+        }
+
+        MEDIR_TIEMPO_START(start);
+        flanger_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, framesRead*inFileStr.channels, inFileStr.channels, amp);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 

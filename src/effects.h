@@ -6,7 +6,8 @@
 #include <limits.h>
 #include <math.h>
 
-#include "./tiempo.h"
+#include "./libs/tiempo.h"
+#include "./libs/sse_mathfun.h"
 
 #define BUFFERSIZE 8192  // en frames
 #define M_PI 3.14159265358979323846264338327
@@ -66,6 +67,6 @@ void delay_asm_caller(float delayInSec, float decay);
 extern int delay_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float *decay, int channels) __asm__("delay_asm");
 
 void flanger_asm_caller(float delay, float rate, float amp);
-extern int flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float delay, float rate, float amp, int channels);
+extern int flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, unsigned int *bufferIndex,  unsigned int framesReadTotal, int channels, float amp);
 
 // [/Efectos]

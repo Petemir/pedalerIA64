@@ -3,7 +3,7 @@ global delay_asm
 ; input 
 ; rdi: *dataBuffIn
 ; rsi: *dataBuffOut
-; rdx: dataBuffEffect
+; rdx: *dataBuffEffect
 ; rcx: framesRead
 ; r8: decay
 ; r9: channels
