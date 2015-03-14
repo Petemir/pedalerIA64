@@ -10,10 +10,10 @@ global flanger_asm
 ; xmm0: amp
 
 locales:
-%define index_1 [rbp-4]
-%define index_2 [rbp-8]
-%define index_3 [rbp-12]
-%define index_4 [rbp-16]
+%define index_4 [rbp-4]
+%define index_3 [rbp-8]
+%define index_2 [rbp-12]
+%define index_1 [rbp-16]
 %define dataBuffIn rdi
 %define dataBuffOut rsi
 %define dataBuffEffect edx
@@ -34,9 +34,13 @@ section .text
     push r15
 
     shufps xmm0, xmm0, 0x00 ; xmm0 = amp | amp | amp | amp |
-    xor rax, rax    ; rax = eff_i
-    effect: 
-    cmp r8, 2
+    mov eax,  0x3F000000 ; 0.5 en eax
+    movd xmm5, eax
+    shufps xmm5, xmm5, 0x00 ; xmm5 = 0.5 | 0.5 | 0.5 | 0.5 |
+
+    xor rax, rax    ; rax = eff_i = 0
+
+    cmp r9, 2
     je cycle_stereo
 
     cycle_mono:
@@ -51,134 +55,117 @@ section .text
 
     movaps xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[i..i+3]
     movaps xmm2, xmm1           ; xmm2 = xmm1
+    movaps [dataBuffEffect+eff_i*4], xmm1  ; dataBuffEffect[eff_i..eff_i+3] = dataBuffIn[i..i+3]
     
     ; busco los indices para el efecto
     movaps xmm3, [dataBuffIndex+eff_i*4] ; xmm3 = dataBuffIndex[eff_i]
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+0]
-    mov r10d, [edx+4*ebx]
+    mov r10d, [dataBuffEffect+4*ebx]
     mov index_1, r10d
+
     shufps xmm3, xmm3, 00111001b ; xmm3 = 1 | 2 | 3 | 0 |
-
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+1]
-    mov r10d, [edx+4*ebx]
+    mov r10d, [dataBuffEffect+4*ebx]
     mov index_2, r10d
+
     shufps xmm3, xmm3, 00111001b ; xmm3 = 2 | 3 | 0 | 1 |
-
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+2]
-    mov r10d, [edx+4*ebx]
+    mov r10d, [dataBuffEffect+4*ebx]
     mov index_3, r10d
-    shufps xmm3, xmm3, 00111001b ; xmm3 = 3 | 0 | 1 | 2 |
 
+    shufps xmm3, xmm3, 00111001b ; xmm3 = 3 | 0 | 1 | 2 |
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+3]
-    mov r10d, [edx+4*ebx]
+    mov r10d, [dataBuffEffect+4*ebx]
     mov index_4, r10d
 
-;    movd xmm3, index_1
-;    shufps xmm3, xmm3, 00000000b
-;    movd xmm3, index_2
-;    shufps xmm3, xmm3, 00000011b
-;    movd xmm3, index_3
-;    shufps xmm3, xmm3, 000001011b
-;    movd xmm3, index_4
-
-    ;punpckldq xmm3, index_1
-    ;punpckldq xmm3, index_3
-    ;shufps xmm3, xmm3, 00011011b;
-
-    movaps xmm3, index_4    
-    addps xmm2, xmm3  ; xmm2 = dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]]
+    movaps xmm3, index_1    
+    addps xmm2, xmm3    ; xmm2 = dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]]
     mulps xmm2, xmm0    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
 
-    movaps xmm4, xmm1  ; Trabajo en xmm4 con dataBuffIn para no ensuciar
-    ; movaps xmm5, [rdx]  ; xmm5 = dataBuffEffect[0..3]
-    punpckldq xmm4, xmm2  ; xmm4 = dBIn[0] | amp*(dBEff[0]+dBEff[dBIndex[eff_i]]) | dBIn[1] | amp*(dBEff[1]+dBEff[dBIndex[eff_i+1]]) 
-    movaps [rsi], xmm4  ; dataBuffOut = xmm4
-    add rsi, 16
+    movaps xmm4, xmm1       ; Trabajo en xmm4 con dataBuffIn para no ensuciar
+    punpckldq xmm4, xmm2    ; xmm4 = dBIn[0] | amp*(dBEff[0]+dBEff[dBIndex[eff_i]]) | dBIn[1] | amp*(dBEff[1]+dBEff[dBIndex[eff_i+1]]) 
+    movaps [dataBuffOut], xmm4      ; dataBuffOut = xmm4
+    add dataBuffOut, 16
     movaps xmm4, xmm1
     punpckhdq xmm4, xmm2
-    movaps [rsi], xmm4
-    add rsi, 16
-
-    movaps [dataBuffEffect+eff_i*4], xmm1  ; dataBuffEffect[eff_i..eff_i+3] = dataBuffIn[i..i+3]
+    movaps [dataBuffOut], xmm4
+    add dataBuffOut, 16
 
     add dataBuffIn, 16  ; nos movemos 16 bytes (4 float) en el puntero de entrada
-    add rax, 4          ; nos movemos 4 posiciones en el índice del puntero de efecto
+    add eff_i, 4        ; nos movemos 4 posiciones en el índice del puntero de efecto
     sub r8, 4           ; se procesaron 4 frames
 
     jmp cycle_mono
 
     odd_frames_mono:
     ; frames restantes, proceso de a un sólo float
-    ; dataBuffOut[i] = dataBuffIn[i]
-    ; dataBuffOut[i+1] = dataBuffEffect[i]
-    jmp fin    
-    movss xmm0, [rdi]  ; xmm0 = dataBuffIn[0] | - | - | - |
-    movss xmm1, [rdx]  ; xmm1 = dataBuffEffect[0] | - | - | - |
+    movss xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[i..i+3]
+    movss xmm2, xmm1           ; xmm2 = xmm1
+    movss [dataBuffEffect+eff_i*4], xmm1  ; dataBuffEffect[eff_i] = dataBuffIn[i]
     
-    movss [rsi], xmm0  ; dataBuffOut[i] = dataBuffIn[i]
+    ; busco los indices para el efecto
+    mov ebx, [dataBuffIndex+eff_i*4] ; ebx = dataBuffIndex[eff_i]
+    movd xmm3, [dataBuffEffect+4*ebx]
+
+    addss xmm2, xmm3  ; xmm2 = dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]]
+    mulss xmm2, xmm0    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
+
+    movss [rsi], xmm1
     add rsi, 4
-    movss [rsi], xmm1 ; dataBuffOut[i+1] = dataBuffEffect[i]
+    movss [rsi], xmm2
     add rsi, 4
 
-    ; dataBuffEffect[i] = dataBuffIn[i] * decay
-    movss xmm0, [r8]  ; xmm0 = decay | - | - | - |
-    movss xmm1, [rdi] ; xmm1 = dataBuffIn | - | - | - |
-    mulss xmm0, xmm1  ; xmm0 = dataBuffIn * decay | - | - | - |
-    movss [rdx], xmm0 ; dataBuffEffect = xmm1
-
-    add rdi, 4
-    add rdx, 4
-    sub rcx,1  ; se proceso 1 frame
-    cmp rcx,0
+    add dataBuffIn, 4   ; nos movemos 4 bytes (1 float) en el puntero de entrada
+    add eff_i, 1        ; nos movemos 1 posicion en el indice del puntero de efecto
+    sub r8, 1           ; se proceso 1 frame
+    cmp r8, 0
     je fin
 
     jmp odd_frames_mono
 
     cycle_stereo:
-    cmp rcx, 0  ; ya recorrí todo el buffer?
+    cmp r8, 0  ; ya recorrí todo el buffer?
     je fin
-    cmp rcx, 2  ; caso borde: cantidad de frames restantes igual a 2 (siempre es par, por ser stereo)
+    cmp r8, 2  ; caso borde: cantidad de frames restantes igual a 2 (siempre es par, por ser stereo)
     je remaining_frames_stereo
 
-    ; dataBuffOut[i] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1])
-    movaps xmm0, [rdi]  ; xmm0 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
-    mulps xmm0, xmm2    ; xmm0 = 0.5*dataBuffIn[0..3]
-
-    movaps xmm3, xmm0   ; xmm3 = xmm0
+    movaps xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
+    mulps xmm1, xmm5            ; xmm1 = 0.5*dataBuffIn[0..3]
+    movaps xmm3, xmm1   ; xmm3 = xmm1
     shufps xmm3, xmm3, 0x70   ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
-    shufps xmm0, xmm0, 0x20   ; xmm0 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
-    addps xmm0, xmm3          ; xmm0 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffIn[2+3])
+    shufps xmm1, xmm1, 0x20   ; xmm1 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
+    addps xmm1, xmm3          ; xmm1 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffIn[2+3])
 
-    ; dataBuffOut[i+1] = 0.5*(dataBuffEffect[i]+dataBuffEffect[i+1])
-    movaps xmm1, [rdx]  ; xmm1 = dataBuffEffect[0..3]
-    mulps xmm1, xmm2    ; xmm1 = 0.5*dataBuffEffect[0..3]
-    
-    movaps xmm3, xmm1
-    shufps xmm3, xmm3, 0x70   ; xmm3 = dataBuffEffect[1] | dataBuffEffect[3] | .. | .. |
-    shufps xmm1, xmm1, 0x20   ; xmm1 = dataBuffEffect[0] | dataBuffEffect[2] | .. | .. |
-    addps xmm1, xmm3          ; xmm1 = 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffEffect[2+3])
+    movaps xmm2, xmm1           ; xmm2 = xmm1 -> Aca queda lo que va para el canal izquierdo (0.5*(canal_izq+canal_der))
+    movq [dataBuffEffect+eff_i*4], xmm1 ; dbEffect[0,1] = 0.5*dbIn[0+1] | 0.5*(dbIn[2+3]) |
 
-    punpckhdq xmm0, xmm1      ; xmm0 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffIn[2+3]) | 0.5*(dataBuffEffect[2+3])
-    movaps [rsi], xmm0
+    movq xmm3, [dataBuffIndex+eff_i*4]  ; xmm3 = dataBuffIndex[0,1]
+    movd ebx, xmm3  ; ebx = dataBuffIndex[eff_i+0]
+    mov r10d, [dataBuffEffect+4*ebx]
+    mov index_3, r10d
 
-    ; dataBuffEffect[i] = dataBuffIn[i] * decay
-    movss xmm1, [r8]        ; xmm1 = decay | - | - | - |
-    shufps xmm1, xmm1, 0x00 ; xmm1 = decay | decay | decay | decay |
-    movaps xmm0, [rdi]     ; xmm0 = dataBuffIn
-    mulps xmm0, xmm1       ; xmm0 = dataBuffIn[0..3] * decay
-    movaps [rdx], xmm0     ; dataBuffEffect = xmm0
+    shufps xmm3, xmm3, 00111001b ; xmm3 = 1 | 2 | 3 | 0 |
+    movd ebx, xmm3
+    mov r10d, [dataBuffEffect+4*ebx]
+    mov index_4, r10d
 
-    sub rcx,4   ; se procesaron 4 frames
-    add rdi,16   ; nos movemos 16 bytes (4 float) en cada puntero
-    add rsi,16
-    add rdx,16
+    movq xmm3, index_3
+    addps xmm1, xmm3    ; dbIn + dbEff
+    mulps xmm1, xmm5    ; amp*(dbIn + dbEff)
+
+    punpckhdq xmm2, xmm1      ; xmm2 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffIn[2+3]) | 0.5*(dataBuffEffect[2+3])
+    movaps [dataBuffOut], xmm2
+
+    add dataBuffIn, 16
+    add eff_i, 2
+    sub r8, 4
 
     jmp cycle_stereo
 
     remaining_frames_stereo:
     ; frames restantes, procesamos dos floats (canal izquierdo y derecho)
     ; dataBuffOut[i] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1])
-    
+    jmp fin 
     movlps xmm0, [rdi]  ; xmm0 = dataBuffIn[0]+dataBuffIn[1]
     mulps xmm0, xmm2    ; xmm0 = 0.5*dataBuffIn[0,1]
 

@@ -315,6 +315,7 @@ void flanger_c(float delayInMsec, float rate, float amp) {
                 dataBuffEffect[eff_i] = dataBuffIn[i];
             }
 
+            printf("eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", eff_i, eff_index, dataBuffEffect[eff_i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames]));
             dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];  // Audio con efecto
 
@@ -377,9 +378,11 @@ void delay_asm_caller(float delayInSec, float decay) {
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
+    // [Limpieza]
     free(dataBuffIn);
     free(dataBuffOut);
     free(dataBuffEffect);
+    // [/Limpieza]
 }
 
 void flanger_asm_caller(float delayInMsec, float rate, float amp) {
@@ -394,7 +397,8 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     dataBuffOut = (float*)malloc(bufferSizeOut);
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
     unsigned int *dataBuffIndex = (unsigned int*)malloc(maxDelayInFrames*sizeof(unsigned int));
-
+    // unsigned int *dataBuffIndex = (unsigned int*)_mm_malloc(maxDelayInFrames*sizeof(unsigned int),16);
+    // printf("dbIn: %d, dbOut: %d, dbEffect: %d, dbIndex: %d.\n", dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex);
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
@@ -410,9 +414,8 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     printf("Length dbix: %d.\n", maxDelayInFrames);
     // [Lecto-escritura de datos
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
-        for (unsigned int eff_i = 0; eff_i < bufferFrameSize; eff_i = eff_i) {
+        for (unsigned int eff_i = 0; eff_i < fmin(framesRead, maxDelayInFrames); eff_i = eff_i) {
             v4sf index_vector;
-
             // Número que se utiliza para calcular el índice que se usará para el efecto
             for (unsigned int j = 0; j < 4; j++) {
                 index_vector[j] = 2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate);
@@ -421,15 +424,19 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
 
             MEDIR_TIEMPO_START(start);
             index_vector = sin_ps(index_vector);
+            // _mm_store_ps((float*)&(dataBuffIndex[eff_i-4]), sin_ps(index_vector));
             MEDIR_TIEMPO_STOP(end);
             MEDIR_TIEMPO_START(start);
             index_vector = _mm_and_ps(index_vector, *(v4sf*)_ps_inv_sign_mask);
+            // _mm_store_ps((float*)&(dataBuffIndex[eff_i-4]), _mm_and_ps((v4sf)&(dataBuffIndex[eff_i-4]), *(v4sf*)_ps_inv_sign_mask));
             MEDIR_TIEMPO_STOP(end);
 
             // Guardo los índices en el buffer que se le pasará a la rutina en ASM
-            for (int j = 3; j >= 0; j--) {
+            eff_i-=4;
+            for (unsigned int j = 0; j <= 3 && eff_i<framesRead; j++) {
                 // printf("%d %d\n", eff_i-j, (int) ((framesReadTotal+(eff_i-j)-ceil(index_vector[3-j]*delayInFrames)))%maxDelayInFrames);
-                dataBuffIndex[eff_i-j] = (int) ((framesReadTotal+(eff_i-j)-ceil(index_vector[3-j]*delayInFrames)))%maxDelayInFrames;
+                dataBuffIndex[eff_i] = (int) ((framesReadTotal+(eff_i)-ceil(index_vector[j]*delayInFrames)))%maxDelayInFrames;
+                eff_i++;
             }
 
             cantCiclos += end-start;
@@ -452,10 +459,11 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
+// printf("dbIn: %d, dbOut: %d, dbEffect: %d, dbIndex: %d.\n", dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex);
     // [Limpieza]
     free(dataBuffIn);
     free(dataBuffOut);
     free(dataBuffEffect);
+    free(dataBuffIndex);
     // [/Limpieza]
 }
