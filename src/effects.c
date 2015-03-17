@@ -1,12 +1,6 @@
 // PedalerIA64 Copyright [2014] <Matias Laporte>
 #include "./effects.h"
 
-void clean_buffer_int(int *buffer, int bufferLen) {     // TODO -> Sacar
-    for (int i = 0; i < bufferLen; i++) {
-        buffer[i] = 0;
-    }
-}
-
 void clean_buffer(float *buffer, int bufferLen) {
     for (int i = 0; i < bufferLen; i++) {
         buffer[i] = 0;
@@ -306,7 +300,7 @@ void flanger_c(float delayInMsec, float rate, float amp) {
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
             float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate)));
             unsigned int current_delay = ceil(current_sin*delayInFrames);
-            unsigned int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
+            int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
 
             if (inFileStr.channels == 2) {
                 dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
@@ -315,9 +309,9 @@ void flanger_c(float delayInMsec, float rate, float amp) {
                 dataBuffEffect[eff_i] = dataBuffIn[i];
             }
 
-            printf("eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", eff_i, eff_index, dataBuffEffect[eff_i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames]));
+            // printf("fr+eff_i: %d, eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", framesReadTotal+eff_i, eff_i, eff_index+1, dataBuffEffect[i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames])));
             dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
-            dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[eff_index%maxDelayInFrames];  // Audio con efecto
+            dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto
 
             eff_i++;
         }
@@ -403,11 +397,10 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     clean_buffer(dataBuffIn, bufferFrameSize);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
     clean_buffer(dataBuffEffect, maxDelayInFrames);
-    clean_buffer_int((int*)dataBuffIndex, maxDelayInFrames);
+    clean_buffer((float*)dataBuffIndex, maxDelayInFrames);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-
     printf("Length dbi: %d.\n", bufferFrameSize);
     printf("Length dbo: %d.\n", bufferFrameSizeOut);
     printf("Length dbe: %d.\n", maxDelayInFrames);
@@ -433,7 +426,7 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
 
             // Guardo los índices en el buffer que se le pasará a la rutina en ASM
             eff_i-=4;
-            for (unsigned int j = 0; j <= 3 && eff_i<framesRead; j++) {
+            for (unsigned int j = 0; j <= 3 && eff_i < framesRead; j++) {
                 // printf("%d %d\n", eff_i-j, (int) ((framesReadTotal+(eff_i-j)-ceil(index_vector[3-j]*delayInFrames)))%maxDelayInFrames);
                 dataBuffIndex[eff_i] = (int) ((framesReadTotal+(eff_i)-ceil(index_vector[j]*delayInFrames)))%maxDelayInFrames;
                 eff_i++;

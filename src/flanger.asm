@@ -110,10 +110,10 @@ section .text
     addss xmm2, xmm3  ; xmm2 = dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]]
     mulss xmm2, xmm0    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
 
-    movss [rsi], xmm1
-    add rsi, 4
-    movss [rsi], xmm2
-    add rsi, 4
+    movss [dataBuffOut], xmm1
+    add dataBuffOut, 4
+    movss [dataBuffOut], xmm2
+    add dataBuffOut, 4
 
     add dataBuffIn, 4   ; nos movemos 4 bytes (1 float) en el puntero de entrada
     add eff_i, 1        ; nos movemos 1 posicion en el indice del puntero de efecto
@@ -153,9 +153,10 @@ section .text
     addps xmm1, xmm3    ; dbIn + dbEff
     mulps xmm1, xmm5    ; amp*(dbIn + dbEff)
 
-    punpckhdq xmm2, xmm1      ; xmm2 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffIn[2+3]) | 0.5*(dataBuffEffect[2+3])
+    punpckldq xmm2, xmm1      ; xmm2 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffIn[2+3]) | 0.5*(dataBuffEffect[2+3])
     movaps [dataBuffOut], xmm2
 
+    add dataBuffOut, 16
     add dataBuffIn, 16
     add eff_i, 2
     sub r8, 4
