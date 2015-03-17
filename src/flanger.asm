@@ -19,6 +19,7 @@ locales:
 %define dataBuffEffect edx
 %define dataBuffIndex ecx
 %define eff_i eax
+%define amp xmm0
 
 ; rax: contador de frames
 
@@ -80,7 +81,7 @@ section .text
 
     movaps xmm3, index_1    
     addps xmm2, xmm3    ; xmm2 = dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]]
-    mulps xmm2, xmm0    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
+    mulps xmm2, amp    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
 
     movaps xmm4, xmm1       ; Trabajo en xmm4 con dataBuffIn para no ensuciar
     punpckldq xmm4, xmm2    ; xmm4 = dBIn[0] | amp*(dBEff[0]+dBEff[dBIndex[eff_i]]) | dBIn[1] | amp*(dBEff[1]+dBEff[dBIndex[eff_i+1]]) 
@@ -108,7 +109,7 @@ section .text
     movd xmm3, [dataBuffEffect+4*ebx]
 
     addss xmm2, xmm3  ; xmm2 = dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]]
-    mulss xmm2, xmm0    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
+    mulss xmm2, amp    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
 
     movss [dataBuffOut], xmm1
     add dataBuffOut, 4
@@ -129,12 +130,12 @@ section .text
     cmp r8, 2  ; caso borde: cantidad de frames restantes igual a 2 (siempre es par, por ser stereo)
     je remaining_frames_stereo
 
-    movaps xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
-    mulps xmm1, xmm5            ; xmm1 = 0.5*dataBuffIn[0..3]
-    movaps xmm3, xmm1   ; xmm3 = xmm1
-    shufps xmm3, xmm3, 0x70   ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
-    shufps xmm1, xmm1, 0x20   ; xmm1 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
-    addps xmm1, xmm3          ; xmm1 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffIn[2+3])
+    movaps xmm1, [dataBuffIn]       ; xmm1 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
+    mulps xmm1, xmm5                ; xmm1 = 0.5*dataBuffIn[0..3]
+    movaps xmm3, xmm1               ; xmm3 = xmm1
+    shufps xmm3, xmm3, 01110000b    ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
+    shufps xmm1, xmm1, 00100000b    ; xmm1 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
+    addps xmm1, xmm3                ; xmm1 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffIn[2+3])
 
     movaps xmm2, xmm1           ; xmm2 = xmm1 -> Aca queda lo que va para el canal izquierdo (0.5*(canal_izq+canal_der))
     movq [dataBuffEffect+eff_i*4], xmm1 ; dbEffect[0,1] = 0.5*dbIn[0+1] | 0.5*(dbIn[2+3]) |
@@ -151,7 +152,7 @@ section .text
 
     movq xmm3, index_3
     addps xmm1, xmm3    ; dbIn + dbEff
-    mulps xmm1, xmm5    ; amp*(dbIn + dbEff)
+    mulps xmm1, amp    ; amp*(dbIn + dbEff)
 
     punpckldq xmm2, xmm1      ; xmm2 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffIn[2+3]) | 0.5*(dataBuffEffect[2+3])
     movaps [dataBuffOut], xmm2
