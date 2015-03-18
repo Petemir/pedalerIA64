@@ -311,7 +311,7 @@ void flanger_c(float delayInMsec, float rate, float amp) {
 
             // printf("fr+eff_i: %d, eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", framesReadTotal+eff_i, eff_i, eff_index+1, dataBuffEffect[i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames])));
             dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
-            dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto
+            dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto - si el índice es negativo, pongo un 0
 
             eff_i++;
         }

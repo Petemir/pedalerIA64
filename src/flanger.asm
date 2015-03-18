@@ -20,6 +20,7 @@ locales:
 %define dataBuffIndex ecx
 %define eff_i eax
 %define amp xmm0
+%define mitad xmm5
 
 ; rax: contador de frames
 
@@ -36,8 +37,8 @@ section .text
 
     shufps xmm0, xmm0, 0x00 ; xmm0 = amp | amp | amp | amp |
     mov eax,  0x3F000000 ; 0.5 en eax
-    movd xmm5, eax
-    shufps xmm5, xmm5, 0x00 ; xmm5 = 0.5 | 0.5 | 0.5 | 0.5 |
+    movd mitad, eax
+    shufps mitad, mitad, 0x00 ; xmm5 = 0.5 | 0.5 | 0.5 | 0.5 |
 
     xor rax, rax    ; rax = eff_i = 0
 
@@ -131,13 +132,13 @@ section .text
     je remaining_frames_stereo
 
     movaps xmm1, [dataBuffIn]       ; xmm1 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
-    mulps xmm1, xmm5                ; xmm1 = 0.5*dataBuffIn[0..3]
+    mulps xmm1, mitad                ; xmm1 = 0.5*dataBuffIn[0..3]
     movaps xmm3, xmm1               ; xmm3 = xmm1
     shufps xmm3, xmm3, 01110000b    ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
     shufps xmm1, xmm1, 00100000b    ; xmm1 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
     addps xmm1, xmm3                ; xmm1 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffIn[2+3])
 
-    movaps xmm2, xmm1           ; xmm2 = xmm1 -> Aca queda lo que va para el canal izquierdo (0.5*(canal_izq+canal_der))
+    movaps xmm2, xmm1           ; xmm2 = xmm1 -> En xmm1 queda lo que va para el canal izquierdo (0.5*(canal_izq+canal_der))
     movq [dataBuffEffect+eff_i*4], xmm1 ; dbEffect[0,1] = 0.5*dbIn[0+1] | 0.5*(dbIn[2+3]) |
 
     movq xmm3, [dataBuffIndex+eff_i*4]  ; xmm3 = dataBuffIndex[0,1]
@@ -167,38 +168,30 @@ section .text
     remaining_frames_stereo:
     ; frames restantes, procesamos dos floats (canal izquierdo y derecho)
     ; dataBuffOut[i] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1])
-    jmp fin 
-    movlps xmm0, [rdi]  ; xmm0 = dataBuffIn[0]+dataBuffIn[1]
-    mulps xmm0, xmm2    ; xmm0 = 0.5*dataBuffIn[0,1]
 
-    movaps xmm3, xmm0
-    shufps xmm3, xmm3, 0x10 ; xmm3 = dataBuffIn[1] | .. | .. | .. |
-    addss xmm0, xmm3    ; xmm0 = 0.5*(dataBuffIn[0+1]) | .. | .. | .. |
+    movaps xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[0] | dataBuffIn[1]
+    mulps xmm1, mitad           ; xmm1 = 0.5*xmm1
+    movaps xmm3, xmm1           ; xmm3 = xmm1
+    shufps xmm3, xmm3, 01000000b; xmm3 = dataBuffIn[1] | ...
+    addps xmm1, xmm3
 
-    movlps [rsi], xmm0
-    add rsi, 4
+    movaps xmm2, xmm1
+    movd [dataBuffEffect+eff_i*4], xmm1 ;
 
-    ; dataBuffOut[i+1] = 0.5*(dataBuffEffect[i]+dataBuffEffect[i+1])
-    movlps xmm1, [rdx]  ; xmm1 = dataBuffEffect[0]+dataBuffEffect[1]
-    mulps xmm1, xmm2    ; xmm1= 0.5*dataBuffEffect[0,1]
+    mov ebx, [dataBuffIndex+eff_i*4]
+    movd xmm3, [dataBuffEffect+4*ebx]
+
+    addss xmm2, xmm3
+    mulss xmm2, amp 
     
-    movaps xmm3, xmm1
-    shufps xmm3, xmm3, 0x10 ; xmm3 = dataBuffEffect[1] | .. | .. | .. |
-    addss xmm1, xmm3    ; xmm0 = 0.5*(dataBuffEffect[0+1]) | .. | .. | .. |
+    movss [dataBuffOut], xmm1
+    add dataBuffOut, 4
+    movss [dataBuffOut], xmm2
+    add dataBuffOut, 4
 
-    movlps [rsi], xmm1
-    add rsi, 4
-
-    ; dataBuffEffect[i] = dataBuffIn[i] * decay
-    movss xmm0, [r8]        ; xmm0 = decay | - | - | - |
-    shufps xmm0, xmm0, 0x00 ; xmm0 = decay | decay | decay | decay |
-    movlps xmm1, [rdi]     ; xmm1 = dataBuffIn[0] | dataBuffIn[1] | .. | .. |
-    mulps xmm1, xmm0       ; xmm1 = dataBuffIn[0] * decay | dataBuffIn[1] * decay | .. | .. |
-    movlps [rdx], xmm1     ; dataBuffEffect = xmm1
-
-    add rdi, 8
-    add rdx, 8
-    sub rcx, 2
+    add dataBuffIn, 8
+    add eff_i, 1
+    sub r8, 2
 
     fin:
     pop r15
