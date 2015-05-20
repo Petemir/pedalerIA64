@@ -134,8 +134,8 @@ section .text
     movaps xmm1, [dataBuffIn]       ; xmm1 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
     mulps xmm1, mitad                ; xmm1 = 0.5*dataBuffIn[0..3]
     movaps xmm3, xmm1               ; xmm3 = xmm1
-    shufps xmm3, xmm3, 01110000b    ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
-    shufps xmm1, xmm1, 00100000b    ; xmm1 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
+    shufps xmm3, xmm3, 10001101b    ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
+    shufps xmm1, xmm1, 11011000b    ; xmm1 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
     addps xmm1, xmm3                ; xmm1 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffIn[2+3])
 
     movaps xmm2, xmm1           ; xmm2 = xmm1 -> En xmm1 queda lo que va para el canal izquierdo (0.5*(canal_izq+canal_der))
