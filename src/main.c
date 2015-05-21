@@ -103,7 +103,6 @@ int main(int argc, char* argv[]) {
                 break;
             case 'f':
                 printf("Flanger c.\n");
-//                printf("Parametros: %f, %f, %f\n",(float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));
                 flanger_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
                 siguienteOpcion+=4;
                 break;
@@ -112,6 +111,10 @@ int main(int argc, char* argv[]) {
                 flanger_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
                 siguienteOpcion+=4;
                 break;
+            case 'v':
+                printf("Vibrato c.\n");
+                vibrato_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
+                siguienteOpcion+=3;
         }
     }
 
