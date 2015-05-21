@@ -338,6 +338,71 @@ void flanger_c(float delayInMsec, float rate, float amp) {
     // [/Limpieza]
 }
 
+void vibrato_c(float depth, float mod) {
+    unsigned int delayInFrames = floor(delayInMsec*inFileStr.samplerate);
+    unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
+    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
+    unsigned int bufferSize = bufferFrameSize*sizeof(float);
+    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
+    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);
+
+    dataBuffIn = (float*)malloc(bufferSize);
+    dataBuffOut = (float*)malloc(bufferSizeOut);
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float)); 
+
+    // NECESITO BUFFER CIRCULAR: PÁGINA 36 de
+    // McPherson, Andrew P._ Reiss, Joshua D-Audio Effects_ Theory, Implementation and Application-CRC Press (2014)
+    
+    // Limpio buffers
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffEffect, maxDelayInFrames);
+    clean_buffer(dataBuffOut, bufferFrameSizeOut);
+
+    start = end = cantCiclos = 0;
+    framesReadTotal = 0;
+    // [Lecto-escritura de datos
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
+        MEDIR_TIEMPO_START(start);
+        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate)));
+            unsigned int current_delay = ceil(current_sin*delayInFrames);
+            int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
+
+            if (inFileStr.channels == 2) {
+                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                i++;    // Avanzo de a dos en dataBuffIn
+            } else {
+                dataBuffEffect[eff_i] = dataBuffIn[i];
+            }
+
+            // printf("fr+eff_i: %d, eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", framesReadTotal+eff_i, eff_i, eff_index+1, dataBuffEffect[i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames])));
+            dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
+            dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto - si el índice es negativo, pongo un 0
+
+            eff_i++;
+        }
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
+        framesReadTotal += framesRead;
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+    // [/Lecto-escritura de datos]
+    printf("\tTiempo de ejecución:\n");
+    printf("\t  Comienzo                          : %lu\n", start);
+    printf("\t  Fin                               : %lu\n", end);
+    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
+    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
+    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
+
+    // [Limpieza]
+    free(dataBuffIn);
+    free(dataBuffOut);
+    free(dataBuffEffect);
+    // [/Limpieza]
+}
 
 void delay_asm_caller(float delayInSec, float decay) {
     unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);  // Frames de delay

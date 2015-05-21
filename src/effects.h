@@ -62,6 +62,7 @@ void clean_buffer(float *buffer, int bufferLen);
 
 void delay_c(float delayInSec, float decay);
 void flanger_c(float delay, float rate, float amp);
+void vibrato_c(float depth, float mod);
 
 void delay_asm_caller(float delayInSec, float decay);
 extern int delay_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float *decay, int channels) __asm__("delay_asm");

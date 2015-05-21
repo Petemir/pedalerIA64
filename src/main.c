@@ -8,8 +8,8 @@ void imprimir_ayuda() {
     printf(" Opciones disponibles:\n");
     printf("Comando\t\t Descripción\t\t\t\t Parámetros\n");
     printf("------------------------------------------------------------------------------------\n");
-    printf("-c \t\t Copiar sin efecto (en C)\t\t Sin parámetros\n");
-    printf("-C \t\t Copiar sin efecto (en ASM)\t\t Sin parámetros\n");
+//    printf("-c \t\t Copiar sin efecto (en C)\t\t Sin parámetros\n");
+//    printf("-C \t\t Copiar sin efecto (en ASM)\t\t Sin parámetros\n");
     printf("-d a b\t\t Delay simple (en C)\t\t\t a: segundos de delay (float), b: decay (float)\n");
     printf("-D a b\t\t Delay simple (en ASM)\t\t\t a: segundos de delay (float), b: decay (float)\n");
     printf("-f a b c\t Flanging (en C)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
