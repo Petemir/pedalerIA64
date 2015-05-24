@@ -356,56 +356,46 @@ void vibrato_c(float depth, float mod) {
     // Buffer circular
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));
 
-    int dataBuffEffectEnd, dataBuffEffectHead, dataBuffEffectTail;
-    dataBuffEffectEnd = maxDelayInFrames;
-    dataBuffEffectHead = dataBuffEffectTail = maxDelayInFrames;
+    int dataBuffEffectEnd, dataBuffEffectHead;
+    dataBuffEffectEnd = dataBuffEffectHead = maxDelayInFrames;
 
     mod = mod/inFileStr.samplerate;
-    printf("%d\n", maxDelayInFrames);
+
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
     clean_buffer(dataBuffEffect, maxDelayInFrames);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
-    // TODO -> DESFAZADO POR maxDelayInFrames, ¿por que?
+//    sf_command(inFilePtr, SFC_SET_NORM_FLOAT, NULL, SF_FALSE);
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
     // [Lecto-escritura de datos
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            float current_mod = sinf(mod*2*M_PI*(i+1));
+            float current_mod = sinf(mod*2*M_PI*(framesReadTotal+eff_i+1));
+            eff_i++;
             float tap = 1+delay+depth*current_mod;
             int n = floor(tap);
             float frac = tap - n;
 
-            // printf("mod: %f\n", mod);
-            // printf("current_mod: %f\n", current_mod);
-            // printf("tap: %f\n", tap);
-            // printf("n: %d\n", n);
-            // printf("frac: %f\n", frac);
-
             if (inFileStr.channels == 2) {
-                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                dataBuffEffect[dataBuffEffectHead] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
                 i++;    // Avanzo de a dos en dataBuffIn
             } else {
                 dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i];
-                // head += sizeof(float);
-                dataBuffEffectHead--;
-                if (dataBuffEffectHead == 0) { dataBuffEffectHead = dataBuffEffectTail; }
             }
 
-            // if (dataBuffEffectHead+n >= dataBuffEffectEnd) { new_n = (dataBuffEffectHead+n)}
+            dataBuffOut[out_i++]  = dataBuffEffect[dataBuffEffectHead];  // Sonido seco en mono, promedio de los canales en stereo
+            dataBuffEffectHead--;
+            dataBuffOut[out_i++]  = dataBuffEffect[((dataBuffEffectHead-1)+n+1) % dataBuffEffectEnd+1]*frac+dataBuffEffect[((dataBuffEffectHead-1)+n) % dataBuffEffectEnd+1]*(1-frac);  // dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto - si el índice es negativo, pongo un 0
 
-            // printf("fr+eff_i: %d, eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", framesReadTotal+eff_i, eff_i, eff_index+1, dataBuffEffect[i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames])));
-            dataBuffOut[out_i++]  = dataBuffIn[i];  // Sonido seco en mono, promedio de los canales en stereo
-            dataBuffOut[out_i++]  = dataBuffEffect[(dataBuffEffectHead+n+1)%dataBuffEffectEnd]*frac+dataBuffEffect[(dataBuffEffectHead+n)%dataBuffEffectEnd]*(1-frac);  // dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto - si el índice es negativo, pongo un 0
-            printf("dbeH: %d, n+1: %d, dbeE: %d, dbO: %f \n", dataBuffEffectHead, n+1, dataBuffEffectEnd, dataBuffOut[out_i-1]);
-            // eff_i++;
+            if (dataBuffEffectHead == 0) { dataBuffEffectHead = dataBuffEffectEnd; }
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
+        // printf("framesReadTotal: %d \n", framesReadTotal);
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);

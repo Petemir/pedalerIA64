@@ -24,6 +24,7 @@
 
 # R objects
 .Rhistory
+.RData
 
 # WAV Files
 gibson-*.wav
