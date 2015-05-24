@@ -353,12 +353,12 @@ void vibrato_c(float depth, float mod) {
     dataBuffIn = (float*)malloc(bufferSize);
     dataBuffOut = (float*)malloc(bufferSizeOut);
 
-    // Bufer circular
+    // Buffer circular
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));
 
     int dataBuffEffectEnd, dataBuffEffectHead, dataBuffEffectTail;
     dataBuffEffectEnd = maxDelayInFrames;
-    dataBuffEffectHead = dataBuffEffectTail = 0;
+    dataBuffEffectHead = dataBuffEffectTail = maxDelayInFrames;
 
     mod = mod/inFileStr.samplerate;
     printf("%d\n", maxDelayInFrames);
@@ -379,11 +379,11 @@ void vibrato_c(float depth, float mod) {
             int n = floor(tap);
             float frac = tap - n;
 
-            printf("mod: %f\n", mod);
-            printf("current_mod: %f\n", current_mod);
-            printf("tap: %f\n", tap);
-            printf("n: %d\n", n);
-            printf("frac: %f\n", frac);
+            // printf("mod: %f\n", mod);
+            // printf("current_mod: %f\n", current_mod);
+            // printf("tap: %f\n", tap);
+            // printf("n: %d\n", n);
+            // printf("frac: %f\n", frac);
 
             if (inFileStr.channels == 2) {
                 dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
@@ -391,8 +391,8 @@ void vibrato_c(float depth, float mod) {
             } else {
                 dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i];
                 // head += sizeof(float);
-                dataBuffEffectHead++;
-                if (dataBuffEffectHead == dataBuffEffectEnd) { dataBuffEffectHead = 0; }
+                dataBuffEffectHead--;
+                if (dataBuffEffectHead == 0) { dataBuffEffectHead = dataBuffEffectTail; }
             }
 
             // if (dataBuffEffectHead+n >= dataBuffEffectEnd) { new_n = (dataBuffEffectHead+n)}
@@ -400,7 +400,7 @@ void vibrato_c(float depth, float mod) {
             // printf("fr+eff_i: %d, eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", framesReadTotal+eff_i, eff_i, eff_index+1, dataBuffEffect[i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames])));
             dataBuffOut[out_i++]  = dataBuffIn[i];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffOut[out_i++]  = dataBuffEffect[(dataBuffEffectHead+n+1)%dataBuffEffectEnd]*frac+dataBuffEffect[(dataBuffEffectHead+n)%dataBuffEffectEnd]*(1-frac);  // dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto - si el índice es negativo, pongo un 0
-
+            printf("dbeH: %d, n+1: %d, dbeE: %d, dbO: %f \n", dataBuffEffectHead, n+1, dataBuffEffectEnd, dataBuffOut[out_i-1]);
             // eff_i++;
         }
         MEDIR_TIEMPO_STOP(end);
