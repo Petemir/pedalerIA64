@@ -92,13 +92,13 @@ int main(int argc, char* argv[]) {
                 siguienteOpcion+=1;
                 break;*/
             case 'd':
-                printf("Delay c.\n");
-                delay_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
+                printf("Delay simple c.\n");
+                delay_simple_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
             case 'D':
-                printf("Delay asm.\n");
-                delay_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
+                printf("Delay simple asm.\n");
+                delay_simple_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
                 siguienteOpcion+=3;
                 break;
             case 'f':
@@ -114,6 +114,10 @@ int main(int argc, char* argv[]) {
             case 'v':
                 printf("Vibrato c.\n");
                 vibrato_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
+                siguienteOpcion+=3;
+            case 'b':
+                printf("Bitcrusher c.\n");
+                bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
                 siguienteOpcion+=3;
         }
     }

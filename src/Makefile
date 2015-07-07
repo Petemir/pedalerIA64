@@ -8,7 +8,7 @@ ASMFLAGS = -felf64 -g -F dwarf
 BIN = main
 #BIN_DIR = ../bin
 
-OBJS =  main.o copy.o delay.o flanger.o
+OBJS =  main.o copy.o delay_simple.o flanger.o
 
 .PHONY: all debug test clean
 
