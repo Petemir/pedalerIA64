@@ -219,20 +219,18 @@ void normalization_c(double dbval) {
 }*/
 
 void delay_simple_c(float delayInSec, float decay) {
-    unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);     // Frames de delay
+    unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);      // Frames de delay
     unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
-    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;        // Tamaño del buffer de entrada en frames
-    unsigned int bufferSize = bufferFrameSize*sizeof(float);                // Tamaño del buffer anterior en bytes
-    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;    // Tamaño del buffer de salida en frames
-    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);          // Tamaño del buffer anterior en bytes
+    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;      // Tamaño buffer entrada en frames
+    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;  // Tamaño buffer salida en frames
 
-    dataBuffIn = (float*)malloc(bufferSize);
-    dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(bufferSizeOut/2);  // El buffer de efecto contiene sólo el canal derecho de la salida
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));             // Buffer entrada en bytes
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));         // Buffer salida en bytes
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));   // Buffer efecto
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, bufferFrameSizeOut/2);
+    clean_buffer(dataBuffEffect, maxDelayInFrames);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
     start = end = cantCiclos = 0;
@@ -249,16 +247,15 @@ void delay_simple_c(float delayInSec, float decay) {
                 } else {
                     dataBuffEffect[eff_i] = dataBuffIn[i];
                 }
-            } else {
-                // En la última parte del último ciclo (framesRead < maxDelayInFrames), la entrada es nula
+            } else {  // En la última parte del último ciclo (framesRead < maxDelayInFrames), la entrada es nula
                 dataBuffEffect[eff_i] = 0;
             }
-            if (inFileStr.channels == 2) { i++; }  // Si es stereo, en dataBuffIn se avanza dos
+            if (inFileStr.channels == 2) { i++; }  // Si es stereo, dataBuffIn avanza dos
 
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // En el canal izquierdo, va la entrada sin efecto (entrada ciclo actual)
 
-            out_i++;
-            eff_i++;
+            out_i++;  // dataBuffOut avanza de a dos
+            eff_i++;  // dataBuffEffect avanza de a uno
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
@@ -268,7 +265,7 @@ void delay_simple_c(float delayInSec, float decay) {
         framesRemaining = framesRead;
     }
 
-    // Completo con los frames de efecto que quedan
+    // Completo con los frames de efecto que quedaron cuando framesRead < bufferFrameSize
     if (framesRemaining > 0) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int eff_i = 0, out_i = 0; eff_i < framesRemaining; eff_i++) {
@@ -300,12 +297,10 @@ void flanger_c(float delayInMsec, float rate, float amp) {
     unsigned int delayInFrames = floor(delayInMsec*inFileStr.samplerate);
     unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
     unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
-    unsigned int bufferSize = bufferFrameSize*sizeof(float);
     unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
-    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);
 
-    dataBuffIn = (float*)malloc(bufferSize);
-    dataBuffOut = (float*)malloc(bufferSizeOut);
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));
 
     // Limpio buffers
@@ -315,7 +310,7 @@ void flanger_c(float delayInMsec, float rate, float amp) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-    // [Lecto-escritura de datos
+    // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
@@ -509,30 +504,41 @@ void bitcrusher_c(int bits, int freq) {
 }
 
 void delay_simple_asm_caller(float delayInSec, float decay) {
-    unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);  // Frames de delay
-    unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;  // Tamaño del buffer en frames
-    unsigned int bufferSize = bufferFrameSize*sizeof(float);       // Tamaño del buffer en bytes
-    unsigned int bufferFrameSizeOut = delayInFrames*outFileStr.channels;
-    unsigned int bufferSizeOut = bufferFrameSizeOut *sizeof(float);
+    unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);
+    unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
+    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
+    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
 
-    dataBuffIn = (float*)malloc(bufferSize);
-    dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(bufferSize);
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
+    float *dataBuffEffect = (float*)malloc(bufferFrameSize*sizeof(float));
+
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
     clean_buffer(dataBuffEffect, bufferFrameSize);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
     start = end = cantCiclos = 0;
-    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, delayInFrames))) {
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
-        delay_simple_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRead*inFileStr.channels, &decay, inFileStr.channels);
+        delay_simple_asm(dataBuffIn, dataBuffOut, dataBuffEffect, bufferFrameSize, &decay, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, bufferFrameSizeOut);
         sf_write_sync(outFilePtr);
+
+        clean_buffer(dataBuffIn, bufferFrameSize);
+        framesRemaining = framesRead;
     }
+
+    // Completo con los frames de efecto que quedaron cuando framesRead < bufferFrameSize
+    MEDIR_TIEMPO_START(start);
+    delay_simple_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRemaining*inFileStr.channels, &decay, inFileStr.channels);
+    MEDIR_TIEMPO_STOP(end);
+    cantCiclos += end-start;
+    framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRemaining*outFileStr.channels);
+    sf_write_sync(outFilePtr);
 
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);
