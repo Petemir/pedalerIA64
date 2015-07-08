@@ -6,7 +6,7 @@ Efectos
 
 * Delay simple:
   * ~~C: hecho.~~
-  * ~~ASM: hecho.~~
+  * ~~ASM: hecho.~~ Falta que el audio de salida dure más
   * Diferencias entre C y ASM , corroborar.
 
 * Delay multiple:
@@ -34,7 +34,7 @@ ToDo
 * Entrada del programa:
   * Mejor manejo de parámetros, para que se pueda usar más de un efecto.
   * Chequear valores que puede tomar cada parámetro según el efecto.
-  * Que el audio de salida dure más (input + delay)
+  * Que el audio de salida dure más (input + delay) :
   
 * Evaluación de performance:
   * Tomar cantidad de iteraciones como parámetro y correrlo esa cantidad de veces

@@ -219,15 +219,16 @@ void normalization_c(double dbval) {
 }*/
 
 void delay_simple_c(float delayInSec, float decay) {
-    unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);   // Frames de delay
-    unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;  // Tamaño del buffer de entrada y efecto en frames
-    unsigned int bufferSize = bufferFrameSize*sizeof(float);          // Tamaño del buffer anterior en bytes
-    unsigned int bufferFrameSizeOut = delayInFrames*outFileStr.channels;  // Tamaño del buffer de salida en frames
-    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);    // Tamaño del buffer anterior en bytes
+    unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);     // Frames de delay
+    unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
+    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;        // Tamaño del buffer de entrada en frames
+    unsigned int bufferSize = bufferFrameSize*sizeof(float);                // Tamaño del buffer anterior en bytes
+    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;    // Tamaño del buffer de salida en frames
+    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);          // Tamaño del buffer anterior en bytes
 
     dataBuffIn = (float*)malloc(bufferSize);
     dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(bufferSizeOut/2);  // El buffer de efecto sólo va a contener el canal derecho de la salida
+    float *dataBuffEffect = (float*)malloc(bufferSizeOut/2);  // El buffer de efecto contiene sólo el canal derecho de la salida
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
@@ -236,18 +237,23 @@ void delay_simple_c(float delayInSec, float decay) {
 
     start = end = cantCiclos = 0;
     // [Lecto-escritura de datos]
-    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, delayInFrames))) {
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
             dataBuffOut[out_i+1] = dataBuffEffect[eff_i]*decay;  // En el canal derecho, va el efecto (entrada ciclo anterior*decay)
 
-            // Stereo: promedio de los dos canales; Mono: entrada normal
-            if (inFileStr.channels == 2) {
-                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                i++;    // Avanzo de a dos en dataBuffIn
+            if (i < framesRead*inFileStr.channels) {
+                // Stereo: promedio de los dos canales; Mono: entrada normal
+                if (inFileStr.channels == 2) {
+                    dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                } else {
+                    dataBuffEffect[eff_i] = dataBuffIn[i];
+                }
             } else {
-                dataBuffEffect[eff_i] = dataBuffIn[i];
+                // En la última parte del último ciclo (framesRead < maxDelayInFrames), la entrada es nula
+                dataBuffEffect[eff_i] = 0;
             }
+            if (inFileStr.channels == 2) { i++; }  // Si es stereo, en dataBuffIn se avanza dos
 
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // En el canal izquierdo, va la entrada sin efecto (entrada ciclo actual)
 
@@ -257,9 +263,24 @@ void delay_simple_c(float delayInSec, float decay) {
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, bufferFrameSizeOut);
+        sf_write_sync(outFilePtr);
+        framesRemaining = framesRead;
+    }
+
+    // Completo con los frames de efecto que quedan
+    if (framesRemaining > 0) {
+        MEDIR_TIEMPO_START(start);
+        for (unsigned int eff_i = 0, out_i = 0; eff_i < framesRemaining; eff_i++) {
+            dataBuffOut[out_i++] = 0;   // Canal izquierdo (entrada sin efecto) sin dato
+            dataBuffOut[out_i++] = dataBuffEffect[eff_i]*decay;
+        }
+        MEDIR_TIEMPO_STOP(end);
+
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRemaining*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
+
     // [/Lecto-escritura de datos]
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);

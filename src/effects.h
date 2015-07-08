@@ -18,6 +18,7 @@ int distValue;
 unsigned int bufferSize = 0;
 unsigned int framesWritten = 0;
 unsigned int framesRead = 0;
+unsigned int framesRemaining = 0;
 unsigned int framesReadTotal = 0;  // TODO -> Borrar
 unsigned long int cantCiclos = 0;
 unsigned long int start = 0;

@@ -21,11 +21,11 @@ void imprimir_ayuda() {
 
 int main(int argc, char* argv[]) {
     nombrePrograma = argv[0];
-    if (argc < 4) {  // Necesito por lo menos 4 argumentos, nombre de programa, archivo entrada, archivo salida y opcion
+    if (argc < 4) {  // Por lo menos 4 argumentos (nombre de programa, archivo entrada, archivo salida y opcion)
         imprimir_ayuda();
         return 1;
     }
-    int siguienteOpcion = 3;  // Sé que hay, por lo menos, 4 argumentos ya
+    int siguienteOpcion = 3;  // Hay, por lo menos, 4 argumentos
 
 // [Declaración de variables de archivo]
     char *inFileName = argv[1];
