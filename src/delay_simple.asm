@@ -94,22 +94,24 @@ section .text
     cmp rcx, 2  ; caso borde: cantidad de frames restantes igual a 2 (siempre es par, por ser stereo)
     je remaining_frames_stereo
 
+    movaps xmm4, [rdi]  ; xmm4 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
+
     ; dataBuffOut[i] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1])
-    movaps xmm0, [rdi]  ; xmm0 = dataBuffIn[0] | dataBuffIn[1] | dataBuffIn[2] | dataBuffIn[3] |
+    movaps xmm0, xmm4   ; xmm0 = xmm4
     mulps xmm0, xmm2    ; xmm0 = 0.5*dataBuffIn[0..3]
 
-    movaps xmm3, xmm0   ; xmm3 = xmm0
-    shufps xmm3, xmm3, 0x70   ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
-    shufps xmm0, xmm0, 0x20   ; xmm0 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
+    movaps xmm3, xmm0         ; xmm3 = xmm0
+    shufps xmm3, xmm3, 0xD0   ; xmm3 = 0.5*dataBuffIn[1] | 0.5*dataBuffIn[3] | .. | .. |
+    shufps xmm0, xmm0, 0x80   ; xmm0 = 0.5*dataBuffIn[0] | 0.5*dataBuffIn[2] | .. | .. |
     addps xmm0, xmm3          ; xmm0 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffIn[2+3])
 
     ; dataBuffOut[i+1] = 0.5*(dataBuffEffect[i]+dataBuffEffect[i+1])
     movaps xmm1, [rdx]  ; xmm1 = dataBuffEffect[0..3]
     mulps xmm1, xmm2    ; xmm1 = 0.5*dataBuffEffect[0..3]
     
-    movaps xmm3, xmm1
-    shufps xmm3, xmm3, 0x70   ; xmm3 = dataBuffEffect[1] | dataBuffEffect[3] | .. | .. |
-    shufps xmm1, xmm1, 0x20   ; xmm1 = dataBuffEffect[0] | dataBuffEffect[2] | .. | .. |
+    movaps xmm3, xmm1         ; xmm3 = xmm1
+    shufps xmm3, xmm3, 0xD0   ; xmm3 = dataBuffEffect[1] | dataBuffEffect[3] | .. | .. |
+    shufps xmm1, xmm1, 0x80   ; xmm1 = dataBuffEffect[0] | dataBuffEffect[2] | .. | .. |
     addps xmm1, xmm3          ; xmm1 = 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffEffect[2+3])
 
     punpckhdq xmm0, xmm1      ; xmm0 = 0.5*(dataBuffIn[0+1]) | 0.5*(dataBuffEffect[0+1]) | 0.5*(dataBuffIn[2+3]) | 0.5*(dataBuffEffect[2+3])
@@ -118,7 +120,7 @@ section .text
     ; dataBuffEffect[i] = dataBuffIn[i] * decay
     movss xmm1, [r8]        ; xmm1 = decay | - | - | - |
     shufps xmm1, xmm1, 0x00 ; xmm1 = decay | decay | decay | decay |
-    movaps xmm0, [rdi]     ; xmm0 = dataBuffIn
+    movaps xmm0, xmm4     ; xmm0 = dataBuffIn
     mulps xmm0, xmm1       ; xmm0 = dataBuffIn[0..3] * decay
     movaps [rdx], xmm0     ; dataBuffEffect = xmm0
 
