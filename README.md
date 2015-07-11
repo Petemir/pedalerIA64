@@ -16,8 +16,8 @@ Efectos
 * Flanger:
   * ~~C: hecho.~~
   * ~~ASM: hecho.~~
-  * Corroborar si hay diferencias. 
-  * Probar con varios parametros.
+  * ~~Corroborar si hay diferencias: hecho.~~
+  * ~~Probar con varios parametros: hecho.~~
   
 * Vibrato:
   * ~~Hecho en C.~~
