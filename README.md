@@ -7,8 +7,8 @@ Efectos
 * Delay simple:
   * ~~C: hecho.~~
   * ~~ASM: hecho.~~
-  * ~~Diferencias de audio entre C y ASM en STEREO, corroborar -> RESUELTO ~~
-  * Generar varios ejemplos con argumentos variados y ponerlos en una carpeta para cerrar el efecto
+  * ~~Diferencias de audio entre C y ASM en STEREO: hecho.~~
+  * ~~Generar varios ejemplos con argumentos variados y ponerlos en una carpeta para cerrar el efecto: hecho.~~
 
 * Delay multiple:
   * No hecho
