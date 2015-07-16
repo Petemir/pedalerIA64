@@ -230,8 +230,8 @@ void delay_simple_c(float delayInSec, float decay) {
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, maxDelayInFrames);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer(dataBuffEffect, maxDelayInFrames);
 
     start = end = cantCiclos = 0;
     // [Lecto-escritura de datos]
@@ -244,14 +244,13 @@ void delay_simple_c(float delayInSec, float decay) {
                 // Stereo: promedio de los dos canales; Mono: entrada normal
                 if (inFileStr.channels == 2) {
                     dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                    i++;  // Si es stereo, dataBuffIn avanza dos
                 } else {
                     dataBuffEffect[eff_i] = dataBuffIn[i];
                 }
             } else {  // En la última parte del último ciclo (framesRead < maxDelayInFrames), la entrada es nula
                 dataBuffEffect[eff_i] = 0;
             }
-            if (inFileStr.channels == 2) { i++; }  // Si es stereo, dataBuffIn avanza dos
-
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // En el canal izquierdo, va la entrada sin efecto (entrada ciclo actual)
 
             out_i++;  // dataBuffOut avanza de a dos
@@ -305,8 +304,8 @@ void flanger_c(float delayInMsec, float rate, float amp) {
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, maxDelayInFrames);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer(dataBuffEffect, maxDelayInFrames);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
