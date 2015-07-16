@@ -68,6 +68,7 @@ void delay_simple_c(float delayInSec, float decay);
 void flanger_c(float delay, float rate, float amp);
 void vibrato_c(float depth, float mod);
 void bitcrusher_c(int bitDepth, int bitRate);
+void wah_wah_c(float damp, int minf, int maxf, int wahfreq);
 // [/Efectos C]
 
 // [Efectos ASM]

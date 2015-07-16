@@ -226,7 +226,7 @@ void delay_simple_c(float delayInSec, float decay) {
 
     dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));             // Buffer entrada en bytes
     dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));         // Buffer salida en bytes
-    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));   // Buffer efecto
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));     // Buffer efecto
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
@@ -433,31 +433,28 @@ void vibrato_c(float depth, float mod) {
 }
 
 void bitcrusher_c(int bits, int freq) {
-    unsigned int delayInFrames = floor(BUFFERSIZE*inFileStr.samplerate);
-    unsigned int bufferFrameSize = delayInFrames*inFileStr.channels;
-    unsigned int bufferSize = bufferFrameSize*sizeof(float);
-    unsigned int bufferFrameSizeOut = delayInFrames*outFileStr.channels;
-    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);
+    unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
+    unsigned int bufferFrameSizeOut = BUFFERSIZE*outFileStr.channels;
 
-    dataBuffIn = (float*)malloc(bufferSize);
-    dataBuffOut = (float*)malloc(bufferSizeOut);
-    float *dataBuffEffect = (float*)malloc(delayInFrames*sizeof(float));
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
+    float *dataBuffEffect = (float*)malloc(BUFFERSIZE*sizeof(float));
 
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
-    clean_buffer(dataBuffEffect, delayInFrames);
+    clean_buffer(dataBuffEffect, BUFFERSIZE);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
     float step = pow(0.5, bits);
     float last = 0, phasor = 0;
     float normFreq = (float)freq/inFileStr.samplerate;
-    printf("step: %f.\n", step);
-    printf("normFreq: %f.\n", normFreq);
+    // printf("step: %f.\n", step);
+    // printf("normFreq: %f.\n", normFreq);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
     // [Lecto-escritura de datos
-    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, delayInFrames))) {
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
             if (inFileStr.channels == 2) {
@@ -473,7 +470,7 @@ void bitcrusher_c(int bits, int freq) {
                phasor -= 1.0;
                last = step * floor(dataBuffEffect[eff_i]/step + 0.5);
             }
-            printf("%d %f %f.\n", framesReadTotal+eff_i, dataBuffEffect[eff_i], step);
+            // printf("%d %f %f.\n", framesReadTotal+eff_i, dataBuffEffect[eff_i], step);
 
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffOut[out_i++] = last;  // Audio con efecto - si el índice es negativo, pongo un 0
@@ -489,6 +486,75 @@ void bitcrusher_c(int bits, int freq) {
     }
 
     // [/Lecto-escritura de datos]
+    printf("\tTiempo de ejecución:\n");
+    printf("\t  Comienzo                          : %lu\n", start);
+    printf("\t  Fin                               : %lu\n", end);
+    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
+    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
+    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
+
+    // [Limpieza]
+    free(dataBuffIn);
+    free(dataBuffOut);
+    free(dataBuffEffect);
+    // [/Limpieza]
+}
+
+void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
+    unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
+    unsigned int bufferFrameSizeOut = BUFFERSIZE*outFileStr.channels;
+
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
+    float *dataBuffEffect = (float*)malloc(bufferFrameSize*sizeof(float));
+
+    // Limpio buffers
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffEffect, bufferFrameSize);
+    clean_buffer(dataBuffOut, bufferFrameSizeOut);
+
+    // Generador de onda triangular.
+    float delta = (float)wahfreq/inFileStr.samplerate;
+    int triangleWaveSize = (maxf-minf)/delta+1;
+    float fc = 2*sin((M_PI*minf)/inFileStr.samplerate);
+    float qc = 2*damp;
+    float yh = 0, yb = 0, yl = 0;
+
+    printf("triangleWaveSize %d\n", triangleWaveSize);
+
+    start = end = cantCiclos = framesReadTotal = 0;
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
+        MEDIR_TIEMPO_START(start);
+        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            if (inFileStr.channels == 2) {
+                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                i++;    // Avanzo de a dos en dataBuffIn
+            } else {
+                dataBuffEffect[eff_i] = dataBuffIn[i];
+            }
+
+            yh = dataBuffEffect[eff_i] - yl - qc * yb;
+            yb = fc * yh + yb;
+            yl = fc * yb + yl;
+
+            int evenCycle = ((((framesReadTotal+i)/triangleWaveSize)%2) == 0);  // Me fijo si es par
+            int thisCycle = (framesReadTotal+i) % triangleWaveSize;  // Me fijo a qué parte de este ciclo correspondería
+//            printf("%d %d %d.\n", (framesReadTotal+i), evenCycle, thisCycle);
+            fc = evenCycle * (minf+thisCycle*delta) +  (1-evenCycle) * (maxf-thisCycle*delta);
+            printf("framesReadTotal+i: %d fc: %f\n", (framesReadTotal+i), fc);
+            fc = 2*sin((M_PI*fc)/inFileStr.samplerate);
+            dataBuffOut[out_i++] = dataBuffIn[i];
+            dataBuffOut[out_i++] = 0.1*yb;
+            eff_i++;
+        }
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
+        framesReadTotal += framesRead;
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);
     printf("\t  Fin                               : %lu\n", end);
@@ -558,12 +624,10 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     unsigned int delayInFrames = floor(delayInMsec*inFileStr.samplerate);
     unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
     unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
-    unsigned int bufferSize = bufferFrameSize*sizeof(float);
     unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
-    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);
 
-    dataBuffIn = (float*)malloc(bufferSize);
-    dataBuffOut = (float*)malloc(bufferSizeOut);
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
     unsigned int *dataBuffIndex = (unsigned int*)malloc(maxDelayInFrames*sizeof(unsigned int));
     // unsigned int *dataBuffIndex = (unsigned int*)_mm_malloc(maxDelayInFrames*sizeof(unsigned int),16);
@@ -576,11 +640,11 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-    printf("Length dbi: %d.\n", bufferFrameSize);
-    printf("Length dbo: %d.\n", bufferFrameSizeOut);
-    printf("Length dbe: %d.\n", maxDelayInFrames);
-    printf("Length dbix: %d.\n", maxDelayInFrames);
-    // [Lecto-escritura de datos
+    // printf("Length dbi: %d.\n", bufferFrameSize);
+    // printf("Length dbo: %d.\n", bufferFrameSizeOut);
+    // printf("Length dbe: %d.\n", maxDelayInFrames);
+    // printf("Length dbix: %d.\n", maxDelayInFrames);
+    // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         for (unsigned int eff_i = 0; eff_i < fmin(framesRead, maxDelayInFrames); eff_i = eff_i) {
             v4sf index_vector;
@@ -593,8 +657,8 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
             MEDIR_TIEMPO_START(start);
             index_vector = sin_ps(index_vector);
             // _mm_store_ps((float*)&(dataBuffIndex[eff_i-4]), sin_ps(index_vector));
-            MEDIR_TIEMPO_STOP(end);
-            MEDIR_TIEMPO_START(start);
+            // MEDIR_TIEMPO_STOP(end);
+            // MEDIR_TIEMPO_START(start);
             index_vector = _mm_and_ps(index_vector, *(v4sf*)_ps_inv_sign_mask);
             // _mm_store_ps((float*)&(dataBuffIndex[eff_i-4]), _mm_and_ps((v4sf)&(dataBuffIndex[eff_i-4]), *(v4sf*)_ps_inv_sign_mask));
             MEDIR_TIEMPO_STOP(end);

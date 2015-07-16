@@ -23,10 +23,20 @@ Efectos
   * ~~Hecho en C.~~
   * ASM: falta.
   * Ver diferencias.
+  * Agregar tiempo restante al buffer.
 
 * Bitcrusher:
-  * Hecho en C, no anda.
-
+  * ~~C: hecho.~~
+  * ASM: no hecho.
+  * Corroborar diferencias.
+  * Ejemplos con varios parametros.
+	
+* WahWah:
+  * ~~C: hecho.~~
+  * Mejorar codigo hecho en C.
+  * ASM: no hecho.
+  * Corroborar diferencias.
+  * Ejemplos con varios parametros.
 
 
 ToDo
