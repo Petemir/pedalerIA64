@@ -515,11 +515,11 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
     // Generador de onda triangular.
     float delta = (float)wahfreq/inFileStr.samplerate;
     int triangleWaveSize = (maxf-minf)/delta+1;
-    float fc = 2*sin((M_PI*minf)/inFileStr.samplerate);
+    float fc = minf;
     float qc = 2*damp;
     float yh = 0, yb = 0, yl = 0;
 
-    printf("triangleWaveSize %d\n", triangleWaveSize);
+//    printf("triangleWaveSize %d\n", triangleWaveSize);
 
     start = end = cantCiclos = framesReadTotal = 0;
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
@@ -532,18 +532,19 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
                 dataBuffEffect[eff_i] = dataBuffIn[i];
             }
 
+            int evenCycle = ((((framesReadTotal+i)/triangleWaveSize)%2) == 0);  // Ciclo positivo o negativo
+            int thisCycle = (framesReadTotal+i) % triangleWaveSize;  // A qué punto del ciclo correspondería
+            fc = evenCycle*(minf+(thisCycle-1)*delta)+(1-evenCycle)*(maxf-(thisCycle-1)*delta);  // Valor del punto
+            fc = 2*sin((M_PI*fc)/inFileStr.samplerate);
+
             yh = dataBuffEffect[eff_i] - yl - qc * yb;
             yb = fc * yh + yb;
             yl = fc * yb + yl;
 
-            int evenCycle = ((((framesReadTotal+i)/triangleWaveSize)%2) == 0);  // Me fijo si es par
-            int thisCycle = (framesReadTotal+i) % triangleWaveSize;  // Me fijo a qué parte de este ciclo correspondería
 //            printf("%d %d %d.\n", (framesReadTotal+i), evenCycle, thisCycle);
-            fc = evenCycle * (minf+thisCycle*delta) +  (1-evenCycle) * (maxf-thisCycle*delta);
-            printf("framesReadTotal+i: %d fc: %f\n", (framesReadTotal+i), fc);
-            fc = 2*sin((M_PI*fc)/inFileStr.samplerate);
+//            printf("framesReadTotal+i: %d fc: %f\n", (framesReadTotal+i), fc);
             dataBuffOut[out_i++] = dataBuffIn[i];
-            dataBuffOut[out_i++] = 0.1*yb;
+            dataBuffOut[out_i++] = yb;
             eff_i++;
         }
         MEDIR_TIEMPO_STOP(end);
@@ -553,6 +554,30 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
+
+    // Normalizo
+    printf("offset: %d\n", (int)sf_seek(outFilePtr, 0, SEEK_SET));
+    // Busco el máximo
+    float maxSamp = -10;
+    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        for (unsigned int i = 0; i < bufferFrameSize; i++) {
+            i++;  // Avanzo de a dos porque no me interesa el canal izquierdo, dry sound
+            if (fabs(dataBuffIn[i]) > maxSamp) { maxSamp = fabs(dataBuffIn[i]); }  // En el canal derecho, el del efecto
+        }
+    }
+    printf("El maximo es %f\n", maxSamp);
+    printf("offset: %d\n", (int)sf_seek(outFilePtr, 0, SEEK_SET));
+    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        for (unsigned int i = 0; i < bufferFrameSize; i++) {
+            dataBuffOut[i] = (float) dataBuffIn[i];
+            i++;
+            dataBuffOut[i] = (float) dataBuffIn[i]/maxSamp;
+        }
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+
 
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);

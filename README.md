@@ -33,7 +33,7 @@ Efectos
 	
 * WahWah:
   * ~~C: hecho.~~
-  * Mejorar codigo hecho en C.
+  * Mejorar codigo hecho en C, no está igual a matlab.
   * ASM: no hecho.
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
@@ -43,10 +43,10 @@ ToDo
 --------------
 
 * Entrada del programa:
-  * Mejor manejo de parámetros, para que se pueda usar más de un efecto.
+  * Mejor manejo de parámetros, para que se pueda usar más de un efecto - que en la segunda pasada abra el archivo de salida anterior, no el de entrada.
   * Chequear valores que puede tomar cada parámetro según el efecto.
   * Que el audio de salida dure más (input + delay)
-  
+
 * Evaluación de performance:
   * Tomar cantidad de iteraciones como parámetro y correrlo esa cantidad de veces
 

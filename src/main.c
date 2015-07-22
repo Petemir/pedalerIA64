@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     outFileStr.samplerate = inFileStr.samplerate;
     // Manejo de errores en la apertura del archivo de salida
-    if (!(outFilePtr = sf_open(outFileName, SFM_WRITE, &outFileStr))) {
+    if (!(outFilePtr = sf_open(outFileName, SFM_RDWR, &outFileStr))) {
         printf("No se pudo abrir el archivo %s.\n", outFileName);
         puts(sf_strerror(NULL));
         return 1;
