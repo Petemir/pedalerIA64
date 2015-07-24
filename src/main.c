@@ -122,6 +122,9 @@ int main(int argc, char* argv[]) {
             case 'w':
                 printf("Wahwah c.\n");
                 wah_wah_c((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
+                sf_seek(outFilePtr, 0, SEEK_SET);
+                normalization_c();
+
                 siguienteOpcion+=5;
         }
     }

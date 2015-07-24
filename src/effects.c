@@ -112,6 +112,49 @@ void normalization_c(double dbval) {
     free(dataBuffOut);
 }*/
 
+float maxsamp_c() {
+    unsigned int bufferFrameSize = BUFFERSIZE*outFileStr.channels;
+
+    float maxSamp = 0;
+    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        for (unsigned int i = 0; i < bufferFrameSize; i++) {
+            i++;  // Avanzo de a dos porque no me interesa el canal izquierdo, dry sound
+            if (fabs(dataBuffIn[i]) > maxSamp) { maxSamp = fabs(dataBuffIn[i]); }
+        }
+    }
+    sf_seek(outFilePtr, 0, SEEK_SET);
+    return maxSamp;
+}
+
+void normalization_c() {
+    // Siempre que normalice, la entrada va a ser stereo (porque va a ser la salida de un efecto anterior), así que usan buffer de mismo tamaño
+    unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSize*sizeof(float));
+
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffOut, bufferFrameSize);
+
+    float maxSamp = maxsamp_c();
+
+    start = end = cantCiclos = framesReadTotal = 0;
+    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            MEDIR_TIEMPO_START(start);
+            dataBuffOut[out_i++] = dataBuffIn[i++];     // El canal izquierdo va igual (audio original nunca satura)
+            dataBuffOut[out_i++] = (float) dataBuffIn[i]/maxSamp;
+            MEDIR_TIEMPO_STOP(end);
+
+            cantCiclos += end-start;
+        }
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+    free(dataBuffIn);
+    free(dataBuffOut);
+}
+
 /*void volume_c(double ampfac) {
     bufferSize = BUFFERSIZE*inFileStr.channels;
 
@@ -403,7 +446,7 @@ void vibrato_c(float depth, float mod) {
 
             dataBuffOut[out_i++]  = dataBuffEffect[dataBuffEffectHead];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffEffectHead--;
-            dataBuffOut[out_i++]  = dataBuffEffect[((dataBuffEffectHead-1)+n+1) % dataBuffEffectEnd+1]*frac+dataBuffEffect[((dataBuffEffectHead-1)+n) % dataBuffEffectEnd+1]*(1-frac);  // dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto - si el índice es negativo, pongo un 0
+            dataBuffOut[out_i++]  = dataBuffEffect[((dataBuffEffectHead-1)+n+1) % dataBuffEffectEnd+1]*frac+dataBuffEffect[((dataBuffEffectHead-1)+n) % dataBuffEffectEnd+1]*(1-frac);
 
             if (dataBuffEffectHead == 0) { dataBuffEffectHead = dataBuffEffectEnd; }
         }
@@ -450,9 +493,8 @@ void bitcrusher_c(int bits, int freq) {
     // printf("step: %f.\n", step);
     // printf("normFreq: %f.\n", normFreq);
 
-    start = end = cantCiclos = 0;
-    framesReadTotal = 0;
-    // [Lecto-escritura de datos
+    start = end = cantCiclos = framesReadTotal = 0;
+    // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
@@ -472,7 +514,7 @@ void bitcrusher_c(int bits, int freq) {
             // printf("%d %f %f.\n", framesReadTotal+eff_i, dataBuffEffect[eff_i], step);
 
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
-            dataBuffOut[out_i++] = last;  // Audio con efecto - si el índice es negativo, pongo un 0
+            dataBuffOut[out_i++] = last;  // Audio con efecto
 
             eff_i++;
         }
@@ -535,10 +577,10 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
             yb = fc * yh + yb;
             yl = fc * yb + yl;
 
-            int evenCycle = ((((framesReadTotal+eff_i)/triangleWaveSize)%2) == 0);  // Ciclo positivo o negativo
-            int thisCycle = (framesReadTotal+eff_i) % (triangleWaveSize + 1);  // A qué punto del ciclo correspondería
-            fc = evenCycle*(minf+(thisCycle-1)*delta)+(1-evenCycle)*(maxf-(thisCycle)*delta);  // Valor del punto
-            fc = 2*sin((float)( M_PI*fc)/inFileStr.samplerate);
+            int evenCycle = ((((framesReadTotal+eff_i)/triangleWaveSize)%2) == 0);              // Ciclo positivo o negativo
+            int thisCycle = (framesReadTotal+eff_i) % (triangleWaveSize + 1);                   // A qué punto del ciclo correspondería
+            fc = evenCycle*(minf+(thisCycle-1)*delta)+(1-evenCycle)*(maxf-(thisCycle)*delta);   // Valor del punto
+            fc = 2*sin((float)(M_PI*fc)/inFileStr.samplerate);
 
             dataBuffOut[out_i++] = dataBuffIn[i];
             dataBuffOut[out_i++] = 0.1*yb;
@@ -549,34 +591,6 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
         cantCiclos += end-start;
 
         framesReadTotal += framesRead;
-        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
-        sf_write_sync(outFilePtr);
-    }
-
-    // Normalización del audio
-    // Recreo el buffer de entrada (porque ahora usa el)
-    if (inFileStr.channels == 1 ) {
-        free(dataBuffIn);
-        dataBuffIn = (float*)malloc(bufferFrameSizeOut*sizeof(float));
-    }
-    printf("offset: %d\n", (int)sf_seek(outFilePtr, 0, SEEK_SET));
-    // Busco el máximo
-    float maxSamp = -10;
-    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
-        for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
-            i++;  // Avanzo de a dos porque no me interesa el canal izquierdo, dry sound
-            if (fabs(dataBuffIn[i]) > maxSamp) { maxSamp = fabs(dataBuffIn[i]); }  // En el canal derecho, el del efecto
-        }
-    }
-    printf("El maximo es %f\n", maxSamp);
-    printf("offset: %d\n", (int)sf_seek(outFilePtr, 0, SEEK_SET));
-    // Normalizo
-    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
-        for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
-            dataBuffOut[i] = (float) dataBuffIn[i];
-            i++;
-            dataBuffOut[i] = (float) dataBuffIn[i]/maxSamp;
-        }
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }

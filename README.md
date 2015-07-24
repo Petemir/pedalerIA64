@@ -10,27 +10,32 @@ Efectos
   * ~~Diferencias de audio entre C y ASM en STEREO: hecho.~~
   * ~~Generar varios ejemplos con argumentos variados y ponerlos en una carpeta para cerrar el efecto: hecho.~~
 
+
 * Delay multiple:
   * No hecho
+
 
 * Flanger:
   * ~~C: hecho.~~
   * ~~ASM: hecho.~~
   * ~~Corroborar si hay diferencias: hecho.~~
   * ~~Probar con varios parametros: hecho.~~
-  
+
+
 * Vibrato:
   * ~~Hecho en C.~~
   * ASM: falta.
   * Ver diferencias.
   * Agregar tiempo restante al buffer.
 
+
 * Bitcrusher:
   * ~~C: hecho.~~
   * ASM: no hecho.
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
-	
+
+
 * WahWah:
   * ~~C: hecho.~~
   * ~~Mejorar codigo hecho en C, no está igual a matlab.~~
@@ -38,11 +43,13 @@ Efectos
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
 
+
 * Normalize:
- * C: modularizar.
+ * ~~C: modularizar.~~
  * ASM: no hecho.
  * Los ejemplos no hacen falta.
  * Pensar si conviene llamarla siempre que se termina de usar algún efecto.
+ * Agregar que cuente los ciclos.
 
 ToDo
 --------------
@@ -54,6 +61,3 @@ ToDo
 
 * Evaluación de performance:
   * Tomar cantidad de iteraciones como parámetro y correrlo esa cantidad de veces
-
-
-

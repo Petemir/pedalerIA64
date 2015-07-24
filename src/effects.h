@@ -48,18 +48,23 @@ typedef struct PANPOS {
 
 // [Auxiliares]
 // void volume_c(double ampfac);
-// void normalization_c(double dbval);
 
 void clean_buffer_int(int *buffer, int bufferLen);  // TODO -> Sacar
 void clean_buffer(float *buffer, int bufferLen);
 
-// double maxsamp(double *bufferIn, int bufferLen);
 
 // void copy_c();
 // void copy_asm_caller();
 // extern int copy_asm(double *bufferIn, double *bufferOut, int bufferLen) __asm__("copy_asm");
 // [/Auxiliares]
 
+float maxsamp_c();
+float maxsamp_asm_caller();
+extern float maxsamp_asm();
+
+void normalization_c();
+void normalization_asm_caller();
+extern int normalization_asm();
 
 // [Efectos C]
 // PANPOS simplepan_c(double position);
@@ -78,3 +83,64 @@ extern int delay_simple_asm(float *bufferIn, float *bufferOut, float *bufferEffe
 void flanger_asm_caller(float delay, float rate, float amp);
 extern int flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, unsigned int *bufferIndex,  unsigned int framesReadTotal, int channels, float amp);
 // [/Efectos ASM]
+
+
+
+// [TEMPLATE]
+/*
+void effect_c(params) {
+    // Si es efecto con delay, tenerlo en cuenta
+    unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
+    unsigned int bufferFrameSizeOut = BUFFERSIZE*outFileStr.channels;
+
+    // Chequear bien los tamaños, particularmente dataBuffEffect
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
+    float *dataBuffEffect = (float*)malloc(BUFFERSIZE*sizeof(float));
+
+    // Limpio buffers
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffEffect, BUFFERSIZE);
+    clean_buffer(dataBuffOut, bufferFrameSizeOut);
+
+    start = end = cantCiclos = framesReadTotal = 0;
+    // [Lecto-escritura de datos]
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
+        MEDIR_TIEMPO_START(start);
+        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            if (inFileStr.channels == 2) {
+                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
+                i++;    // Avanzo de a dos en dataBuffIn
+            } else {
+                dataBuffEffect[eff_i] = dataBuffIn[i];
+            }
+
+            // aplicar efecto
+
+            dataBuffOut[out_i++] = dataBuffEffect[eff_i];   // Sonido original
+            dataBuffOut[out_i++] = ¿?;
+
+            eff_i++;
+        }
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
+        framesReadTotal += framesRead;
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+    // [/Lecto-escritura de datos]
+    printf("\tTiempo de ejecución:\n");
+    printf("\t  Comienzo                          : %lu\n", start);
+    printf("\t  Fin                               : %lu\n", end);
+    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
+    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
+    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
+
+    // [Limpieza]
+    free(dataBuffIn);
+    free(dataBuffOut);
+    free(dataBuffEffect);
+    // [/Limpieza]
+}*/
