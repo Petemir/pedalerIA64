@@ -23,11 +23,11 @@ double maxsamp(double *bufferIn, int bufferLen) {
 /*PANPOS simplepan_c(double position) {
     PANPOS pos;
 
-    position *= 0.5; 
+    position *= 0.5;
     pos.left = position - 0.5;
     pos.right = position + 0.5;
 
-    return pos;    
+    return pos;
 }*/
 /*
 void panning_c(double panpos) {
@@ -99,7 +99,7 @@ void normalization_c(double dbval) {
 
         framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
         sf_write_sync(outFilePtr);
-    }  
+    }
 
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);
@@ -107,7 +107,7 @@ void normalization_c(double dbval) {
     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
- 
+
     free(dataBuffIn);
     free(dataBuffOut);
 }*/
@@ -137,14 +137,14 @@ void normalization_c(double dbval) {
         framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
         sf_write_sync(outFilePtr);
     }
- 
+
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);
     printf("\t  Fin                               : %lu\n", end);
     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
- 
+
     free(dataBuffIn);
     free(dataBuffOut);
 }*/
@@ -174,14 +174,14 @@ void normalization_c(double dbval) {
         framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
         sf_write_sync(outFilePtr);
     }
- 
+
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);
     printf("\t  Fin                               : %lu\n", end);
     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
- 
+
     free(dataBuffIn);
     free(dataBuffOut);
 }*/
@@ -197,7 +197,7 @@ void normalization_c(double dbval) {
     clean_buffer(dataBuffOut, bufferSize);
 
     unsigned long int start, end, cantCiclos = 0;
-    while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {        
+    while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
         copy_asm(dataBuffIn, dataBuffOut, framesRead*inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
@@ -213,7 +213,7 @@ void normalization_c(double dbval) {
     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-    
+
     free(dataBuffIn);
     free(dataBuffOut);
 }*/
@@ -514,12 +514,11 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
 
     // Generador de onda triangular.
     float delta = (float)wahfreq/inFileStr.samplerate;
-    int triangleWaveSize = (maxf-minf)/delta+1;
-    float fc = minf;
-    float qc = 2*damp;
-    float yh = 0, yb = 0, yl = 0;
+    int triangleWaveSize = floor((maxf-minf)/delta)+1;
 
-//    printf("triangleWaveSize %d\n", triangleWaveSize);
+    float fc = 2*sin((float)(M_PI*minf)/inFileStr.samplerate);
+    float q1 = 2*damp;
+    float yh = 0, yb = 0, yl = 0;
 
     start = end = cantCiclos = framesReadTotal = 0;
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
@@ -527,24 +526,23 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
             if (inFileStr.channels == 2) {
                 dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                i++;    // Avanzo de a dos en dataBuffIn
+                i++;
             } else {
                 dataBuffEffect[eff_i] = dataBuffIn[i];
             }
 
-            int evenCycle = ((((framesReadTotal+i)/triangleWaveSize)%2) == 0);  // Ciclo positivo o negativo
-            int thisCycle = (framesReadTotal+i) % triangleWaveSize;  // A qué punto del ciclo correspondería
-            fc = evenCycle*(minf+(thisCycle-1)*delta)+(1-evenCycle)*(maxf-(thisCycle-1)*delta);  // Valor del punto
-            fc = 2*sin((M_PI*fc)/inFileStr.samplerate);
-
-            yh = dataBuffEffect[eff_i] - yl - qc * yb;
+            yh = dataBuffEffect[eff_i] - yl - q1 * yb;
             yb = fc * yh + yb;
             yl = fc * yb + yl;
 
-//            printf("%d %d %d.\n", (framesReadTotal+i), evenCycle, thisCycle);
-//            printf("framesReadTotal+i: %d fc: %f\n", (framesReadTotal+i), fc);
+            int evenCycle = ((((framesReadTotal+eff_i)/triangleWaveSize)%2) == 0);  // Ciclo positivo o negativo
+            int thisCycle = (framesReadTotal+eff_i) % (triangleWaveSize + 1);  // A qué punto del ciclo correspondería
+            fc = evenCycle*(minf+(thisCycle-1)*delta)+(1-evenCycle)*(maxf-(thisCycle)*delta);  // Valor del punto
+            fc = 2*sin((float)( M_PI*fc)/inFileStr.samplerate);
+
             dataBuffOut[out_i++] = dataBuffIn[i];
-            dataBuffOut[out_i++] = yb;
+            dataBuffOut[out_i++] = 0.1*yb;
+
             eff_i++;
         }
         MEDIR_TIEMPO_STOP(end);
@@ -555,20 +553,26 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
         sf_write_sync(outFilePtr);
     }
 
-    // Normalizo
+    // Normalización del audio
+    // Recreo el buffer de entrada (porque ahora usa el)
+    if (inFileStr.channels == 1 ) {
+        free(dataBuffIn);
+        dataBuffIn = (float*)malloc(bufferFrameSizeOut*sizeof(float));
+    }
     printf("offset: %d\n", (int)sf_seek(outFilePtr, 0, SEEK_SET));
     // Busco el máximo
     float maxSamp = -10;
     while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
-        for (unsigned int i = 0; i < bufferFrameSize; i++) {
+        for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
             i++;  // Avanzo de a dos porque no me interesa el canal izquierdo, dry sound
             if (fabs(dataBuffIn[i]) > maxSamp) { maxSamp = fabs(dataBuffIn[i]); }  // En el canal derecho, el del efecto
         }
     }
     printf("El maximo es %f\n", maxSamp);
     printf("offset: %d\n", (int)sf_seek(outFilePtr, 0, SEEK_SET));
+    // Normalizo
     while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
-        for (unsigned int i = 0; i < bufferFrameSize; i++) {
+        for (unsigned int i = 0; i < bufferFrameSizeOut; i++) {
             dataBuffOut[i] = (float) dataBuffIn[i];
             i++;
             dataBuffOut[i] = (float) dataBuffIn[i]/maxSamp;
@@ -576,8 +580,6 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
-
 
     printf("\tTiempo de ejecución:\n");
     printf("\t  Comienzo                          : %lu\n", start);

@@ -33,11 +33,16 @@ Efectos
 	
 * WahWah:
   * ~~C: hecho.~~
-  * Mejorar codigo hecho en C, no está igual a matlab.
+  * ~~Mejorar codigo hecho en C, no está igual a matlab.~~
   * ASM: no hecho.
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
 
+* Normalize:
+ * C: modularizar.
+ * ASM: no hecho.
+ * Los ejemplos no hacen falta.
+ * Pensar si conviene llamarla siempre que se termina de usar algún efecto.
 
 ToDo
 --------------
