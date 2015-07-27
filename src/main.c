@@ -115,17 +115,20 @@ int main(int argc, char* argv[]) {
                 printf("Vibrato c.\n");
                 vibrato_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
                 siguienteOpcion+=3;
+                break;
             case 'b':
                 printf("Bitcrusher c.\n");
                 bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
                 siguienteOpcion+=3;
+                break;
             case 'w':
                 printf("Wahwah c.\n");
                 wah_wah_c((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
-                sf_seek(outFilePtr, 0, SEEK_SET);
-                normalization_c();
-
+                sf_seek(outFilePtr, 0, SEEK_SET);   // Reinicio puntero al archivo
+                normalization_right_c();                  // Normalizo el canal de efecto
                 siguienteOpcion+=5;
+                break;
+
         }
     }
 

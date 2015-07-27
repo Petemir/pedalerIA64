@@ -47,9 +47,14 @@ Efectos
 * Normalize:
  * ~~C: modularizar.~~
  * ASM: no hecho.
- * Los ejemplos no hacen falta.
+ * ~~Los ejemplos no hacen falta.~~
  * Pensar si conviene llamarla siempre que se termina de usar algún efecto.
- * Agregar que cuente los ciclos.
+ * Falta hacer que sume a cantCiclos (ultimo item ToDo)
+
+* MaxSamp:
+ * ~~C: hecho.~~
+ * ~~ASM: hecho.~~
+ * Falta hacer que sume a cantCiclos (ultimo item ToDo)
 
 ToDo
 --------------

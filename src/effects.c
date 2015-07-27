@@ -112,30 +112,39 @@ void normalization_c(double dbval) {
     free(dataBuffOut);
 }*/
 
-float maxsamp_c() {
+float maxsamp_right_c() {
     unsigned int bufferFrameSize = BUFFERSIZE*outFileStr.channels;
 
     float maxSamp = 0;
     while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
         for (unsigned int i = 0; i < bufferFrameSize; i++) {
             i++;  // Avanzo de a dos porque no me interesa el canal izquierdo, dry sound
-            if (fabs(dataBuffIn[i]) > maxSamp) { maxSamp = fabs(dataBuffIn[i]); }
+            if (fabs(dataBuffIn[i]) > maxSamp) { maxSamp = fabs(dataBuffIn[i]);}
         }
     }
     sf_seek(outFilePtr, 0, SEEK_SET);
     return maxSamp;
 }
 
-void normalization_c() {
+float maxsamp_right_asm_caller() {
+    float maxSamp = 0;
+    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        maxsamp_right_asm(dataBuffIn, &maxSamp, framesRead*outFileStr.channels);
+    }
+    sf_seek(outFilePtr, 0, SEEK_SET);
+    return maxSamp;
+}
+
+void normalization_right_c() {
     // Siempre que normalice, la entrada va a ser stereo (porque va a ser la salida de un efecto anterior), así que usan buffer de mismo tamaño
-    unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
+    unsigned int bufferFrameSize = BUFFERSIZE*outFileStr.channels;
     dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
     dataBuffOut = (float*)malloc(bufferFrameSize*sizeof(float));
 
     clean_buffer(dataBuffIn, bufferFrameSize);
     clean_buffer(dataBuffOut, bufferFrameSize);
 
-    float maxSamp = maxsamp_c();
+    float maxSamp = maxsamp_right_c();
 
     start = end = cantCiclos = framesReadTotal = 0;
     while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
@@ -367,7 +376,6 @@ void flanger_c(float delayInMsec, float rate, float amp) {
                 dataBuffEffect[eff_i] = dataBuffIn[i];
             }
 
-            // printf("fr+eff_i: %d, eff_i: %d, index: %d, dataBuffIn: %.12f, dataBuffEffect: %.12f, dataBuffOut: %.12f\n", framesReadTotal+eff_i, eff_i, eff_index+1, dataBuffEffect[i], dataBuffEffect[eff_index%maxDelayInFrames], (dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames])));
             dataBuffOut[out_i++]  = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffOut[out_i++]  = dataBuffEffect[eff_i]*amp + amp*(eff_index < 0 ? 0:dataBuffEffect[eff_index%maxDelayInFrames]);  // Audio con efecto - si el índice es negativo, pongo un 0
 
@@ -424,7 +432,6 @@ void vibrato_c(float depth, float mod) {
     clean_buffer(dataBuffEffect, maxDelayInFrames);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
 
-//    sf_command(inFilePtr, SFC_SET_NORM_FLOAT, NULL, SF_FALSE);
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
     // [Lecto-escritura de datos
@@ -670,8 +677,6 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
     unsigned int *dataBuffIndex = (unsigned int*)malloc(maxDelayInFrames*sizeof(unsigned int));
-    // unsigned int *dataBuffIndex = (unsigned int*)_mm_malloc(maxDelayInFrames*sizeof(unsigned int),16);
-    // printf("dbIn: %d, dbOut: %d, dbEffect: %d, dbIndex: %d.\n", dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex);
     // Limpio buffers
     clean_buffer(dataBuffIn, bufferFrameSize);
     clean_buffer(dataBuffOut, bufferFrameSizeOut);
@@ -680,10 +685,6 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-    // printf("Length dbi: %d.\n", bufferFrameSize);
-    // printf("Length dbo: %d.\n", bufferFrameSizeOut);
-    // printf("Length dbe: %d.\n", maxDelayInFrames);
-    // printf("Length dbix: %d.\n", maxDelayInFrames);
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         for (unsigned int eff_i = 0; eff_i < fmin(framesRead, maxDelayInFrames); eff_i = eff_i) {
@@ -706,7 +707,6 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
             // Guardo los índices en el buffer que se le pasará a la rutina en ASM
             eff_i-=4;
             for (unsigned int j = 0; j <= 3 && eff_i < framesRead; j++) {
-                // printf("%d %d\n", eff_i-j, (int) ((framesReadTotal+(eff_i-j)-ceil(index_vector[3-j]*delayInFrames)))%maxDelayInFrames);
                 dataBuffIndex[eff_i] = (int) ((framesReadTotal+(eff_i)-ceil(index_vector[j]*delayInFrames)))%maxDelayInFrames;
                 eff_i++;
             }
@@ -731,7 +731,6 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
     // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
     printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
     // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-// printf("dbIn: %d, dbOut: %d, dbEffect: %d, dbIndex: %d.\n", dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex);
     // [Limpieza]
     free(dataBuffIn);
     free(dataBuffOut);
