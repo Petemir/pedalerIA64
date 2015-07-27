@@ -148,14 +148,14 @@ void normalization_right_c() {
 
     start = end = cantCiclos = framesReadTotal = 0;
     while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            MEDIR_TIEMPO_START(start);
             dataBuffOut[out_i++] = dataBuffIn[i++];     // El canal izquierdo va igual (audio original nunca satura)
             dataBuffOut[out_i++] = (float) dataBuffIn[i]/maxSamp;
-            MEDIR_TIEMPO_STOP(end);
-
-            cantCiclos += end-start;
         }
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
@@ -163,6 +163,37 @@ void normalization_right_c() {
     free(dataBuffIn);
     free(dataBuffOut);
 }
+
+void normalization_right_asm_caller() {
+    // Siempre que normalice, la entrada va a ser stereo (porque va a ser la salida de un efecto anterior), así que usan buffer de mismo tamaño
+    unsigned int bufferFrameSize = BUFFERSIZE*outFileStr.channels;
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSize*sizeof(float));
+
+    clean_buffer(dataBuffIn, bufferFrameSize);
+    clean_buffer(dataBuffOut, bufferFrameSize);
+
+    float maxSamp = maxsamp_right_asm_caller();
+
+    start = end = cantCiclos = framesReadTotal = 0;
+    while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        MEDIR_TIEMPO_START(start);
+        for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            dataBuffOut[out_i++] = dataBuffIn[i++];     // El canal izquierdo va igual (audio original nunca satura)
+            dataBuffOut[out_i++] = (float) dataBuffIn[i]/maxSamp;
+
+        }
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+    free(dataBuffIn);
+    free(dataBuffOut);
+}
+
 
 /*void volume_c(double ampfac) {
     bufferSize = BUFFERSIZE*inFileStr.channels;
@@ -697,11 +728,8 @@ void flanger_asm_caller(float delayInMsec, float rate, float amp) {
 
             MEDIR_TIEMPO_START(start);
             index_vector = sin_ps(index_vector);
-            // _mm_store_ps((float*)&(dataBuffIndex[eff_i-4]), sin_ps(index_vector));
-            // MEDIR_TIEMPO_STOP(end);
-            // MEDIR_TIEMPO_START(start);
+            // index_vector = Sin(index_vector);  // TODO -> REMOVE
             index_vector = _mm_and_ps(index_vector, *(v4sf*)_ps_inv_sign_mask);
-            // _mm_store_ps((float*)&(dataBuffIndex[eff_i-4]), _mm_and_ps((v4sf)&(dataBuffIndex[eff_i-4]), *(v4sf*)_ps_inv_sign_mask));
             MEDIR_TIEMPO_STOP(end);
 
             // Guardo los índices en el buffer que se le pasará a la rutina en ASM
