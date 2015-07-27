@@ -23,6 +23,12 @@ section .text
     push r14
     push r15
 
+    cycle:
+    cmp rcx, 0
+    je fin
+    cmp rcx, 4
+    cmp rcx, 2
+    je ?;
 
     ; return en rax, o xmm0
     fin:

@@ -1,5 +1,6 @@
 // PedalerIA64 Copyright [2014] <Matias Laporte>
 #include "./effects.c"
+#include "./effects_asm.c"
 
 const char* nombrePrograma;
 
@@ -126,6 +127,13 @@ int main(int argc, char* argv[]) {
                 wah_wah_c((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
                 sf_seek(outFilePtr, 0, SEEK_SET);   // Reinicio puntero al archivo
                 normalization_right_c();                  // Normalizo el canal de efecto
+                siguienteOpcion+=5;
+                break;
+            case 'W':
+                printf("Wahwah asm.\n");
+                wah_wah_c((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
+                sf_seek(outFilePtr, 0, SEEK_SET);   // Reinicio puntero al archivo
+                normalization_right_asm_caller();
                 siguienteOpcion+=5;
                 break;
 

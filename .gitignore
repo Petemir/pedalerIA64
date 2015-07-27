@@ -29,3 +29,6 @@
 # WAV Files
 gibson-*.wav
 guitar-*.wav
+
+# callgrind
+callgrind.out.*
