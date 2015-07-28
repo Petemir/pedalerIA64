@@ -4,10 +4,6 @@ global maxsamp_right_asm
 ; rdi: *dataBuffIn
 ; rsi: *maxTemp
 ; rdx: framesRead
-; rcx:
-; r8:
-; r9:
-
 
 section .text
     maxsamp_right_asm:
@@ -26,17 +22,29 @@ section .text
     cmp rdx, 0
     je fin
     cmp rdx, 2
-    je fin
+    je remaining_frames
 
     movaps xmm3, [rdi]  ; xmm2 = dataBuffIn[0..3]
-    pxor xmm2, xmm2      ; xmm2 = | 0 | 0 | 0 | 0 |
+    jmp comparison
+
+    remaining_frames:
+    movq xmm3, [rdi]    ; xmm3 = dataBuffIn[0..1] | 0 | 0 | (entonces nunca van a ser maximos)
+
+    comparison:
+    pxor xmm2, xmm2     ; xmm2 = | 0 | 0 | 0 | 0 |
     subps xmm2, xmm3    ; xmm2 = -xmm3
     maxps xmm2, xmm3    ; xmm2 = max(-xmm3,xmm3)
 
     maxps xmm1, xmm2    ; xmm1 = | max(xmm1[0],xmm3[0]) | max(xmm1[1],xmm3[1]) | max(xmm1[2],xmm3[2]) | max(xmm1[3],xmm3[3])
 
-    sub rdx, 4
-    add rdi, 16     ; nos movemos 16 bytes (4 float) en la entrada
+    add rdi, 8     ; nos movemos por lo menos 8 bytes (2 float) en la entrada
+    sub rdx, 2
+
+    cmp rdx, 0
+    je fin
+
+    add rdi, 8      ; como no eran los ultimos dos frames, recorrimos 4 en total y seguimos
+    sub rdx, 2
 
     jmp cycle
 

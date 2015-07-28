@@ -5,13 +5,6 @@ global normalization_right_asm
 ; rsi: *dataBuffOut
 ; rdx: *maxRightValue
 ; rcx: framesRead
-; r8:
-; r9:
-; input floats
-; xmm0:
-; xmm1:
-; xmm2:
-; xmm3:
 
 section .text
     normalization_right_asm:
@@ -34,15 +27,28 @@ section .text
     cmp rcx, 0
     je fin
     cmp rcx, 2
-    je fin
+    je remaining_frames
 
     movaps xmm2, [rdi]
+    jmp normalization
+
+    remaining_frames:
+    movlps xmm2, [rdi]
+
+    normalization:
     mulps xmm2, xmm0        ; normalizo el canal derecho
     movaps [rsi], xmm2
 
-    sub rcx, 4
-    add rdi, 16
-    add rsi, 16
+    add rdi, 8      ; nos movemos por lo menos 8 bytes (2 float) en la entrada
+    add rsi, 8
+    sub rcx, 2
+
+    cmp rcx, 0
+    je fin
+
+    add rdi, 8      ; como no eran los ultimos dos frames, recorrimos 4 en total y seguimos
+    add rsi, 8
+    sub rcx, 2
 
     jmp cycle
 

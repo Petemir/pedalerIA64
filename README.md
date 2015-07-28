@@ -31,7 +31,7 @@ Efectos
 
 * Bitcrusher:
   * ~~C: hecho.~~
-  * ASM: no hecho.
+  * ASM: no hecho.                                      || NEXT
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
 
@@ -39,7 +39,7 @@ Efectos
 * WahWah:
   * ~~C: hecho.~~
   * ~~Mejorar codigo hecho en C, no está igual a matlab.~~
-  * ASM: no hecho.                                      || NEXT
+  * ASM: no hecho.
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
 
@@ -48,15 +48,15 @@ Efectos
  * ~~C: modularizar.~~
  * ASM: no hecho.
  * ~~Los ejemplos no hacen falta.~~
- * Falta codigo para ultimos dos frames                 || NEXT
+ * ~~Falta codigo para ultimos dos frames~~
  * Pensar si conviene llamarla siempre que se termina de usar algún efecto.
- * Falta hacer que sume a cantCiclos (ultimo item ToDo)
+ * ~~Falta hacer que sume a cantCiclos (ultimo item ToDo)~~
 
 * MaxSamp:
  * ~~C: hecho.~~
  * ~~ASM: hecho.~~
- * Falta codigo para ultimos dos frames                 || NEXT
- * Falta hacer que sume a cantCiclos (ultimo item ToDo)
+ * ~~Falta codigo para ultimos dos frames~~
+ * ~~Falta hacer que sume a cantCiclos (ultimo item ToDo)~~
 
 * CleanBuffer
  * ~~C: hecho.~~

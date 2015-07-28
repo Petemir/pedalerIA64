@@ -51,12 +51,16 @@ float maxsamp_right_c() {
 
     float maxSamp = 0;
     while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
+        MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0; i < bufferFrameSize; i++) {
             i++;  // Avanzo de a dos porque no me interesa el canal izquierdo, dry sound
             if (fabs(dataBuffIn[i]) > maxSamp) { maxSamp = fabs(dataBuffIn[i]);}
         }
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
     }
     sf_seek(outFilePtr, 0, SEEK_SET);
+    printf("max: %f\n", maxSamp);
     return maxSamp;
 }
 
@@ -478,64 +482,3 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
     free(dataBuffEffect);
     // [/Limpieza]
 }
-
-
-
-// [TEMPLATE]
-/*
-void effect_c(params) {
-    // Si es efecto con delay, tenerlo en cuenta
-    unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
-    unsigned int bufferFrameSizeOut = BUFFERSIZE*outFileStr.channels;
-
-    // Chequear bien los tamaños, particularmente dataBuffEffect
-    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
-    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
-    float *dataBuffEffect = (float*)malloc(BUFFERSIZE*sizeof(float));
-
-    // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffEffect, BUFFERSIZE);
-    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
-
-    start = end = cantCiclos = framesReadTotal = 0;
-    // [Lecto-escritura de datos]
-    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
-        MEDIR_TIEMPO_START(start);
-        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            if (inFileStr.channels == 2) {
-                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                i++;    // Avanzo de a dos en dataBuffIn
-            } else {
-                dataBuffEffect[eff_i] = dataBuffIn[i];
-            }
-
-            // aplicar efecto
-
-            dataBuffOut[out_i++] = dataBuffEffect[eff_i];   // Sonido original
-            dataBuffOut[out_i++] = ¿?;
-
-            eff_i++;
-        }
-        MEDIR_TIEMPO_STOP(end);
-        cantCiclos += end-start;
-
-        framesReadTotal += framesRead;
-        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
-        sf_write_sync(outFilePtr);
-    }
-
-    // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
-    // [Limpieza]
-    free(dataBuffIn);
-    free(dataBuffOut);
-    free(dataBuffEffect);
-    // [/Limpieza]
-}*/
