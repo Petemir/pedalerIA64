@@ -19,7 +19,7 @@ section .text
     mov eax, 0x3f800000     ; 1 en IEEE-754 Single Precision
     movd xmm0, eax
     shufps xmm0, xmm0, 0x00 ; xmm0 = |  1  |  1  |  1  |  1  |
-    movd xmm1, [rdx]        ; xmm1 = | max |  0  |  0  |  0  |
+    movss xmm1, [rdx]        ; xmm1 = | max |  0  |  0  |  0  |
     shufps xmm1, xmm1, 0x00 ; xmm0 = | max | max | max | max |
     punpckldq xmm0, xmm1    ; xmm0 = | max |  1  | max |  1  |
 

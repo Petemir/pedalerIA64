@@ -15,7 +15,7 @@ section .text
     push r14
     push r15
 
-    movd xmm1, [rsi]   ; xmm1[0] = maximo temporal
+    movss xmm1, [rsi]   ; xmm1[0] = maximo temporal
     shufps xmm1, xmm1, 0x00 ; xmm1 = | max | max | max | max
 
     cycle:

@@ -1,6 +1,6 @@
 global flanger_asm
 
-; input 
+; input
 ; rdi: *dataBuffIn
 ; rsi: *dataBuffOut
 ; rdx: *dataBuffEffect
@@ -28,7 +28,7 @@ section .text
     flanger_asm:
     push rbp        ; convención C
     mov rbp, rsp
-    sub rsp, 32
+    sub rsp, 32     ; TODO -> 16????
     push rbx
     push r12
     push r13
@@ -52,13 +52,13 @@ section .text
     jl odd_frames_mono
 
     ; dataBuffEffect[eff_i] = dataBuffIn[i];
-    ; dataBuffOut[out_i] = dataBuffEffect[eff_i];  
+    ; dataBuffOut[out_i] = dataBuffEffect[eff_i];
     ; dataBuffOut[out_i+1] = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[dataBuffIndex[eff_i]];
 
     movaps xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[i..i+3]
     movaps xmm2, xmm1           ; xmm2 = xmm1
     movaps [dataBuffEffect+eff_i*4], xmm1  ; dataBuffEffect[eff_i..eff_i+3] = dataBuffIn[i..i+3]
-    
+
     ; busco los indices para el efecto
     movaps xmm3, [dataBuffIndex+eff_i*4] ; xmm3 = dataBuffIndex[eff_i]
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+0]
@@ -80,12 +80,12 @@ section .text
     mov r10d, [dataBuffEffect+4*ebx]
     mov index_4, r10d
 
-    movaps xmm3, index_1    
+    movaps xmm3, index_1
     addps xmm2, xmm3    ; xmm2 = dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]]
     mulps xmm2, amp    ; xmm2 = amp * (dataBuffEffect[eff_i] + dataBuffEffect[dataBuffIndex[eff_i]])
 
     movaps xmm4, xmm1       ; Trabajo en xmm4 con dataBuffIn para no ensuciar
-    punpckldq xmm4, xmm2    ; xmm4 = dBIn[0] | amp*(dBEff[0]+dBEff[dBIndex[eff_i]]) | dBIn[1] | amp*(dBEff[1]+dBEff[dBIndex[eff_i+1]]) 
+    punpckldq xmm4, xmm2    ; xmm4 = dBIn[0] | amp*(dBEff[0]+dBEff[dBIndex[eff_i]]) | dBIn[1] | amp*(dBEff[1]+dBEff[dBIndex[eff_i+1]])
     movaps [dataBuffOut], xmm4      ; dataBuffOut = xmm4
     add dataBuffOut, 16
     movaps xmm4, xmm1
@@ -104,7 +104,7 @@ section .text
     movss xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[i..i+3]
     movss xmm2, xmm1           ; xmm2 = xmm1
     movss [dataBuffEffect+eff_i*4], xmm1  ; dataBuffEffect[eff_i] = dataBuffIn[i]
-    
+
     ; busco los indices para el efecto
     mov ebx, [dataBuffIndex+eff_i*4] ; ebx = dataBuffIndex[eff_i]
     movd xmm3, [dataBuffEffect+4*ebx]
@@ -182,8 +182,8 @@ section .text
     movd xmm3, [dataBuffEffect+4*ebx]
 
     addss xmm2, xmm3
-    mulss xmm2, amp 
-    
+    mulss xmm2, amp
+
     movss [dataBuffOut], xmm1
     add dataBuffOut, 4
     movss [dataBuffOut], xmm2
@@ -199,6 +199,6 @@ section .text
     pop r13
     pop r12
     pop rbx
-    add rsp, 32
+    add rsp, 32     ; TODO -> 16????
     pop rbp
     ret

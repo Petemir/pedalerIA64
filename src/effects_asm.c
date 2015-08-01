@@ -198,38 +198,25 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
 }
 
 
-void bitcrusher_asm_caller(int bitDeph, int bitRate) {
+void bitcrusher_asm_caller(int bits, int freq) {
     unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
     unsigned int bufferFrameSizeOut = BUFFERSIZE*outFileStr.channels;
 
     dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
     dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
-    float *dataBuffEffect = (float*)malloc(BUFFERSIZE*sizeof(float));
 
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffEffect, BUFFERSIZE);
     clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
+
+    float phasor = 0;   // La variable se define acá porque se necesita que se conserve entre ciclo y ciclo
+    float normFreq = (float)freq/inFileStr.samplerate;
 
     start = end = cantCiclos = framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
-        for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            if (inFileStr.channels == 2) {
-                dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];
-                i++;    // Avanzo de a dos en dataBuffIn
-            } else {
-                dataBuffEffect[eff_i] = dataBuffIn[i];
-            }
-
-            // aplicar efecto
-
-            dataBuffOut[out_i++] = dataBuffEffect[eff_i];   // Sonido original
-            dataBuffOut[out_i++] = ¿?;
-
-            eff_i++;
-        }
+        bitcrusher_asm(dataBuffIn, dataBuffOut, framesRead, pow(0.5, bits), &normFreq, &phasor);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
@@ -249,6 +236,5 @@ void bitcrusher_asm_caller(int bitDeph, int bitRate) {
     // [Limpieza]
     free(dataBuffIn);
     free(dataBuffOut);
-    free(dataBuffEffect);
     // [/Limpieza]
 }
