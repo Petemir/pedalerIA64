@@ -31,7 +31,7 @@ Efectos
 
 * Bitcrusher:
   * ~~C: hecho.~~
-  * ASM: no hecho.                                      || NEXT
+  * ASM: no hecho.                                      || NEXT falta stereo
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
 

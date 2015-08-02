@@ -122,6 +122,11 @@ int main(int argc, char* argv[]) {
                 bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
                 siguienteOpcion+=3;
                 break;
+            case 'B':
+                printf("Bitcrusher asm.\n");
+                bitcrusher_asm_caller((int)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
+                siguienteOpcion+=3;
+                break;
             case 'w':
                 printf("Wahwah c.\n");
                 wah_wah_c((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
