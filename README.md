@@ -31,7 +31,7 @@ Efectos
 
 * Bitcrusher:
   * ~~C: hecho.~~
-  * ASM: no hecho.                    || NEXT falta remaining_frames
+  * ~~ASM: hecho.~~
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
 

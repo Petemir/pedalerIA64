@@ -164,6 +164,7 @@ void delay_simple_c(float delayInSec, float decay) {
                     dataBuffEffect[eff_i] = dataBuffIn[i];
                 }
             } else {  // En la última parte del último ciclo (framesRead < maxDelayInFrames), la entrada es nula
+                if (inFileStr.channels == 2) { i++; }
                 dataBuffEffect[eff_i] = 0;
             }
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // En el canal izquierdo, va la entrada sin efecto (entrada ciclo actual)
@@ -363,8 +364,6 @@ void bitcrusher_c(int bits, int freq) {
     float step = pow(0.5, bits);
     float last = 0, phasor = 0;
     float normFreq = roundf(((float)freq/inFileStr.samplerate)*100)/100;
-    //printf("step: %f.\n", step);
-    //printf("normFreq: %f.\n", normFreq);
 
     start = end = cantCiclos = framesReadTotal = 0;
     // [Lecto-escritura de datos]
@@ -380,16 +379,13 @@ void bitcrusher_c(int bits, int freq) {
 
             phasor += normFreq;
 
-            //printf("framesLeft %d phasorpre %f in %f ", framesRead-eff_i, phasor, dataBuffEffect[eff_i]);
             if (phasor >= 1.0 && eff_i % 4 == 0) {
                 phasor -= 1.0;
                 last = step * floor(dataBuffEffect[eff_i]/step + 0.5);
             }
-            //printf("phasorpost %f last %f.\n", phasor, last);
 
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffOut[out_i++] = last;  // Audio con efecto
-            printf("framesLeft %d in %f out %f phasorpost %f last %f\n", framesRead-eff_i, dataBuffOut[out_i-2], dataBuffOut[out_i-1], phasor, last);
 
             eff_i++;
         }
