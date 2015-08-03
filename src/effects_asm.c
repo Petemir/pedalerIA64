@@ -210,22 +210,22 @@ void bitcrusher_asm_caller(int bits, int freq) {
     clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
 
     float last = 0, phasor = 0;   // Las variables se definen acá porque se necesita que se conserven entre ciclo y ciclo
-    float normFreq = (float)freq/inFileStr.samplerate;
+    float normFreq = roundf(((float)freq/inFileStr.samplerate)*100)/100;
     float step = pow(0.5, bits);
-    //printf("normFreq: %f.\n", normFreq);
+    printf("normFreq: %f.\n", normFreq);
     //printf("step: %f.\n", step);
 
     start = end = cantCiclos = framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
-        bitcrusher_asm(dataBuffIn, dataBuffOut, framesRead, &step, &normFreq, &phasor, &last);
+        bitcrusher_asm(dataBuffIn, dataBuffOut, framesRead*inFileStr.channels, &step, &normFreq, &phasor, &last, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-    /*    for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
+        for (unsigned int i = 0, out_i = 0; i < framesRead; i++) {
             printf("framesLeft %d in %f out %f\n", framesRead-i, dataBuffOut[out_i++], dataBuffOut[out_i++]);
-        }*/
+        }
 
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);

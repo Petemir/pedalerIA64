@@ -362,7 +362,7 @@ void bitcrusher_c(int bits, int freq) {
 
     float step = pow(0.5, bits);
     float last = 0, phasor = 0;
-    float normFreq = (float)freq/inFileStr.samplerate;
+    float normFreq = roundf(((float)freq/inFileStr.samplerate)*100)/100;
     //printf("step: %f.\n", step);
     //printf("normFreq: %f.\n", normFreq);
 
@@ -381,15 +381,15 @@ void bitcrusher_c(int bits, int freq) {
             phasor += normFreq;
 
             //printf("framesLeft %d phasorpre %f in %f ", framesRead-eff_i, phasor, dataBuffEffect[eff_i]);
-            if (phasor >= 1.0) {
-               phasor -= 1.0;
-               last = step * floor(dataBuffEffect[eff_i]/step + 0.5);
+            if (phasor >= 1.0 && eff_i % 4 == 0) {
+                phasor -= 1.0;
+                last = step * floor(dataBuffEffect[eff_i]/step + 0.5);
             }
             //printf("phasorpost %f last %f.\n", phasor, last);
 
             dataBuffOut[out_i++] = dataBuffEffect[eff_i];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffOut[out_i++] = last;  // Audio con efecto
-            //printf("framesLeft %d in %f out %f phasorpost %f last %f\n", framesRead-eff_i, dataBuffOut[out_i-2], dataBuffOut[out_i-1], phasor, last);
+            printf("framesLeft %d in %f out %f phasorpost %f last %f\n", framesRead-eff_i, dataBuffOut[out_i-2], dataBuffOut[out_i-1], phasor, last);
 
             eff_i++;
         }

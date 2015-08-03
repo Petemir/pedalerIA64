@@ -119,12 +119,12 @@ int main(int argc, char* argv[]) {
                 break;
             case 'b':
                 printf("Bitcrusher c.\n");
-                bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
+                bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
                 siguienteOpcion+=3;
                 break;
             case 'B':
                 printf("Bitcrusher asm.\n");
-                bitcrusher_asm_caller((int)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
+                bitcrusher_asm_caller((int)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
                 siguienteOpcion+=3;
                 break;
             case 'w':

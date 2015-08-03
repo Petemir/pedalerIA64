@@ -31,9 +31,12 @@ Efectos
 
 * Bitcrusher:
   * ~~C: hecho.~~
-  * ASM: no hecho.                                      || NEXT falta stereo
+  * ASM: no hecho.                    || NEXT falta remaining_frames
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
+
+* Overdrive:
+  * https://github.com/nashj/Algorithms/blob/master/DigitalMusic/Overdrive.m
 
 
 * WahWah:

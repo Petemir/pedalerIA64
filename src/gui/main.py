@@ -1,13 +1,13 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 # http://zetcode.com/gui/pyqt5/firstprograms/
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 """
 ZetCode PyQt5 tutorial
 
-This example shows a tooltip on
-a window and a button.
+This program creates a menubar. The
+menubar has one menu with an exit action.
 
 author: Jan Bodnar
 website: zetcode.com
@@ -15,12 +15,11 @@ last edited: January 2015
 """
 
 import sys
-from PyQt5.QtWidgets import (QWidget, QToolTip,
-    QPushButton, QApplication)
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication
+from PyQt5.QtGui import QIcon
 
 
-class Example(QWidget):
+class Example(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -30,17 +29,24 @@ class Example(QWidget):
 
     def initUI(self):
 
-        QToolTip.setFont(QFont('SansSerif', 10))
+        inputAction = QAction(QIcon('input.png', '&Input', self))
+        inputAction.setShortcut('Ctrl+I')
+        inputAction.setStatusTip('Input file')
+        inputAction.triggered.connect(fileBrowser.show())
+        
+        exitAction = QAction(QIcon('exit.png'), '&Exit', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(qApp.quit)
 
-        self.setToolTip('This is a <b>QWidget</b> widget')
+        self.statusBar()
 
-        btn = QPushButton('Button', self)
-        btn.setToolTip('This is a <b>QPushButton</b> widget')
-        btn.resize(btn.sizeHint())
-        btn.move(50, 50)
+        menubar = self.menuBar()
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(exitAction)
 
         self.setGeometry(300, 300, 300, 200)
-        self.setWindowTitle('Tooltips')
+        self.setWindowTitle('Menubar')
         self.show()
 
 

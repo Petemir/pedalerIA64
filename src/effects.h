@@ -86,7 +86,7 @@ extern void flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, 
 // extern void vibrato_asm();
 
 void bitcrusher_asm_caller(int bitDeph, int bitRate);
-extern void bitcrusher_asm(float *bufferIn, float *bufferOut, int bufferLen, float *steps, float *normFreq, float *phasor, float *last);
+extern void bitcrusher_asm(float *bufferIn, float *bufferOut, int bufferLen, float *steps, float *normFreq, float *phasor, float *last, int channels);
 
 
 // void wah_wah_asm_caller();
