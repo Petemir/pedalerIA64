@@ -157,9 +157,8 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
             }
 
             MEDIR_TIEMPO_START(start);
-            index_vector = sin_ps(index_vector);
-            // index_vector = Sin(index_vector);  // TODO -> REMOVE
-            index_vector = _mm_and_ps(index_vector, *(v4sf*)_ps_inv_sign_mask);
+            index_vector = sin_ps(index_vector);    // Seno
+            index_vector = _mm_and_ps(index_vector, *(v4sf*)_ps_inv_sign_mask);             // Valor absoluto
             MEDIR_TIEMPO_STOP(end);
             cantCiclos += end-start;
 
@@ -217,7 +216,7 @@ void bitcrusher_asm_caller(int bits, int freq) {
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
-        bitcrusher_asm(dataBuffIn, dataBuffOut, framesRead*inFileStr.channels, &step, &normFreq, &phasor, &last, inFileStr.channels);
+        bitcrusher_asm(dataBuffIn, dataBuffOut, framesRead*inFileStr.channels, &step, normFreq, &phasor, &last, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
@@ -237,5 +236,87 @@ void bitcrusher_asm_caller(int bits, int freq) {
     // [Limpieza]
     free(dataBuffIn);
     free(dataBuffOut);
+    // [/Limpieza]
+}
+
+
+void vibrato_asm_caller(float depth, float mod) {
+    float delay = depth;    // Se usan dos nombres por claridad, pero valen siempre lo mismo
+    delay = round(delay*inFileStr.samplerate);
+    depth = round(depth*inFileStr.samplerate);
+
+    unsigned int delayInFrames = floor(2+delay+depth*2);
+    unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
+    unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
+    unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
+
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
+    // Buffer circular
+    float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));
+    int dataBuffEffectEnd, dataBuffEffectHead;
+    dataBuffEffectEnd = dataBuffEffectHead = maxDelayInFrames;
+
+    float *dataBuffIndex = (float*)malloc(maxDelayInFrames*sizeof(float));
+
+    mod = mod/inFileStr.samplerate;
+
+    // Limpio buffers
+    clean_buffer_c(dataBuffIn, bufferFrameSize);
+    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_c(dataBuffEffect, maxDelayInFrames);
+    clean_buffer_c(dataBuffIndex, maxDelayInFrames);
+
+    start = end = cantCiclos = framesReadTotal = 0;
+    // [Lecto-escritura de datos]
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
+        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i = eff_i) {
+            v4sf index_vector;
+
+            for (unsigned int j = 0; j < 4; j++) {
+                index_vector[j] = mod*2*M_PI*(framesReadTotal+eff_i+1);
+                eff_i++;
+            }
+
+            MEDIR_TIEMPO_START(start);
+            index_vector = sin_ps(index_vector); // Acá tengo current_mod para cada indice
+            MEDIR_TIEMPO_STOP(end);
+            cantCiclos += end-start;
+
+            eff_i -= 4;
+            for (unsigned int j = 0; j < 4 && eff_i < framesRead; j++) {
+                dataBuffIndex[eff_i] = index_vector[j];
+            }
+        }*/
+        printf("%x.\n", dataBuffIn);
+        printf("%x.\n", dataBuffOut);
+        printf("%x.\n", dataBuffEffect);
+        printf("%x.\n", dataBuffIndex);
+        printf("%f.\n", delay);
+        printf("%x.\n", &dataBuffEffectHead);
+        printf("%x.\n", &dataBuffEffectEnd);
+        printf("%d.\n", inFileStr.channels);
+        MEDIR_TIEMPO_START(start);
+        vibrato_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, delay, &dataBuffEffectHead, &dataBuffEffectEnd, inFileStr.channels);
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
+        framesReadTotal += framesRead;
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+    // [/Lecto-escritura de datos]
+    printf("\tTiempo de ejecución:\n");
+    printf("\t  Comienzo                          : %lu\n", start);
+    printf("\t  Fin                               : %lu\n", end);
+    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
+    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
+    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
+
+    // [Limpieza]
+    free(dataBuffIn);
+    free(dataBuffOut);
+    free(dataBuffEffect);
     // [/Limpieza]
 }

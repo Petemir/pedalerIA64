@@ -82,11 +82,11 @@ extern void delay_simple_asm(float *bufferIn, float *bufferOut, float *bufferEff
 void flanger_asm_caller(float delay, float rate, float amp);
 extern void flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, unsigned int *bufferIndex,  unsigned int framesReadTotal, int channels, float amp);
 
-// void vibrato_asm_caller();
-// extern void vibrato_asm();
+void vibrato_asm_caller(float depth, float mod);
+extern void vibrato_asm(float *bufferIn, float *bufferOut, float *circularBuffer, float *bufferIndex, float delay, int *circularBufferHead, int *circularBufferEnd, int channels);
 
 void bitcrusher_asm_caller(int bitDeph, int bitRate);
-extern void bitcrusher_asm(float *bufferIn, float *bufferOut, int bufferLen, float *steps, float *normFreq, float *phasor, float *last, int channels);
+extern void bitcrusher_asm(float *bufferIn, float *bufferOut, int bufferLen, float *steps, float normFreq, float *phasor, float *last, int channels);
 
 
 // void wah_wah_asm_caller();

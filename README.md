@@ -24,7 +24,7 @@ Efectos
 
 * Vibrato:
   * ~~Hecho en C.~~
-  * ASM: falta.
+  * ASM: falta.             || NEXT
   * Ver diferencias.
   * Agregar tiempo restante al buffer.
 

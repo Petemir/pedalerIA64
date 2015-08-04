@@ -14,15 +14,14 @@ global bitcrusher_asm
 %define dataBuffOut rsi
 %define framesRead rdx
 %define step rcx
-%define normFreq r8
-%define phasor r9
-%define channels [rbp+24]
-%define last [rbp-4]
-%define stereotmp [rbp-12]
+%define phasor r8
+%define last r9
+%define channels [rbp+16]
+%define stereotmp [rbp-8]
 
-%define phasors xmm0
+%define phasors xmm2
 %define multipliers xmm1
-%define sumFreqs xmm2
+%define sumFreqs xmm0
 %define halves xmm3
 %define ones xmm4
 %define input xmm5
@@ -55,10 +54,9 @@ section .text
         movss steps, [step]
         shufps steps, steps, 0x00       ; steps = | step | step | step | step |
 
-        movss lasts, last
+        movss lasts, [last]
         shufps lasts, lasts, 0x00       ; lasts = | last | last | last | last |
 
-        movss sumFreqs, [normFreq]
         shufps sumFreqs, sumFreqs, 0x00 ; sumFreqs = | normFreq | normFreq | normFreq | normFreq |
 
         movhps multipliers, [_numbers34]    ; multipliers = | 4 | 3 | x | x |
@@ -153,7 +151,7 @@ section .text
         roundps phasorsint, phasorsint, 01b     ; tomo floor de esos phasors
         subps phasors, phasorsint   ; me quedo con la parte decimal en phasors
 
-        movss last, tmp         ; last = tmp
+        movss [last], tmp         ; last = tmp
         movss lasts, tmp
         shufps lasts, lasts, 0x00   ; lasts = | last | last | last | last |
         jmp continue_cycle

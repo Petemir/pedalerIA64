@@ -278,12 +278,10 @@ void vibrato_c(float depth, float mod) {
     unsigned int delayInFrames = floor(2+delay+depth*2);
     unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
     unsigned int bufferFrameSize = maxDelayInFrames*inFileStr.channels;
-    unsigned int bufferSize = bufferFrameSize*sizeof(float);
     unsigned int bufferFrameSizeOut = maxDelayInFrames*outFileStr.channels;
-    unsigned int bufferSizeOut = bufferFrameSizeOut*sizeof(float);
 
-    dataBuffIn = (float*)malloc(bufferSize);
-    dataBuffOut = (float*)malloc(bufferSizeOut);
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
 
     // Buffer circular
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));
@@ -295,8 +293,8 @@ void vibrato_c(float depth, float mod) {
 
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffEffect, maxDelayInFrames);
     clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_c(dataBuffEffect, maxDelayInFrames);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;

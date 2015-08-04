@@ -117,6 +117,11 @@ int main(int argc, char* argv[]) {
                 vibrato_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
                 siguienteOpcion+=3;
                 break;
+            case 'V':
+                printf("Vibrato asm.\n");
+                vibrato_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
+                siguienteOpcion+=3;
+                break;
             case 'b':
                 printf("Bitcrusher c.\n");
                 bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
