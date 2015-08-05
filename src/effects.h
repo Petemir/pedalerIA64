@@ -64,7 +64,7 @@ extern void maxsamp_right_asm(float *bufferIn, float *maxTemp, unsigned int fram
 void normalization_right_asm_caller();
 extern void normalization_right_asm(float *bufferIn, float *bufferOut, float *maxValue, unsigned int framesRead);
 
-
+extern void sine_asm(float *bufferIn, unsigned int bufferSize);
 
 /************************** EFECTOS C **************************/
 void delay_simple_c(float delayInSec, float decay);
@@ -81,6 +81,7 @@ extern void delay_simple_asm(float *bufferIn, float *bufferOut, float *bufferEff
 
 void flanger_asm_caller(float delay, float rate, float amp);
 extern void flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, unsigned int *bufferIndex,  unsigned int framesReadTotal, int channels, float amp);
+extern void flanger_index_calc(unsigned int *bufferIn, unsigned long int framesRead, unsigned long int framesReadTotal, float rate, unsigned int delayInFrames, unsigned int maxDelayInFrames);
 
 void vibrato_asm_caller(float depth, float mod);
 extern void vibrato_asm(float *bufferIn, float *bufferOut, float *circularBuffer, float *bufferIndex, float delay, int *circularBufferHead, int *circularBufferEnd, int channels);

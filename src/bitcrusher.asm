@@ -143,7 +143,7 @@ section .text
         movaps tmp, input       ; tmp = input
         divps tmp, steps        ; tmp = input/step
         addps tmp, halves       ; tmp = (input/step + 0.5)
-        ;roundps tmp, tmp, 0x01  ; tmp = floor(input/step + 0.5) // TODO -> UNCOMMENT
+        roundps tmp, tmp, 0x01  ; tmp = floor(input/step + 0.5) // TODO -> UNCOMMENT
         mulps tmp, steps        ; tmp = step*floor(dataBuffEffect[0..3]/step+0.5)
 
         movaps phasorsint, phasors
