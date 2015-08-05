@@ -137,7 +137,7 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
     dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
     dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
-    float *dataBuffSin = (float*)malloc(maxDelayInFrames*sizeof(float));
+    //float *dataBuffSin = (float*)malloc(maxDelayInFrames*sizeof(float));
     unsigned int *dataBuffIndex = (unsigned int*)malloc(maxDelayInFrames*sizeof(unsigned int));
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
@@ -160,6 +160,9 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
 
         MEDIR_TIEMPO_START(start);
         flanger_index_calc(dataBuffIndex, framesRead, framesReadTotal, rate/inFileStr.samplerate, delayInFrames, maxDelayInFrames);
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+        MEDIR_TIEMPO_START(start);
         flanger_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, framesRead*inFileStr.channels, inFileStr.channels, amp);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
@@ -281,7 +284,7 @@ void vibrato_asm_caller(float depth, float mod) {
                 dataBuffIndex[eff_i] = index_vector[j];
             }
         }*/
-        printf("%x.\n", dataBuffIn);
+        /*printf("%x.\n", dataBuffIn);
         printf("%x.\n", dataBuffOut);
         printf("%x.\n", dataBuffEffect);
         printf("%x.\n", dataBuffIndex);
@@ -289,7 +292,7 @@ void vibrato_asm_caller(float depth, float mod) {
         printf("%x.\n", &dataBuffEffectHead);
         printf("%x.\n", &dataBuffEffectEnd);
         printf("%d.\n", inFileStr.channels);
-        MEDIR_TIEMPO_START(start);
+        */MEDIR_TIEMPO_START(start);
         vibrato_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, delay, &dataBuffEffectHead, &dataBuffEffectEnd, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;

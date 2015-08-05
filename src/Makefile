@@ -1,7 +1,7 @@
 CC = gcc
 ASM = nasm
 DBG = gdb
-CPPFLAGS = -ggdb -Wall -pedantic -std=c99
+CPPFLAGS = -ggdb -Wall -Wextra -pedantic -std=c99 # -O3
 LIBS = -lm -lsndfile
 ASMFLAGS = -felf64 -g -F dwarf
 

@@ -17,7 +17,9 @@ global flanger_index_calc
 
 %define rates xmm0
 %define firstTerm xmm1
+%define tmp1 xmm1
 %define secondTerm xmm2
+%define tmp2 xmm2
 %define tmp xmm3
 %define Bconstant xmm4
 %define Cconstant xmm5
@@ -104,17 +106,26 @@ section .text
         mulps sine_args, rates    ; sine_args = sine_args*(rate/inFileStr.samplerate)
         mulps sine_args, two_pi   ; sine_args = sine_args*2*pi
 
-    arg_to_interval:            ; llevo los argumentos del seno al intervalo (-pi,pi)
-        movaps cmpflag, pi              ; cmpflag = |pi|pi|pi|pi|
-        cmpps cmpflag, sine_args, 0x01  ; cmpflag = pi < sine_args
-        ptest cmpflag, cmpflag
-        jz calc_sine                    ; si es cero, es porque no hay ningún argumento mayor que pi
+        arg_to_interval:            ; llevo los argumentos del seno al intervalo (0,2*pi)
+            movaps cmpflag, two_pi          ; cmpflag = |two_pi|two_pi|two_pi|two_pi|
+            cmpps cmpflag, sine_args, 0x01  ; cmpflag = two_pi < sine_args
+            ptest cmpflag, cmpflag
+            jz arg_to_interval_cont         ; si es cero, es porque no hay ningún argumento mayor que 2*pi
 
-        movaps tmp, two_pi
-        andps tmp, cmpflag              ; me quedo con 2*pi en los lugares donde pi < sine_args
-        subps sine_args, tmp            ; resto -2*pi en los lugares que corresponden
+            movaps tmp, sine_args
+            divps tmp, two_pi
+            roundps tmp, tmp, 01b; me quedo con el cociente de la división
+            mulps tmp, two_pi       ; multiplico por el divisor
+            subps sine_args, tmp    ; ahora tengo todo entre (0, 2pi)
 
-        jmp arg_to_interval
+        arg_to_interval_cont:       ; llevo lo que está entre (pi, 2pi) a (-pi, 0)
+            movaps cmpflag, pi      ; cmpflag = |pi|pi|pi|pi|
+            cmpps cmpflag, sine_args, 0x01  ; cmpflag = pi < sine_args
+            ptest cmpflag, cmpflag
+            jz calc_sine
+
+            andps cmpflag, two_pi       ; me quedo con 2*pi en los lugares donde pi < sine_args
+            subps sine_args, cmpflag    ; ahora está todo entre (-pi, pi)
 
     ; CALCULO SENO ;
     calc_sine:
@@ -162,13 +173,13 @@ section .text
         movaps cmpflag, max_delays  ; cmpflag = |maxDelayInFrames|maxDelayInFrames|maxDelayInFrames|maxDelayInFrames|
         cmpps cmpflag, tmp, 0x01    ; cmpflag = maxDelayInFrames < (framesReadTotal+eff_i-ceil(abs(sine(sine_args))*delayInFrames))
         ptest cmpflag, cmpflag
-        jz continue_cycle                ; si es cero, no hace falta restar
+        jz continue_cycle                ; si es cero, no hace falta reducir el argumento
 
-        movaps firstTerm, max_delays
-        andps firstTerm, cmpflag         ; me quedo con maxDelayInFrames en los lugares donde tmp > maxDelayInFrames
-        subps tmp, firstTerm
-
-        jmp mod_maxdelay
+        movaps tmp1, tmp            ; tmp1 = tmp
+        divps tmp1, max_delays      ; tmp1 = tmp / maxDelayInFrames
+        roundps tmp1, tmp1, 01b     ; me quedo con la parte entera de la division
+        mulps tmp1, max_delays      ; cociente*divisor
+        subps tmp, tmp1             ; en tmp me queda el resto de la división, tmp % maxDelayInFrames
 
     continue_cycle:
         subps tmp, ones            ; corrijo un offset de 1 que hay (indices es framesReadTotal+eff_i+1, y en la cuenta anterior a mod_maxdelay necesito sacar ese 1)
@@ -194,13 +205,25 @@ section .text
 
     ; CALCULO ARGUMENTO SENO ;
     single_arg_to_interval:
+        movss cmpflag, two_pi
+        cmpss cmpflag, sine_args, 0x01
+        ptest cmpflag, cmpflag
+        jz single_arg_to_interval_cont
+
+        movss tmp, sine_args
+        divss tmp, two_pi
+        roundss tmp, tmp, 01b
+        mulss tmp, two_pi
+        subss sine_args, tmp
+
+    single_arg_to_interval_cont:
         movss cmpflag, pi
         cmpss cmpflag, sine_args, 0x01
         ptest cmpflag, cmpflag
         jz single_calc_sine
 
-        subss sine_args, pi           ; no necesito usar el cmpflag como mask, porque sólo comparé un valor
-        jmp single_arg_to_interval
+        andps cmpflag, two_pi
+        subss sine_args, cmpflag
 
     ; CALCULO SENO ;
     single_calc_sine:
@@ -251,8 +274,11 @@ section .text
 
         jz continue_single_cycle
 
-        subss tmp, max_delays
-        jmp single_mod_maxdelay
+        movss tmp1, tmp
+        divss tmp1, max_delays
+        roundss tmp1, tmp1, 01b
+        mulss tmp1, max_delays
+        subss tmp, tmp1
 
     continue_single_cycle:
         subss tmp, ones

@@ -233,6 +233,7 @@ void flanger_c(float delayInSec, float rate, float amp) {
             float current_sin = fabs(sinf(2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate)));
             unsigned int current_delay = ceil(current_sin*delayInFrames);
             int eff_index = (((framesReadTotal)+eff_i)-current_delay);  // Indice del efecto
+            //printf("%5d %1.6f %5d %5d\n", framesReadTotal+eff_i, current_sin, current_delay, eff_index%maxDelayInFrames);
 
             if (inFileStr.channels == 2) {
                 dataBuffEffect[eff_i] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1];

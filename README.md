@@ -26,7 +26,7 @@ Efectos
   * ~~Hecho en C.~~
   * ASM: falta.             || NEXT
   * Ver diferencias.
-  * Agregar tiempo restante al buffer.
+  * ~~Agregar tiempo restante al buffer.~~ No hace falta.
 
 
 * Bitcrusher:
