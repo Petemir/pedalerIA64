@@ -85,6 +85,7 @@ extern void flanger_index_calc(unsigned int *bufferIn, unsigned long int framesR
 
 void vibrato_asm_caller(float depth, float mod);
 extern void vibrato_asm(float *bufferIn, float *bufferOut, float *circularBuffer, float *bufferIndex, float delay, int *circularBufferHead, int *circularBufferEnd, int channels);
+extern void vibrato_index_calc(float *bufferIn, unsigned long int bufferLength, unsigned long int framesReadTotal, float mod, float depth);
 
 void bitcrusher_asm_caller(int bitDeph, int bitRate);
 extern void bitcrusher_asm(float *bufferIn, float *bufferOut, int bufferLen, float *steps, float normFreq, float *phasor, float *last, int channels);

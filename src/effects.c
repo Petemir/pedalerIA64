@@ -299,13 +299,17 @@ void vibrato_c(float depth, float mod) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-    // [Lecto-escritura de datos
+    // [Lecto-escritura de datos]
+    //printf("f+eff_i\t\tsin_arg\t\tc_mod\t\ttap\n");
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
             float current_mod = sinf(mod*2*M_PI*(framesReadTotal+eff_i+1));
             eff_i++;
             float tap = 1+delay+depth*current_mod;
+
+    //        printf("%d\t\t%f\t\t%f\t\t%f\n", framesReadTotal+eff_i-1, mod*2*M_PI*(framesReadTotal+eff_i), current_mod, tap);
+            //printf("%d\t\t%f\n", framesReadTotal+eff_i-1, tap);
             int n = floor(tap);
             float frac = tap - n;
 

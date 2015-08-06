@@ -240,6 +240,7 @@ void vibrato_asm_caller(float depth, float mod) {
     float delay = depth;    // Se usan dos nombres por claridad, pero valen siempre lo mismo
     delay = round(delay*inFileStr.samplerate);
     depth = round(depth*inFileStr.samplerate);
+    mod = mod/inFileStr.samplerate;
 
     unsigned int delayInFrames = floor(2+delay+depth*2);
     unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
@@ -255,7 +256,6 @@ void vibrato_asm_caller(float depth, float mod) {
 
     float *dataBuffIndex = (float*)malloc(maxDelayInFrames*sizeof(float));
 
-    mod = mod/inFileStr.samplerate;
 
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
@@ -292,7 +292,16 @@ void vibrato_asm_caller(float depth, float mod) {
         printf("%x.\n", &dataBuffEffectHead);
         printf("%x.\n", &dataBuffEffectEnd);
         printf("%d.\n", inFileStr.channels);
-        */MEDIR_TIEMPO_START(start);
+        */
+        MEDIR_TIEMPO_START(start);
+        vibrato_index_calc(dataBuffIndex, framesRead, framesReadTotal, mod, depth);
+        MEDIR_TIEMPO_STOP(end);
+
+        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
+            printf("%d %f\n", framesReadTotal+eff_i, dataBuffIndex[eff_i]);
+        }*/
+
+        MEDIR_TIEMPO_START(start);
         vibrato_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, delay, &dataBuffEffectHead, &dataBuffEffectEnd, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;

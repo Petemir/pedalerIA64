@@ -34,14 +34,13 @@ global flanger_index_calc
 %define delays xmm14
 %define max_delays xmm15
 
-_numbers12 dq 0x400000003f800000    ; | 2 | 1 |
-_numbers34 dq 0x4080000040400000    ; | 4 | 3 |
+_numbers12 dq 0x400000003f800000    ; |2.0|1.0|
+_numbers34 dq 0x4080000040400000    ; |4.0|3.0|
 
 section .text
     flanger_index_calc:
     push rbp        ; convención C
     mov rbp, rsp
-    ;sub rsp, N    ; espacio para variables locales
     push rbx
     push r12
     push r13
@@ -51,13 +50,13 @@ section .text
     ; SETUP ;
     shufps rates, rates, 0x00   ; rates = |rate|rate|rate|rate|
 
-    movhps indices, [_numbers34]    ; indices = | 4 | 3 | x | x |
-    movlps indices, [_numbers12]    ; indices = | 4 | 3 | 1 | 2 |
+    movhps indices, [_numbers34]    ; indices = |4.0|3.0|x|x|
+    movlps indices, [_numbers12]    ; indices = |4.0|3.0|2.0|1.0|
 
     movd tmp, framesReadTotal
     shufps tmp, tmp, 0x00
     cvtdq2ps tmp, tmp     ; (float)framesReadTotal
-    addps indices, tmp    ; indices = framesReadTotal+|4|3|2|1|
+    addps indices, tmp    ; indices = framesReadTotal+|4.0|3.0|2.0|1.0|
 
     movd delays, delayInFrames
     shufps delays, delays, 0x00     ; delays = |delayInFrames|delayInFrames|delayInFrames|delayInFrames|
@@ -79,9 +78,9 @@ section .text
     shufps ones, ones, 0x00   ; ones = |1.0|1.0|1.0|1.0|
     cvtps2dq ones, ones       ; ones = (int) 1.0 = 1
 
-    mov eax, 0x40800000
+    mov eax, 0x40800000 ; 4.0
     movd inc_index, eax
-    shufps inc_index, inc_index, 0x00   ; inc_index = |4|4|4|4|
+    shufps inc_index, inc_index, 0x00   ; inc_index = |4.0|4.0|4.0|4.0|
 
     mov eax, 0x3fa2f983 ; 4/pi ~= 1.2732395
     movd Bconstant, eax
@@ -98,7 +97,7 @@ section .text
 
     cycle:
         cmp length, 4
-        jl single_cycle_setup
+        jl single_sine_arg
 
     ; CALCULO ARGUMENTOS DEL SENO ;
     cycle_sine_args:
@@ -193,9 +192,8 @@ section .text
 
         jmp cycle
 
-    single_cycle_setup:
-        shufps indices, indices, 0xFF ; pongo el indice más grande en todo el registro
-    single_cycle:
+    ; CALCULO ARGUMENTO SENO ;
+    single_sine_arg:
         cmp length, 0
         je fin
 
@@ -203,27 +201,26 @@ section .text
         mulss sine_args, rates
         mulss sine_args, two_pi
 
-    ; CALCULO ARGUMENTO SENO ;
-    single_arg_to_interval:
-        movss cmpflag, two_pi
-        cmpss cmpflag, sine_args, 0x01
-        ptest cmpflag, cmpflag
-        jz single_arg_to_interval_cont
+        single_arg_to_interval:
+            movss cmpflag, two_pi
+            cmpss cmpflag, sine_args, 0x01
+            ptest cmpflag, cmpflag
+            jz single_arg_to_interval_cont
 
-        movss tmp, sine_args
-        divss tmp, two_pi
-        roundss tmp, tmp, 01b
-        mulss tmp, two_pi
-        subss sine_args, tmp
+            movss tmp, sine_args
+            divss tmp, two_pi
+            roundss tmp, tmp, 01b
+            mulss tmp, two_pi
+            subss sine_args, tmp
 
-    single_arg_to_interval_cont:
-        movss cmpflag, pi
-        cmpss cmpflag, sine_args, 0x01
-        ptest cmpflag, cmpflag
-        jz single_calc_sine
+        single_arg_to_interval_cont:
+            movss cmpflag, pi
+            cmpss cmpflag, sine_args, 0x01
+            ptest cmpflag, cmpflag
+            jz single_calc_sine
 
-        andps cmpflag, two_pi
-        subss sine_args, cmpflag
+            andps cmpflag, two_pi
+            subss sine_args, cmpflag
 
     ; CALCULO SENO ;
     single_calc_sine:
@@ -290,14 +287,13 @@ section .text
 
         sub length, 1
         add input, 4
-        jmp single_cycle
+        jmp single_sine_arg
 
     fin:
         pop r15
         pop r14
         pop r13
         pop r12
-        ;add rsp, N
         pop rbx
         pop rbp
         ret

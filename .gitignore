@@ -32,3 +32,6 @@ guitar-*.wav
 
 # callgrind
 callgrind.out.*
+
+# VIM
+.*.swp
