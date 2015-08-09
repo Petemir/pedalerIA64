@@ -102,6 +102,8 @@ section .text
         movlpd stereotmp, input     ; stereotmp = |0.5*dataBuffIn[2+3]|0.5*dataBuffIn[0+1]|
 
         add dataBuffIn, 16
+        sub framesRead, 4
+
         movaps input, [dataBuffIn]  ; input = |dataBuffIn[7]|dataBuffIn[6]|dataBuffIn[5]|dataBuffIn[4]|
         mulps input, halves         ; input = 0.5*dataBuffIn[4..7]
         movaps tmp, input               ; tmp = input
@@ -110,8 +112,6 @@ section .text
         addps input, tmp              ; input = |...|...|0.5*dataBuffIn[7+6]|0.5*dataBuffIn[5+4]|
         movlhps input, input          ; input = |0.5*dataBuffIn[7+6]|0.5*dataBuffIn[5+4]|...|...|
         movlpd input, stereotmp       ; input = 0.5*dataBuffIn[|(7+6)|(5+4)|(3+2)|(1+0)|]
-
-        sub framesRead, 4
 
     cycle_common:
         addps phasors, sumFreqs     ; phasor = phasor + |normFreq*4|normFreq*3|normFreq*2|normFreq*1|
@@ -125,17 +125,16 @@ section .text
         movaps tmp, input
         punpckldq tmp, lasts
         movaps [dataBuffOut], tmp
-
         add dataBuffOut, 16
 
         movaps tmp, input
         punpckhdq tmp, lasts
         movaps [dataBuffOut], tmp
+        add dataBuffOut, 16
 
         shufps phasors, phasors, 0xFF
 
         add dataBuffIn, 16
-        add dataBuffOut, 16
         sub framesRead, 4
         jmp cycle
 
@@ -165,7 +164,7 @@ section .text
         movq [dataBuffOut], input
 
         add dataBuffIn, 4
-        add dataBuffOut, 4
+        add dataBuffOut, 8
         sub framesRead, 1
         jmp remaining_frames_mono
 
@@ -186,6 +185,7 @@ section .text
         add dataBuffIn, 8
         add dataBuffOut, 8
         sub framesRead, 2
+        jmp remaining_frames_stereo
 
     fin:
     ; tengo que mover el ultimo phasors hacia [phasor]

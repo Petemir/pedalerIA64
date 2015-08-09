@@ -65,17 +65,17 @@ section .text
     mov r10d, [dataBuffEffect+4*ebx]
     mov index_1, r10d
 
-    shufps xmm3, xmm3, 00111001b ; xmm3 = 1 | 2 | 3 | 0 |
+    shufps xmm3, xmm3, 00111001b ; xmm3 =|0|3|2|1|
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+1]
     mov r10d, [dataBuffEffect+4*ebx]
     mov index_2, r10d
 
-    shufps xmm3, xmm3, 00111001b ; xmm3 = 2 | 3 | 0 | 1 |
+    shufps xmm3, xmm3, 00111001b ; xmm3 = |1|0|3|2|
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+2]
     mov r10d, [dataBuffEffect+4*ebx]
     mov index_3, r10d
 
-    shufps xmm3, xmm3, 00111001b ; xmm3 = 3 | 0 | 1 | 2 |
+    shufps xmm3, xmm3, 00111001b ; xmm3 = |2|1|0|3|
     movd ebx, xmm3              ; ebx = dataBuffIndex[eff_i+3]
     mov r10d, [dataBuffEffect+4*ebx]
     mov index_4, r10d

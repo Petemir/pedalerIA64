@@ -299,6 +299,7 @@ void vibrato_c(float depth, float mod) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
+    printf("dbEnd %d\n", dataBuffEffectEnd);
     // [Lecto-escritura de datos]
     //printf("f+eff_i\t\tsin_arg\t\tc_mod\t\ttap\n");
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
@@ -324,6 +325,7 @@ void vibrato_c(float depth, float mod) {
             dataBuffEffectHead--;
             dataBuffOut[out_i++]  = dataBuffEffect[((dataBuffEffectHead-1)+n+1) % dataBuffEffectEnd+1]*frac+dataBuffEffect[((dataBuffEffectHead-1)+n) % dataBuffEffectEnd+1]*(1-frac);
 
+            printf("eff_i %d dbEH-1 %d dbEH-1+n+1 %d dbEH-1+n %d modDBE+1 %d modDBE+1 %d frac %f out_i %f out_i+1 %f\n", eff_i-1, dataBuffEffectHead-1, dataBuffEffectHead-1+n+1, dataBuffEffectHead-1+n, ((dataBuffEffectHead-1)+n+1) % dataBuffEffectEnd+1,((dataBuffEffectHead-1)+n) % dataBuffEffectEnd+1, frac, dataBuffOut[out_i-2], dataBuffOut[out_i-1]);
             if (dataBuffEffectHead == 0) { dataBuffEffectHead = dataBuffEffectEnd; }
         }
         MEDIR_TIEMPO_STOP(end);
