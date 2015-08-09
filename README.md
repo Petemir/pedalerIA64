@@ -20,11 +20,12 @@ Efectos
   * ~~ASM: hecho.~~
   * ~~Corroborar si hay diferencias: hecho.~~
   * ~~Probar con varios parametros: hecho.~~
+  * Rehacer los audios.
 
 
 * Vibrato:
-  * ~~Hecho en C.~~
-  * ASM: falta.             || NEXT
+  * ~~Hecho en C.~~         || CHEQUEAR ERRORES VALGRIND
+  * ASM: falta.             || CASI, CHEQUEAR MONO, Y POQUITO DE STEREO
   * Ver diferencias.
   * ~~Agregar tiempo restante al buffer.~~ No hace falta.
 
