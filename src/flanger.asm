@@ -169,7 +169,7 @@ section .text
     ; frames restantes, procesamos dos floats (canal izquierdo y derecho)
     ; dataBuffOut[i] = 0.5*(dataBuffIn[i]+dataBuffIn[i+1])
 
-    movaps xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[0] | dataBuffIn[1]
+    movd xmm1, [dataBuffIn]   ; xmm1 = dataBuffIn[0] | dataBuffIn[1]
     mulps xmm1, mitad           ; xmm1 = 0.5*xmm1
     movaps xmm3, xmm1           ; xmm3 = xmm1
     shufps xmm3, xmm3, 01000000b; xmm3 = dataBuffIn[1] | ...
