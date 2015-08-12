@@ -287,9 +287,7 @@ void vibrato_c(float depth, float mod) {
     // Buffer circular
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));
 
-    int dataBuffEffectEnd, dataBuffEffectHead;
-    dataBuffEffectEnd = dataBuffEffectHead = maxDelayInFrames;
-
+    int dataBuffEffectHead = maxDelayInFrames-1;
     mod = mod/inFileStr.samplerate;
 
     // Limpio buffers
@@ -299,16 +297,15 @@ void vibrato_c(float depth, float mod) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-    printf("dbEnd %d\n", dataBuffEffectEnd);
     // [Lecto-escritura de datos]
     //printf("f+eff_i\t\tsin_arg\t\tc_mod\t\ttap\n");
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            float sine_arg = mod*2*M_PI*(framesReadTotal+eff_i+1);
             float current_mod = sinf(mod*2*M_PI*(framesReadTotal+eff_i+1));
             eff_i++;
             float tap = 1+delay+depth*current_mod;
-
     //        printf("%d\t\t%f\t\t%f\t\t%f\n", framesReadTotal+eff_i-1, mod*2*M_PI*(framesReadTotal+eff_i), current_mod, tap);
             //printf("%d\t\t%f\n", framesReadTotal+eff_i-1, tap);
             int n = floor(tap);
@@ -323,10 +320,14 @@ void vibrato_c(float depth, float mod) {
 
             dataBuffOut[out_i++]  = dataBuffEffect[dataBuffEffectHead];  // Sonido seco en mono, promedio de los canales en stereo
             dataBuffEffectHead--;
-            dataBuffOut[out_i++]  = dataBuffEffect[((dataBuffEffectHead-1)+n+1) % dataBuffEffectEnd+1]*frac+dataBuffEffect[((dataBuffEffectHead-1)+n) % dataBuffEffectEnd+1]*(1-frac);
+            if (dataBuffEffectHead == -1) { dataBuffEffectHead = maxDelayInFrames-1; }
+            int index_a = ((dataBuffEffectHead)+n+1) % (maxDelayInFrames);
+            int index_b = ((dataBuffEffectHead)+n) % (maxDelayInFrames);
+            float a = dataBuffEffect[index_a];
+            float b = dataBuffEffect[index_b];
+            dataBuffOut[out_i++]  = a*frac+b*(1-frac);
 
-            printf("eff_i %d dbEH-1 %d dbEH-1+n+1 %d dbEH-1+n %d modDBE+1 %d modDBE+1 %d frac %f out_i %f out_i+1 %f\n", eff_i-1, dataBuffEffectHead-1, dataBuffEffectHead-1+n+1, dataBuffEffectHead-1+n, ((dataBuffEffectHead-1)+n+1) % dataBuffEffectEnd+1,((dataBuffEffectHead-1)+n) % dataBuffEffectEnd+1, frac, dataBuffOut[out_i-2], dataBuffOut[out_i-1]);
-            if (dataBuffEffectHead == 0) { dataBuffEffectHead = dataBuffEffectEnd; }
+//            printf("total %d eff_i %d dbEH %d dbEH+n+1 %d dbEH+n %d modDBE %d modDBE+1 %d a %f b %f sine_arg %f sine %f n %d frac %f out_i %f out_i+1 %f\n", framesReadTotal+eff_i, eff_i, dataBuffEffectHead, dataBuffEffectHead+n+1, dataBuffEffectHead+n, index_a, index_b, a, b, sine_arg, current_mod, n, frac, dataBuffOut[out_i-2], dataBuffOut[out_i-1]);
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
