@@ -251,11 +251,10 @@ void vibrato_asm_caller(float depth, float mod) {
     dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
     // Buffer circular
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));
-    int dataBuffEffectEnd, dataBuffEffectHead;
-    dataBuffEffectEnd = dataBuffEffectHead = maxDelayInFrames;
+    int dataBuffEffectHead = maxDelayInFrames-1;
 
     float *dataBuffIndex = (float*)malloc(maxDelayInFrames*sizeof(float));
-    printf("start %x end %x\n", dataBuffEffect, &dataBuffEffect[dataBuffEffectEnd]);
+    printf("start %x end %x delay %f depth %f\n", dataBuffEffect, &dataBuffEffect[maxDelayInFrames], delay, depth);
 
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
@@ -266,7 +265,7 @@ void vibrato_asm_caller(float depth, float mod) {
     start = end = cantCiclos = framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
-        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i = eff_i) {
+        for (unsigned int eff_i = 0; eff_i < framesRead; eff_i = eff_i) {
             v4sf index_vector;
 
             for (unsigned int j = 0; j < 4; j++) {
@@ -281,9 +280,10 @@ void vibrato_asm_caller(float depth, float mod) {
 
             eff_i -= 4;
             for (unsigned int j = 0; j < 4 && eff_i < framesRead; j++) {
-                dataBuffIndex[eff_i] = index_vector[j];
+                dataBuffIndex[eff_i] = 1+delay+depth*index_vector[j];
+                eff_i++;
             }
-        }*/
+        }
         /*printf("%x.\n", dataBuffIn);
         printf("%x.\n", dataBuffOut);
         printf("%x.\n", dataBuffEffect);
@@ -293,21 +293,21 @@ void vibrato_asm_caller(float depth, float mod) {
         printf("%x.\n", &dataBuffEffectEnd);
         printf("%d.\n", inFileStr.channels);
         */
-        MEDIR_TIEMPO_START(start);
+        /*MEDIR_TIEMPO_START(start);
         vibrato_index_calc(dataBuffIndex, framesRead, framesReadTotal, mod, depth);
-        MEDIR_TIEMPO_STOP(end);
+        MEDIR_TIEMPO_STOP(end);*/
 
         /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
             printf("%d %f\n", framesReadTotal+eff_i, dataBuffIndex[eff_i]);
         }*/
-        printf("head: %x %d end %x %d \n", &dataBuffEffectHead, dataBuffEffectHead, dataBuffEffectEnd, dataBuffEffectEnd);
+        //printf("head: %x %d end %x %d \n", &dataBuffEffectHead, dataBuffEffectHead, dataBuffEffectEnd, dataBuffEffectEnd);
         MEDIR_TIEMPO_START(start);
-        vibrato_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, &dataBuffEffectHead, &dataBuffEffectEnd, framesRead*inFileStr.channels, inFileStr.channels);
+        vibrato_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, &dataBuffEffectHead, &maxDelayInFrames, framesRead*inFileStr.channels, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
         for (unsigned int eff_i = 0, i = 0; eff_i < framesRead; eff_i++) {
-            printf("%d %d %f %f\n", eff_i, framesReadTotal+eff_i, dataBuffOut[i++], dataBuffOut[i++]);
+            printf("%d %d %f %f %f\n", eff_i, framesReadTotal+eff_i, dataBuffIndex[eff_i],  dataBuffOut[i++], dataBuffOut[i++]);
         }
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);

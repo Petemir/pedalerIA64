@@ -22,6 +22,8 @@ global vibrato_asm
 %define circularBufferHead r8
 %define circularBufferEnd r9
 
+%define head ebx
+
 %define length_mem [rbp+16]
 %define channels_mem [rbp+24]
 %define length r10d
@@ -82,6 +84,8 @@ section .text
         movd ones, eax
         shufps ones, ones, 0x00   ; ones = |1.0|1.0|1.0|1.0|
 
+        ; mov head, 7960
+
         movss circularBufferIndices, [circularBufferHead]
         shufps circularBufferIndices, circularBufferIndices, 0x00
         cvtdq2ps circularBufferIndices, circularBufferIndices ; (float)circularBufferIndices
@@ -135,63 +139,74 @@ section .text
         sub length, 4
 
     cycle_common:
-        cvtss2si ebx, circularBufferIndices
-        movaps [circularBuffer+4*ebx], input ; dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i] caso mono
+        cvtss2si head, circularBufferIndices
+        sub head, 3
+        movaps [circularBuffer+4*head], input; dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i] caso mono
         ; dataBuffEffect[dataBuffEffectHead] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1] caso stereo
 
         subps circularBufferIndices, ones   ; dataBuffEffectHead--
 
+        movaps cmpflag, circularBufferIndices
+        pxor tmp3, tmp3
+        cmpps cmpflag, tmp3, 1 ; cmpflag = (circularBufferIndices < 0)
+        ptest cmpflag, cmpflag
+        jz continue_cycle_zero
+
+        andps cmpflag, circularBufferEnds
+        addps circularBufferIndices, cmpflag
+
+    continue_cycle_zero:
         movaps fracs, [bufferIndex]   ; fracs = tap
         roundps ns, fracs, 01b        ; ns = floor(tap) = n
         subps fracs, ns               ; fracs = tap-floor(tap) = parte fraccionaria
 ;        cvtps2dq ns, ns               ; ns = (int) ns
 
         movaps tmp, circularBufferIndices ; tmp = dataBuffEffectHead
-        subps tmp, ones     ; tmp = dataBuffEffectHead-1
-        addps tmp, ns       ; tmp = dataBuffEffectHead-1+n
-        movaps tmp2, tmp    ; tmp2 = dataBuffEffectHead-1+n
-        addps tmp, ones     ; tmp = dataBuffEffectHead-1+n+1
+        ;subps tmp, ones   ; tmp = dataBuffEffectHead-1
+        addps tmp, ns      ; tmp = dataBuffEffectHead+n
+        movaps tmp2, tmp   ; tmp2 = dataBuffEffectHead+n
+        addps tmp, ones    ; tmp = dataBuffEffectHead+n+1
 
-    non_negative_one:
-        movaps cmpflag, tmp
-        pxor tmp3, tmp3
-        cmpps cmpflag, tmp3, 2
-        ptest cmpflag, cmpflag
-        jz non_negative_two
+;    non_negative_one:
+;        movaps cmpflag, tmp
+;        pxor tmp3, tmp3
+;        cmpps cmpflag, tmp3, 2
+;        ptest cmpflag, cmpflag
+;        jz non_negative_two
 
-        andps cmpflag, circularBufferEnds
-        addps tmp, cmpflag
+;        andps cmpflag, circularBufferEnds
+;        addps tmp, cmpflag
 
-    non_negative_two:
-        movaps cmpflag, tmp2
-        pxor tmp3, tmp3
-        cmpps cmpflag, tmp3, 2
-        ptest cmpflag, cmpflag
-        jz continue_cycle_one
+;    non_negative_two:
+;        movaps cmpflag, tmp2
+;        pxor tmp3, tmp3
+;        cmpps cmpflag, tmp3, 2
+;        ptest cmpflag, cmpflag
+;        jz continue_cycle_one
 
-        andps cmpflag, circularBufferEnds
-        addps tmp2, cmpflag
+;        andps cmpflag, circularBufferEnds
+;        addps tmp2, cmpflag
 
     continue_cycle_one:
         movaps cmpflag, circularBufferEnds
-        cmpps cmpflag, tmp, 2 ; cmpflag = circularBufferEnd <= dataBuffEffectHead-1+n+1
+        cmpps cmpflag, tmp, 2 ; cmpflag = circularBufferEnd <= dataBuffEffectHead+n+1
         ptest cmpflag, cmpflag
         jz modulus_two
 
         modulus_one:
             andps cmpflag, circularBufferEnds
-            subps tmp, cmpflag  ; tmp = (dataBuffEffectHead-1+n+1) % dataBuffEffectEnd
-            addps tmp, ones     ; tmp = (dataBuffEffectHead-1+n+1) % dataBuffEffectEnd +1
+            subps tmp, cmpflag  ; tmp = (dataBuffEffectHead+n+1) % dataBuffEffectEnd
+            ;addps tmp, ones     ; tmp = (dataBuffEffectHead-1+n+1) % dataBuffEffectEnd +1
 
         modulus_two:
             movaps cmpflag, circularBufferEnds
-            cmpps cmpflag, tmp2, 2 ; cmpflag = circularBufferEnd <= dataBuffEffectHead-1+n
+            cmpps cmpflag, tmp2, 2 ; cmpflag = circularBufferEnd <= dataBuffEffectHead+n
             ptest cmpflag, cmpflag
             jz continue_cycle_two
 
             andps cmpflag, circularBufferEnds
-            subps tmp2, cmpflag ; tmp2 = (dataBuffEffectHead-1+n) % dataBuffEffectEnd
-            addps tmp2, ones    ; tmp2 = (dataBuffEffectHead-1+n) % dataBuffEffectEnd +1
+            subps tmp2, cmpflag ; tmp2 = (dataBuffEffectHead+n) % dataBuffEffectEnd
+            ;addps tmp2, ones    ; tmp2 = (dataBuffEffectHead-1+n) % dataBuffEffectEnd +1
 
     ; hasta acá, ya tengo los índices para la interpolación lineal ;
     continue_cycle_two:
@@ -247,7 +262,7 @@ section .text
 
         movaps cmpflag, circularBufferIndices
         pxor tmp3, tmp3
-        cmpps cmpflag, tmp3, 2 ; cmpflag = (circularBufferIndices <= 0)
+        cmpps cmpflag, tmp3, 1 ; cmpflag = (circularBufferIndices < 0)
         ptest cmpflag, cmpflag
         jz finish_cycle
 
@@ -261,22 +276,38 @@ section .text
         ;movaps circularBufferIndices, cmpflag   ; dataBuffEffectHead == 0 => dataBuffEffectHead = dataBuffEffectEnd
 
         finish_cycle:
-        subps circularBufferIndices, sub_index  ; ya resté uno antes, ahora sólo resto tres en cada índice
+            subps circularBufferIndices, sub_index  ; ya resté uno antes, ahora sólo resto tres en cada índice
 
-        movaps tmp3, input
-        punpckldq tmp3, tmp
-        movaps [dataBuffOut], tmp3
-        add dataBuffOut, 16
+            movaps cmpflag, circularBufferIndices
+            pxor tmp3, tmp3
+            cmpps cmpflag, tmp3, 1 ; cmpflag = (circularBufferIndices < 0)
+            ptest cmpflag, cmpflag
+            jz continue_finish_cycle
 
-        movaps tmp3, input
-        punpckhdq tmp3, tmp
-        movaps [dataBuffOut], tmp3
-        add dataBuffOut, 16
+            andps cmpflag, circularBufferEnds
+            addps circularBufferIndices, cmpflag
 
-        add bufferIndex, 16
-        add dataBuffIn, 16
-        sub length, 4
-        jmp cycle
+        continue_finish_cycle:
+            movaps tmp3, input
+            punpckldq tmp3, tmp
+            movaps [dataBuffOut], tmp3
+            add dataBuffOut, 16
+
+            movaps tmp3, input
+            punpckhdq tmp3, tmp
+            movaps [dataBuffOut], tmp3
+            add dataBuffOut, 16
+
+            sub head, 4
+            cmp head, 0
+            jg finish_cycle_continue
+            mov head, 7960
+
+        finish_cycle_continue:
+            add bufferIndex, 16
+            add dataBuffIn, 16
+            sub length, 4
+            jmp cycle
 
     remaining_frames:
         cmp eax, 2
@@ -306,8 +337,9 @@ section .text
         sub length, 1
 
     remaining_frames_cycle_common:
-        cvtss2si ebx, circularBufferIndices
-        movaps [circularBuffer+4*ebx-32], input
+        cvtss2si head, circularBufferIndices
+        sub head, 1;
+        movd [circularBuffer+4*head], input
 
         subss circularBufferIndices, ones
 
@@ -373,9 +405,25 @@ section .text
     finish_cycle_single:
         subss circularBufferIndices, sub_index
 
+        movss cmpflag, circularBufferIndices
+        pxor tmp3, tmp3
+        cmpss cmpflag, tmp3, 1 ; cmpflag = (circularBufferIndices < 0)
+        ptest cmpflag, cmpflag
+        jz continue_finish_cycle_single
+
+        andps cmpflag, circularBufferEnds
+        addss circularBufferIndices, cmpflag
+
+    continue_finish_cycle_single:
         punpckldq input, tmp
         movq [dataBuffOut], input
 
+        sub head, 1
+        cmp head, 0
+        jg finish_cycle_single_continue
+        mov head, 7960
+
+    finish_cycle_single_continue:
         add dataBuffOut, 8
         add bufferIndex, 1
         add dataBuffIn, 4

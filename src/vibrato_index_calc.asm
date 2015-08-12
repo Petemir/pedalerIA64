@@ -119,7 +119,6 @@ section .text
 
             andps cmpflag, two_pi           ; cmpflag = 2*pi en los lugares donde pi < sine_args
             subps sine_args, cmpflag        ; ahora todo esta entre (-pi, pi)
-
     calc_sine:
         movaps firstTerm, sine_args
 
@@ -147,12 +146,6 @@ section .text
 
         addps firstTerm, secondTerm     ; firstTerm = secondTerm+y = sine(sine_args) = current_mod
 
-;        movaps [input], firstTerm
-;        addps indices, inc_index
-;        sub length, 4
-;        add input, 16
-
-;       jmp cycle
     ; CALCULO INDICE ;
     calc_index:
         mulps firstTerm, depths         ; firstTerm = current_mod*depth
@@ -164,7 +157,6 @@ section .text
         addps indices, inc_index
         sub length, 4
         add input, 16
-
         jmp cycle
 
     ; calculo argumento seno ;
