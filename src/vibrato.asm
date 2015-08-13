@@ -141,7 +141,9 @@ section .text
     cycle_common:
         cvtss2si head, circularBufferIndices
         sub head, 3
-        movaps [circularBuffer+4*head], input; dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i] caso mono
+        movaps tmp3, input
+        shufps tmp3, tmp3, 00011011b
+        movaps [circularBuffer+4*head], tmp3; dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i] caso mono
         ; dataBuffEffect[dataBuffEffectHead] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1] caso stereo
 
         subps circularBufferIndices, ones   ; dataBuffEffectHead--
