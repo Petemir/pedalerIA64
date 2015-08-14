@@ -254,7 +254,7 @@ void vibrato_asm_caller(float depth, float mod) {
     int dataBuffEffectHead = maxDelayInFrames-1;
 
     float *dataBuffIndex = (float*)malloc(maxDelayInFrames*sizeof(float));
-    printf("start %x end %x delay %f depth %f\n", dataBuffEffect, &dataBuffEffect[maxDelayInFrames], delay, depth);
+    //printf("start %x end %x delay %f depth %f\n", dataBuffIndex, &dataBuffIndex[maxDelayInFrames], delay, depth);
 
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
@@ -265,7 +265,7 @@ void vibrato_asm_caller(float depth, float mod) {
     start = end = cantCiclos = framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
-        for (unsigned int eff_i = 0; eff_i < framesRead; eff_i = eff_i) {
+        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i = eff_i) {
             v4sf index_vector;
 
             for (unsigned int j = 0; j < 4; j++) {
@@ -283,7 +283,7 @@ void vibrato_asm_caller(float depth, float mod) {
                 dataBuffIndex[eff_i] = 1+delay+depth*index_vector[j];
                 eff_i++;
             }
-        }
+        }*/
         /*printf("%x.\n", dataBuffIn);
         printf("%x.\n", dataBuffOut);
         printf("%x.\n", dataBuffEffect);
@@ -293,9 +293,9 @@ void vibrato_asm_caller(float depth, float mod) {
         printf("%x.\n", &dataBuffEffectEnd);
         printf("%d.\n", inFileStr.channels);
         */
-        /*MEDIR_TIEMPO_START(start);
+        MEDIR_TIEMPO_START(start);
         vibrato_index_calc(dataBuffIndex, framesRead, framesReadTotal, mod, depth);
-        MEDIR_TIEMPO_STOP(end);*/
+        MEDIR_TIEMPO_STOP(end);
 
         /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
             printf("%d %f\n", framesReadTotal+eff_i, dataBuffIndex[eff_i]);
@@ -306,9 +306,9 @@ void vibrato_asm_caller(float depth, float mod) {
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-        for (unsigned int eff_i = 0, i = 0; eff_i < framesRead; eff_i++) {
+/*        for (unsigned int eff_i = 0, i = 0; eff_i < framesRead; eff_i++) {
             printf("%d %d %f %f %f\n", eff_i, framesReadTotal+eff_i, dataBuffIndex[eff_i],  dataBuffOut[i++], dataBuffOut[i++]);
-        }
+        }*/
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);

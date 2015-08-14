@@ -297,6 +297,7 @@ void vibrato_c(float depth, float mod) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
+    //printf("dbEnd %d delay %f depth %f\n", maxDelayInFrames, delay, depth);
     // [Lecto-escritura de datos]
     //printf("f+eff_i\t\tsin_arg\t\tc_mod\t\ttap\n");
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
@@ -327,7 +328,7 @@ void vibrato_c(float depth, float mod) {
             float b = dataBuffEffect[index_b];
             dataBuffOut[out_i++]  = a*frac+b*(1-frac);
 
-//            printf("total %d eff_i %d dbEH %d dbEH+n+1 %d dbEH+n %d modDBE %d modDBE+1 %d a %f b %f sine_arg %f sine %f n %d frac %f out_i %f out_i+1 %f\n", framesReadTotal+eff_i, eff_i, dataBuffEffectHead, dataBuffEffectHead+n+1, dataBuffEffectHead+n, index_a, index_b, a, b, sine_arg, current_mod, n, frac, dataBuffOut[out_i-2], dataBuffOut[out_i-1]);
+    //        printf("total %d eff_i %d dbEH %d dbEH+n+1 %d dbEH+n %d modDBE %d modDBE+1 %d a %f b %f sine_arg %f sine %f n %d frac %f out_i %f out_i+1 %f\n", framesReadTotal+eff_i, eff_i, dataBuffEffectHead, dataBuffEffectHead+n+1, dataBuffEffectHead+n, index_a, index_b, a, b, sine_arg, current_mod, n, frac, dataBuffOut[out_i-2], dataBuffOut[out_i-1]);
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;

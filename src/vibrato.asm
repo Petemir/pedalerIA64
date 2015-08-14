@@ -347,7 +347,7 @@ section .text
         cmp length, 0
         je fin
 
-        movd input, [dataBuffIn]    ; input = |...|...|dataBuffIn[1]|dataBuffIn[0]|
+        movq input, [dataBuffIn]    ; input = |...|...|dataBuffIn[1]|dataBuffIn[0]|
         mulps input, halves   ; input = 0.5*input
         movaps tmp, input       ; tmp = input
         shufps tmp, tmp, 0x01 ; tmp = |...|...|...|dataBuffIn[1]
@@ -435,7 +435,7 @@ section .text
 ;        movss circularBufferIndices, cmpflag
 
     finish_cycle_single:
-        subss circularBufferIndices, ones
+;        subss circularBufferIndices, ones
 
         movss cmpflag, circularBufferIndices
         pxor tmp3, tmp3

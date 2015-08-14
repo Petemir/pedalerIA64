@@ -24,9 +24,9 @@ Efectos
 
 
 * Vibrato:
-  * ~~Hecho en C.~~         || CHEQUEAR ERRORES VALGRIND
-  * ASM: falta.             || CASI ESTAMOS, fijarse stereo con 0.001 y 1.0 (1 frame mal), probar varios parametros para asegurarse
-  * Ver diferencias.
+  * ~~Hecho en C.~~
+  * ~~ASM: falta.~~
+  * ~~Ver diferencias.~~
   * ~~Agregar tiempo restante al buffer.~~ No hace falta.
 
 
