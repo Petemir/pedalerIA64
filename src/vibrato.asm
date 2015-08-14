@@ -86,17 +86,19 @@ section .text
 
         ; mov head, 7960
 
-        movss circularBufferIndices, [circularBufferHead]
+        movd circularBufferEnds, [circularBufferEnd]
+        shufps circularBufferEnds, circularBufferEnds, 0x00
+        cvtdq2ps circularBufferEnds, circularBufferEnds ; (float)circularBufferEnds
+
+        movss circularBufferIndices, circularBufferEnds
+        subss circularBufferIndices, ones
+        ;[circularBufferHead]
         shufps circularBufferIndices, circularBufferIndices, 0x00
-        cvtdq2ps circularBufferIndices, circularBufferIndices ; (float)circularBufferIndices
+        ;cvtdq2ps circularBufferIndices, circularBufferIndices ; (float)circularBufferIndices
 
         movhps tmp, [_numbers32]
         movlps tmp, [_numbers10]
         subps circularBufferIndices, tmp ; circularBufferIndices = |head-3.0|head-2.0|head-1.0|head|
-
-        movd circularBufferEnds, [circularBufferEnd]
-        shufps circularBufferEnds, circularBufferEnds, 0x00
-        cvtdq2ps circularBufferEnds, circularBufferEnds ; (float)circularBufferEnds
 
         ; TODO -> CHEQUEO head==0
     cycle:
@@ -139,13 +141,7 @@ section .text
         sub length, 4
 
     cycle_common:
-        cvtss2si head, circularBufferIndices
-        sub head, 3
-        movaps tmp3, input
-        shufps tmp3, tmp3, 00011011b
-        movaps [circularBuffer+4*head], tmp3; dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i] caso mono
-        ; dataBuffEffect[dataBuffEffectHead] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1] caso stereo
-
+        movaps tmp, circularBufferIndices   ; lo uso en continue_cycle_zero
         subps circularBufferIndices, ones   ; dataBuffEffectHead--
 
         movaps cmpflag, circularBufferIndices
@@ -158,6 +154,37 @@ section .text
         addps circularBufferIndices, cmpflag
 
     continue_cycle_zero:
+        movaps tmp2, input
+;        shufps tmp2, tmp2, 00011011b
+        cvtps2dq tmp, tmp
+
+        movd head, tmp
+        movd eax, tmp2
+        mov [circularBuffer+4*head], eax
+
+        shufps tmp, tmp, 00111001b  ; tmp = |0|3|2|1|
+        shufps tmp2, tmp2, 00111001b; tmp2 = |0|3|2|1|
+        movd head, tmp
+        movd eax, tmp2
+        mov [circularBuffer+4*head], eax
+
+        shufps tmp, tmp, 00111001b  ; tmp = |1|0|3|2|
+        shufps tmp2, tmp2, 00111001b; tmp2 = |1|0|3|2|
+        movd head, tmp
+        movd eax, tmp2
+        mov [circularBuffer+4*head], eax
+
+        shufps tmp, tmp, 00111001b  ; tmp = |2|1|0|3|
+        shufps tmp2, tmp2, 00111001b; tmp2 = |2|1|0|3|
+        movd head, tmp
+        movd eax, tmp2
+        mov [circularBuffer+4*head], eax
+
+;        movaps tmp3, input
+;        shufps tmp3, tmp3, 00011011b
+;        movups [circularBuffer+4*head], tmp3; dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i] caso mono
+        ; dataBuffEffect[dataBuffEffectHead] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1] caso stereo
+
         movaps fracs, [bufferIndex]   ; fracs = tap
         roundps ns, fracs, 01b        ; ns = floor(tap) = n
         subps fracs, ns               ; fracs = tap-floor(tap) = parte fraccionaria
@@ -300,19 +327,13 @@ section .text
             movaps [dataBuffOut], tmp3
             add dataBuffOut, 16
 
-            sub head, 4
-            cmp head, 0
-            jg finish_cycle_continue
-            mov head, 7960
-
-        finish_cycle_continue:
             add bufferIndex, 16
             add dataBuffIn, 16
             sub length, 4
             jmp cycle
 
     remaining_frames:
-        cmp eax, 2
+        cmp channels, 2
         je remaining_frames_stereo_input
 
     remaining_frames_mono_input:
@@ -340,7 +361,14 @@ section .text
 
     remaining_frames_cycle_common:
         cvtss2si head, circularBufferIndices
-        sub head, 1;
+        ;sub head, 1
+        cmp head, 0
+        jge continue_remaining_frames_cycle_common
+
+        movss circularBufferIndices, circularBufferEnds
+        cvtss2si head, circularBufferEnds
+        sub head, 1
+    continue_remaining_frames_cycle_common:
         movd [circularBuffer+4*head], input
 
         subss circularBufferIndices, ones
@@ -350,7 +378,7 @@ section .text
         subss fracs, ns
 
         movss tmp, circularBufferIndices
-        subss tmp, ones
+        ;subss tmp, ones
         addss tmp, ns
         movss tmp2, tmp
         addss tmp, ones
@@ -362,7 +390,7 @@ section .text
 
         andps cmpflag, circularBufferEnds
         subss tmp, cmpflag
-        addss tmp, ones
+        ;addss tmp, ones
 
     continue_cycle_single_one:
         movss cmpflag, circularBufferEnds
@@ -372,7 +400,7 @@ section .text
 
         andps cmpflag, circularBufferEnds
         subss tmp2, cmpflag
-        addss tmp2, ones
+        ;addss tmp2, ones
 
     continue_cycle_single_two:
         cvtps2dq tmp, tmp
@@ -393,19 +421,21 @@ section .text
 
         movss cmpflag, circularBufferIndices
         pxor tmp3, tmp3
-        cmpss cmpflag, tmp3, 2
+        cmpss cmpflag, tmp3, 1
         ptest cmpflag, cmpflag
         jz finish_cycle_single
 
-        movss tmp3, circularBufferEnds
-        andps tmp3, cmpflag
-        andnps cmpflag, circularBufferIndices
+        andps cmpflag, circularBufferEnds
+        addss circularBufferIndices, cmpflag
+;        movss tmp3, circularBufferEnds
+;        andps tmp3, cmpflag
+;        andnps cmpflag, circularBufferIndices
 
-        addss cmpflag, tmp3
-        movss circularBufferIndices, cmpflag
+;        addss cmpflag, tmp3
+;        movss circularBufferIndices, cmpflag
 
     finish_cycle_single:
-        subss circularBufferIndices, sub_index
+        subss circularBufferIndices, ones
 
         movss cmpflag, circularBufferIndices
         pxor tmp3, tmp3
@@ -420,14 +450,8 @@ section .text
         punpckldq input, tmp
         movq [dataBuffOut], input
 
-        sub head, 1
-        cmp head, 0
-        jg finish_cycle_single_continue
-        mov head, 7960
-
-    finish_cycle_single_continue:
         add dataBuffOut, 8
-        add bufferIndex, 1
+        add bufferIndex, 4
         add dataBuffIn, 4
         sub length, 1
         jmp remaining_frames
