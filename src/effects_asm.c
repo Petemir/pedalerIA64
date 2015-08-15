@@ -329,3 +329,48 @@ void vibrato_asm_caller(float depth, float mod) {
     free(dataBuffEffect);
     // [/Limpieza]
 }
+
+void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
+    unsigned int bufferFrameSize = BUFFERSIZE*inFileStr.channels;
+    unsigned int bufferFrameSizeOut = BUFFERSIZE*outFileStr.channels;
+
+    dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
+    dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
+    float *dataBuffMod = (float*)malloc(BUFFERSIZE*sizeof(float));
+
+    // Limpio buffers
+    clean_buffer_c(dataBuffIn, bufferFrameSize);
+    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_c(dataBuffMod, BUFFERSIZE);
+
+    float delta = (float)wahfreq/inFileStr.samplerate;
+    float fc = 2*sin((float)(M_PI*minf)/inFileStr.samplerate);
+
+    start = end = cantCiclos = 0;
+    framesReadTotal = 0;
+    // [Lecto-escritura de datos]
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
+        MEDIR_TIEMPO_START(start);
+        wah_wah_index_calc(dataBuffMod, framesRead, framesReadTotal, minf, maxf, delta, &fc, inFileStr.samplerate);
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
+        framesReadTotal += framesRead;
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
+        sf_write_sync(outFilePtr);
+    }
+
+    // [/Lecto-escritura de datos]
+    printf("\tTiempo de ejecución:\n");
+    printf("\t  Comienzo                          : %lu\n", start);
+    printf("\t  Fin                               : %lu\n", end);
+    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
+    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
+    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
+
+    // [Limpieza]
+    free(dataBuffIn);
+    free(dataBuffOut);
+    free(dataBuffMod);
+    // [/Limpieza]
+}

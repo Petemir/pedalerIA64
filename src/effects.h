@@ -84,14 +84,14 @@ extern void flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, 
 extern void flanger_index_calc(unsigned int *bufferIn, unsigned long int framesRead, unsigned long int framesReadTotal, float rate, unsigned int delayInFrames, unsigned int maxDelayInFrames);
 
 void vibrato_asm_caller(float depth, float mod);
-extern void vibrato_asm(float *bufferIn, float *bufferOut, float *circularBuffer, float *bufferIndex, int *circularBufferHead, int *circularBufferEnd, unsigned long int framesRead, int channels);
-extern void vibrato_index_calc(float *bufferIn, unsigned long int bufferLength, unsigned long int framesReadTotal, float mod, float depth);
+extern void vibrato_asm(float *bufferIn, float *bufferOut, float *circularBuffer, float *bufferIndex, int *circularBufferHead, unsigned int *circularBufferEnd, unsigned long int framesRead, int channels);
+extern void vibrato_index_calc(float *bufferIndex, unsigned long int bufferLength, unsigned long int framesReadTotal, float mod, float depth);
 
 void bitcrusher_asm_caller(int bitDeph, int bitRate);
 extern void bitcrusher_asm(float *bufferIn, float *bufferOut, int bufferLen, float *steps, float normFreq, float *phasor, float *last, int channels);
 
-
-// void wah_wah_asm_caller();
+void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq);
+extern void wah_wah_index_calc(float *bufferMod, unsigned long int bufferLength, unsigned long int framesReadTotal, int minf, int maxf, float delta, float *fc, int samplerate);
 // extern void wah_wah_asm();
 
 

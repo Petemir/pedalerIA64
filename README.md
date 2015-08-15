@@ -28,6 +28,7 @@ Efectos
   * ~~ASM: falta.~~
   * ~~Ver diferencias.~~
   * ~~Agregar tiempo restante al buffer.~~ No hace falta.
+  * Ejemplos con varios parametros
 
 
 * Bitcrusher:
