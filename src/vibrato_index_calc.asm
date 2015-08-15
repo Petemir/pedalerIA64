@@ -33,8 +33,8 @@ global vibrato_index_calc
 %define Cconstant xmm13
 %define Pconstant xmm14
 
-_numbers12 dq 0x400000003f800000    ; | 2 | 1 |
-_numbers34 dq 0x4080000040400000    ; | 4 | 3 |
+_numbers12 dq 0x400000003f800000    ; | 2.0 | 1.0 |
+_numbers34 dq 0x4080000040400000    ; | 4.0 | 3.0 |
 
 section .text
     vibrato_index_calc:
