@@ -40,14 +40,14 @@ section .text
         shufps halves, halves, 0x00 ; halves = | 0.5 | 0.5 | 0.5 | 0.5 |
 
     cycle:
-        cmp eax, 2
+        cmp channels, 2
         je input_stereo
 
     input_mono:
         cmp length, 0
         je fin
         cmp length, 4
-        jl remaining_frames_mono
+        jl remaining_frames_mono_input
 
         movaps input, [dataBuffIn]
 
@@ -57,7 +57,7 @@ section .text
         cmp length, 0
         je fin
         cmp length, 8
-        jl remaining_frames_stereo
+        jl remaining_frames_stereo_input
 
         movaps input, [dataBuffIn]  ; input = |dataBuffIn[3]|dataBuffIn[2]|dataBuffIn[1]|dataBuffIn[0]|
         mulps input, halves         ; input = 0.5*dataBuffIn[0..3]
@@ -87,34 +87,37 @@ section .text
         sub length, 4
         jmp cycle
 
-    remaining_frames_mono:
+    remaining_frames:
+        cmp channels, 2
+        je remaining_frames_stereo_input
+
+    remaining_frames_mono_input:
         cmp length, 0
         je fin
 
-        ;; calculo efecto mono 1 frame ;;
+        movss input, [dataBuffIn]
+        jmp remaining_frames_cycle_common
 
-        add dataBuffIn, 4
-        add dataBuffOut, 4
-        sub length, 1
-        jmp remaining_frames_mono
-
-    remaining_frames_stereo
+    remaining_frames_stereo_input:
         cmp length, 0
         je fin
 
-        movd input, [dataBuffIn]    ; input = |...|...|dataBuffIn[1]|dataBuffIn[0]|
+        movq input, [dataBuffIn]    ; input = |...|...|dataBuffIn[1]|dataBuffIn[0]|
         mulps input, halves   ; input = 0.5*input
         movaps tmp, input       ; tmp = input
         shufps tmp, tmp, 0x01 ; tmp = |...|...|...|dataBuffIn[1]
 
-        ;; calculo efecto mono 1 frame 2 floats ;;
+        addss input, tmp      ; tmp = |...|...|...|0.5*dataBuffIn[0+1]
 
-        addss tmp, input      ; tmp = |...|...|...|0.5*dataBuffIn[0+1]
+        add dataBuffIn, 4
+        sub length, 1
 
-        add dataBuffIn, 8
+    remaining_frames_cycle_common:
+
         add dataBuffOut, 8
-        sub framesRead, 2
-        jmp remaining_frames_stereo
+        add dataBuffIn, 4
+        sub length, 1
+        jmp remaining_frames
 
     ; return en rax, o xmm0
     fin:
