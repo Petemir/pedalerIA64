@@ -45,8 +45,6 @@ global wah_wah_index_calc
 %define Pconstant xmm9          ; float
 %define triangleWaveSizes xmm10 ; float
 
-;_numbers12 dq 0x0000000200000001    ; | 2 | 1 |
-;_numbers34 dq 0x0000000400000003    ; | 4 | 3 |
 _numbers12 dq 0x400000003f800000    ; | 2.0 | 1.0 |
 _numbers34 dq 0x4080000040400000    ; | 4.0 | 3.0 |
 
@@ -79,7 +77,6 @@ section .text
     shufps ones, ones, 0x00   ; ones = |1.0|1.0|1.0|1.0|
 
     mov eax, 0x40800000 ; 4.0
-    ;mov eax, 0x00000004 ; 4
     movd inc_index, eax
     shufps inc_index, inc_index, 0x00   ; inc_index = |4|4|4|4|
 
@@ -99,7 +96,6 @@ section .text
     movhps indices, [_numbers34]    ; indices = |4|3|x|x|
     movlps indices, [_numbers12]    ; indices = |4|3|2|1|
 
-;    movd tmp, framddesReadTotal
     cvtsi2ss tmp, framesReadTotal
     shufps tmp, tmp, 0x00
     addps indices, tmp    ; indices = framesReadTotal+|4.0|3.0|2.0|1.0|
@@ -111,9 +107,7 @@ section .text
     divss triangleWaveSizes, deltas       ; triangleWaveSizes = (maxf-minf)/delta
     roundss triangleWaveSizes, triangleWaveSizes, 01b   ; triangleWaveSizes = floor((maxf-minf)/delta)
     addss triangleWaveSizes, ones         ; triangleWaveSizes = floor((maxf-minf)/delta)+1
-    ;cvtss2si tmpreg, triangleWaveSizes    ; triangleWaveSizes = (int) triangleWaveSize
 
-    ; movss triangleWaveSizes, tmp
     shufps triangleWaveSizes, triangleWaveSizes, 0x00 ; triangleWaveSizes = |triangleWaveSize|triangleWaveSize|triangleWaveSize|triangleWaveSize|
 
     cycle:
@@ -133,12 +127,10 @@ section .text
 
         movaps tmp2, triangleWaveSizes  ; tmps = triangleWaveSizes
         movaps cmpflag, indices         ; cmpflag = framesReadTotal+eff_i
-        ;cvtdq2ps cmpflag, cmpflag      ; cmpflag = (float) cmpflag
         divps cmpflag, tmp2             ; cmpflag = (framesReadTotal+eff_i)/triangleWaveSize
         roundps cmpflag, cmpflag, 01b ; cmpflag = floor(cmpflag) ; cociente entero de la division
         mulps cmpflag, tmp2     ; cmpflag = cociente * divisor
         movaps tmp2, indices    ; tmp2 = framesReadTotal+eff_i
-        ;cvtdq2ps tmp2, tmp2     ; tmp2 = (float) tmp2
         subps tmp2, cmpflag     ; tmp2 = (framesReadTotal+eff_i)%triangleWaveSize
         addps tmp2, ones        ; tmp2 = thisCycle = (framesReadTotal+eff_i)%triangleWaveSize+1
 
@@ -146,7 +138,6 @@ section .text
         subps tmp3, ones        ; tmp3 = thisCycle-1
         mulps tmp3, deltas      ; tmp3 = (thisCycle-1)*delta
         cvtsi2ss tmp4, minf     ; tmp4 = |x|x|x|(float)minf|
-        ;cvtdq2ps tmp4, tmp4    ; tmp4 = (float)tmp4
         shufps tmp4, tmp4, 0x00 ; tmp4 = |minf|minf|minf|minf|
         addps tmp3, tmp4        ; tmp3 = (minf+(thisCycle-1)*delta)
         movaps tmp4, ones       ; tmp4 = |1.0|1.0|1.0|1.0|
@@ -159,7 +150,6 @@ section .text
         mulps tmp3, deltas      ; tmp3 = thisCycle*delta
         cvtsi2ss tmp4, maxf     ; tmp4 = |x|x|x|(float)maxf|
         shufps tmp4, tmp4, 0x00 ; tmp4 = |maxf|maxf|maxf|maxf|
-        ;cvtdq2ps tmp4, tmp4     ; tmp4 = (float) tmp4
         subps tmp4, tmp3        ; tmp4 = maxf-thisCycle*delta
         mulps tmp4, tmp         ; tmp4 = parityCycle*(maxf-thisCycle*delta)
 
@@ -170,62 +160,61 @@ section .text
         shufps tmp, tmp, 0x00       ; tmp = |samplerate|samplerate|samplerate|samplerate|
         divps sine_args, tmp    ; M_PI*fc/samplerate
 
-;        args_to_interval:   ; llevo los argumentos del seno al intervalo (-pi,pi)
-;            movaps cmpflag, two_pi          ; cmpflag = |two_pi|two_pi|two_pi|two_pi|
-;            cmpps cmpflag, sine_args, 0x01  ; cmpflag = two_pi < sine_args
-;            ptest cmpflag, cmpflag
-;            jz args_to_interval_cont         ; si es cero, están todos entre (0, 2*pi)
-;
-;            movaps tmp, sine_args       ; tmp = sine_args
-;            divps tmp, two_pi           ; tmp = sine_args/(2*pi)
-;            roundps tmp, tmp, 01b       ; tmp = floor(sine_args/(2*pi)) = cociente entero de la division
-;            mulps tmp, two_pi           ; tmp = cociente * divisor
-;            subps sine_args, tmp        ; sine_args = floor(sine_args/(2*i))*(2*pi) = sine_args % (2*pi)
+        args_to_interval:   ; llevo los argumentos del seno al intervalo (-pi,pi)
+            movaps cmpflag, two_pi          ; cmpflag = |two_pi|two_pi|two_pi|two_pi|
+            cmpps cmpflag, sine_args, 0x01  ; cmpflag = two_pi < sine_args
+            ptest cmpflag, cmpflag
+            jz args_to_interval_cont         ; si es cero, están todos entre (0, 2*pi)
+
+            movaps tmp, sine_args       ; tmp = sine_args
+            divps tmp, two_pi           ; tmp = sine_args/(2*pi)
+            roundps tmp, tmp, 01b       ; tmp = floor(sine_args/(2*pi)) = cociente entero de la division
+            mulps tmp, two_pi           ; tmp = cociente * divisor
+            subps sine_args, tmp        ; sine_args = floor(sine_args/(2*i))*(2*pi) = sine_args % (2*pi)
                                         ; tengo todo en el rango (0, 2*pi)
-;
-;        args_to_interval_cont:              ; llevo lo que está entre (pi, 2*pi) a (-pi, pi)
-;            movaps cmpflag, pi              ; cmpflag = |pi|pi|pi|pi|
-;            cmpps cmpflag, sine_args, 0x01  ; cmpflag = pi < sine_args
-;            ptest cmpflag, cmpflag
-;            jz calc_sine                    ; si es cero, ya estan todos los argumentos entre (-pi, pi)
-;
-;            andps cmpflag, two_pi           ; cmpflag = 2*pi en los lugares donde pi < sine_args
-;            subps sine_args, cmpflag        ; ahora todo esta entre (-pi, pi)
-;    calc_sine:
-;        movaps firstTerm, sine_args
-;
-;        pxor tmp, tmp                   ; tmp = 0
-;        movaps secondTerm, firstTerm    ; secondTerm = sine_args
-;        subps tmp, secondTerm           ; tmp = -secondTerm
-;        maxps secondTerm, tmp           ; tmp = abs(sine_args)
-;
-;        mulps secondTerm, firstTerm     ; secondTerm = sine_args*abs(sine_args)
-;        mulps firstTerm, Bconstant      ; firstTerm = 4/pi*input
-;        mulps secondTerm, Cconstant     ; secondTerm = -4/(pi*pi)*sine_args*abs(sine_args)
-;
-;        addps firstTerm, secondTerm     ; firstTerm = 'y' = 4/pi*sine_args-4/(pi*pi)*sine_args*abs(sine_args)
-;
+
+        args_to_interval_cont:              ; llevo lo que está entre (pi, 2*pi) a (-pi, pi)
+            movaps cmpflag, pi              ; cmpflag = |pi|pi|pi|pi|
+            cmpps cmpflag, sine_args, 0x01  ; cmpflag = pi < sine_args
+            ptest cmpflag, cmpflag
+            jz calc_sine                    ; si es cero, ya estan todos los argumentos entre (-pi, pi)
+
+            andps cmpflag, two_pi           ; cmpflag = 2*pi en los lugares donde pi < sine_args
+            subps sine_args, cmpflag        ; ahora todo esta entre (-pi, pi)
+    calc_sine:
+        movaps firstTerm, sine_args
+
+        pxor tmp, tmp                   ; tmp = 0
+        movaps secondTerm, firstTerm    ; secondTerm = sine_args
+        subps tmp, secondTerm           ; tmp = -secondTerm
+        maxps secondTerm, tmp           ; tmp = abs(sine_args)
+
+        mulps secondTerm, firstTerm     ; secondTerm = sine_args*abs(sine_args)
+        mulps firstTerm, Bconstant      ; firstTerm = 4/pi*input
+        mulps secondTerm, Cconstant     ; secondTerm = -4/(pi*pi)*sine_args*abs(sine_args)
+
+        addps firstTerm, secondTerm     ; firstTerm = 'y' = 4/pi*sine_args-4/(pi*pi)*sine_args*abs(sine_args)
+
         ; correccion ;
-;        movaps secondTerm, firstTerm    ; secondTerm = y
-;
-;        pxor tmp, tmp                   ; tmp = 0
-;        subps tmp, secondTerm           ; tmp = -y
-;        maxps secondTerm, tmp           ; secondTerm = abs(y)
-;
-;        mulps secondTerm, firstTerm     ; secondTerm = abs(y)*y
-;        subps secondTerm, firstTerm     ; secondTerm = abs(y)*y-y
-;        mulps secondTerm, Pconstant     ; secondTerm = P*(abs(y)*y-y)
-;
-;        addps firstTerm, secondTerm     ; firstTerm = secondTerm+y = sine(sine_args) = current_mod
+        movaps secondTerm, firstTerm    ; secondTerm = y
+
+        pxor tmp, tmp                   ; tmp = 0
+        subps tmp, secondTerm           ; tmp = -y
+        maxps secondTerm, tmp           ; secondTerm = abs(y)
+
+        mulps secondTerm, firstTerm     ; secondTerm = abs(y)*y
+        subps secondTerm, firstTerm     ; secondTerm = abs(y)*y-y
+        mulps secondTerm, Pconstant     ; secondTerm = P*(abs(y)*y-y)
+
+        addps firstTerm, secondTerm     ; firstTerm = secondTerm+y = sine(sine_args) = current_mod
 
     ; CALCULO INDICE ;
     calc_index:
-;        movaps tmp, ones            ; tmp = |1.0|1.0|1.0|1.0|
-;        addps tmp, ones             ; tmp = |2.0|2.0|2.0|2.0|
+        movaps tmp, ones            ; tmp = |1.0|1.0|1.0|1.0|
+        addps tmp, ones             ; tmp = |2.0|2.0|2.0|2.0|
 
-;        mulps firstTerm, tmp        ; fc = 2*sin((M_PI*fc)/inFileStr.samplerate)
-        movaps [input], sine_args
-;        movaps [input], firstTerm
+        mulps firstTerm, tmp        ; fc = 2*sin((M_PI*fc)/inFileStr.samplerate)
+        movaps [input], firstTerm
 
         addps indices, inc_index
         sub length, 4
@@ -277,64 +266,63 @@ section .text
         cvtsi2ss tmp, samplerate
         divss sine_args, tmp
 
-;        single_arg_to_interval:
-;            movss cmpflag, two_pi
-;            cmpss cmpflag, sine_args, 0x01
-;            ptest cmpflag, cmpflag
-;            jz single_arg_to_interval_cont
-;
-;            movss tmp, sine_args
-;            divss tmp, two_pi
-;            roundss tmp, tmp, 01b
-;            mulss tmp, two_pi
-;            subss sine_args, tmp
-;
-;        single_arg_to_interval_cont:
-;            movss cmpflag, pi
-;            cmpss cmpflag, sine_args, 0x01
-;            ptest cmpflag, cmpflag
-;            jz single_calc_sine
-;
-;            andps cmpflag, two_pi
-;            subss sine_args, cmpflag
-;
-;        ; CALCULO SENO ;
-;        single_calc_sine:
-;            movss firstTerm, sine_args
-;
-;            pxor tmp, tmp                   ; tmp = 0
-;            movss secondTerm, firstTerm     ; secondTerm = sine_arg
-;            subss tmp, secondTerm           ; tmp = -secondTerm
-;            maxss secondTerm, tmp           ; tmp = abs(sine_arg)
-;
-;            mulss secondTerm, firstTerm     ; secondTerm = sine_arg*abs(sine_arg)
-;
-;            mulss firstTerm, Bconstant      ; firstTerm = 4/pi*sine_arg
-;            mulss secondTerm, Cconstant     ; secondTerm = -4/(pi*pi)*input*abs(sine_arg)
-;
-;            addss firstTerm, secondTerm     ; firstTerm = 4/pi*sine_arg -4/(pi*pi)*sine_arg*abs(sine_arg)
-;
-;            ; correccion
-;            movss secondTerm, firstTerm
-;
-;            pxor tmp, tmp
-;            subss tmp, secondTerm
-;            maxss secondTerm, tmp
-;
-;            mulss secondTerm, firstTerm
-;            subss secondTerm, firstTerm
-;            mulss secondTerm, Pconstant
-;
-;            addss firstTerm, secondTerm
+        single_arg_to_interval:
+            movss cmpflag, two_pi
+            cmpss cmpflag, sine_args, 0x01
+            ptest cmpflag, cmpflag
+            jz single_arg_to_interval_cont
+
+            movss tmp, sine_args
+            divss tmp, two_pi
+            roundss tmp, tmp, 01b
+            mulss tmp, two_pi
+            subss sine_args, tmp
+
+        single_arg_to_interval_cont:
+            movss cmpflag, pi
+            cmpss cmpflag, sine_args, 0x01
+            ptest cmpflag, cmpflag
+            jz single_calc_sine
+
+            andps cmpflag, two_pi
+            subss sine_args, cmpflag
+
+        ; CALCULO SENO ;
+        single_calc_sine:
+            movss firstTerm, sine_args
+
+            pxor tmp, tmp                   ; tmp = 0
+            movss secondTerm, firstTerm     ; secondTerm = sine_arg
+            subss tmp, secondTerm           ; tmp = -secondTerm
+            maxss secondTerm, tmp           ; tmp = abs(sine_arg)
+
+            mulss secondTerm, firstTerm     ; secondTerm = sine_arg*abs(sine_arg)
+
+            mulss firstTerm, Bconstant      ; firstTerm = 4/pi*sine_arg
+            mulss secondTerm, Cconstant     ; secondTerm = -4/(pi*pi)*input*abs(sine_arg)
+
+            addss firstTerm, secondTerm     ; firstTerm = 4/pi*sine_arg -4/(pi*pi)*sine_arg*abs(sine_arg)
+
+            ; correccion
+            movss secondTerm, firstTerm
+
+            pxor tmp, tmp
+            subss tmp, secondTerm
+            maxss secondTerm, tmp
+
+            mulss secondTerm, firstTerm
+            subss secondTerm, firstTerm
+            mulss secondTerm, Pconstant
+
+            addss firstTerm, secondTerm
 
     ; CALCULO INDICE ;
     single_calc_index:
-;        movss tmp, ones
-;        addss tmp, ones
-;        mulss firstTerm, tmp
+        movss tmp, ones
+        addss tmp, ones
+        mulss firstTerm, tmp
 
-;        movss [input], firstTerm
-        movss [input], sine_args
+        movss [input], firstTerm
 
         addss indices, ones
         sub length, 1
