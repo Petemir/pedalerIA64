@@ -345,22 +345,46 @@ void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
 
     float delta = (float)wahfreq/inFileStr.samplerate;
     float yh = 0, yb = 0, yl = 0;
-    
+
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
+        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i = eff_i) {
+            v4sf index_vector;
+
+            for (unsigned int j = 0; j < 4; j++) {
+                int triangleWaveSize = floor((maxf-minf)/delta)+1;
+                int parityCycle = ((framesReadTotal+eff_i)/(triangleWaveSize))%2;   // Ciclo positivo (par, 0) o negativo (impar, 1)
+                int thisCycle = (framesReadTotal+eff_i) % (triangleWaveSize)+1;     // A qué punto del ciclo correspondería
+                float fc = (1-parityCycle)*(minf+(thisCycle-1)*delta)+(parityCycle)*(maxf-(thisCycle)*delta);   // Valor del punto
+
+                index_vector[j] = M_PI*fc/inFileStr.samplerate;
+                eff_i++;
+            }
+
+            MEDIR_TIEMPO_START(start);
+            index_vector = sin_ps(index_vector); // Acá tengo current_mod para cada indice
+            MEDIR_TIEMPO_STOP(end);
+            cantCiclos += end-start;
+
+            eff_i -= 4;
+            for (unsigned int j = 0; j < 4 && eff_i < framesRead; j++) {
+                dataBuffMod[eff_i] = 2*index_vector[j];
+                eff_i++;
+            }
+        }*/
         MEDIR_TIEMPO_START(start);
         wah_wah_index_calc(dataBuffMod, framesRead, framesReadTotal, minf, maxf, delta, inFileStr.samplerate);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
+/*        for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
             printf("%d %f\n", framesReadTotal+eff_i, dataBuffMod[eff_i]);
         }*/
 
         MEDIR_TIEMPO_START(start);
-        wah_wah_index_calc(dataBuffIn, dataBuffOut, dataBuffOut, framesRead, inFileStr.channels, 2*damp, &yh, &yb, &yl);
+        wah_wah_asm(dataBuffIn, dataBuffOut, dataBuffMod, framesRead*inFileStr.channels, inFileStr.channels, 2*damp, &yh, &yb, &yl);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 

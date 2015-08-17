@@ -3,31 +3,50 @@ global wah_wah_asm
 ; input enteros
 ; rdi: *dataBuffIn
 ; rsi: *dataBuffOut
-; rdx: *dataBuffEffect
-; rcx:
-; r8:
-; r9:
+; rdx: *dataBuffMod
+; rcx: length
+; r8: channels
+; r9: *yh
+; [rbp+16]: yb
+; [rbp+24]: yl
+
 ; input floats
-; xmm0:
-; xmm1:
-; xmm2:
-; xmm3:
+; xmm0: q1
 
 %define dataBuffIn rdi
 %define dataBuffOut rsi
-%define length ?
-%define channels ?
+%define dataBuffMod rdx
+%define length ecx
+%define channels r8d
+%define yh [r9]
 
-%define input ?
-%define tmp ?
-%define halves ?
+%define tmpreg r10
+%define cyclecount r11
 
+%define yb_stack [rbp+16]
+%define yl_stack [rbp+24]
+%define stereotmp [rbp-8]
+
+%define qs xmm0
+%define input xmm1
+%define yhs xmm4
+%define ybs xmm5
+%define yls xmm6
+%define fcs xmm7
+
+; AUXILIARES ;
+%define tmp xmm2
+%define outtmp xmm9
+
+; CONSTANTES ;
+%define halves xmm3
+%define tenths xmm8
 
 section .text
     wah_wah_asm:
         push rbp        ; convención C
         mov rbp, rsp
-        ;sub rsp, N    ; espacio para variables locales
+        sub rsp, 8    ; espacio para variables locales
         push rbx
         push r12
         push r13
@@ -37,17 +56,34 @@ section .text
     ; setup ;
         mov eax, 0X3F000000         ; 0.5
         movd halves, eax
-        shufps halves, halves, 0x00 ; halves = | 0.5 | 0.5 | 0.5 | 0.5 |
+        shufps halves, halves, 0x00 ; halves = |0.5|0.5|0.5|0.5|
+
+        mov eax, 0x3DCCCCCD         ; 0.1
+        movd tenths, eax
+        shufps tenths, tenths, 0x00 ; tenths = |0.1|0.1|0.1|0.1|
+
+        shufps qs, qs, 0x00         ; qs = |q1|q1|q1|q1|
+
+        movd yhs, yh            ; yhs = |x|x|x|yh|
+        shufps yhs, yhs, 0x00   ; yhs = |yh|yh|yh|yh|
+
+        mov tmpreg, yb_stack
+        movd ybs, [tmpreg]      ; ybs = |x|x|x|yb|
+        shufps ybs, ybs, 0x00   ; ybs = |yb|yb|yb|yb|
+
+        mov tmpreg, yl_stack
+        movd yls, [tmpreg]      ; yls = |x|x|x|yl|
+        shufps yls, yls, 0x00   ; yls = |yl|yl|yl|yl|
 
     cycle:
-        cmp eax, 2
+        cmp channels, 2
         je input_stereo
 
     input_mono:
         cmp length, 0
         je fin
         cmp length, 4
-        jl remaining_frames_mono
+        jl remaining_frames_mono_input
 
         movaps input, [dataBuffIn]
 
@@ -57,7 +93,7 @@ section .text
         cmp length, 0
         je fin
         cmp length, 8
-        jl remaining_frames_stereo
+        jl remaining_frames_stereo_input
 
         movaps input, [dataBuffIn]  ; input = |dataBuffIn[3]|dataBuffIn[2]|dataBuffIn[1]|dataBuffIn[0]|
         mulps input, halves         ; input = 0.5*dataBuffIn[0..3]
@@ -81,48 +117,124 @@ section .text
 
     cycle_common:
         ;; calculo efecto ;;
+        movaps fcs, [dataBuffMod]   ; fcs = |fc|fc|fc|fc|
+        movaps yhs, input   ; yhs = |input|input|input|input|
+
+        mov cyclecount, 4
+        cycle_four:
+            subss yhs, yls      ; yhs = input - yl
+            movss tmp, ybs      ; tmp = yb
+            mulss tmp, qs       ; tmp = q1*yb
+            subss yhs, tmp      ; yhs = input-yl-q1*yb
+
+            movss tmp, yhs      ; tmp = yh
+            mulss tmp, fcs      ; tmp = fc*yh
+            addss ybs, tmp      ; ybs = fc*yh+yb
+
+            movss tmp, ybs      ; tmp = yb
+            mulss tmp, fcs      ; tmp = fc*yb
+            addss yls, tmp      ; yls = fc*yb+yl
+
+            movss tmp, ybs      ; tmp = yb
+            mulss tmp, tenths   ; tmp = 0.1*yb
+
+            sub cyclecount, 1
+            cmp cyclecount, 0
+            je continue_cycle_common
+
+            shufps yhs, yhs, 00111001b
+;            shufps yls, yls, 00111001b
+;            shufps ybs, ybs, 00111001b
+            shufps fcs, fcs, 00111001b
+            shufps tmp, tmp, 00111001b
+
+            jmp cycle_four
+    continue_cycle_common:
+        shufps tmp, tmp, 00111001b
+        movaps outtmp, input
+        punpckldq outtmp, tmp
+        movaps [dataBuffOut], outtmp
+        add dataBuffOut, 16
+
+        movaps outtmp, input
+        punpckhdq outtmp, tmp
+        movaps [dataBuffOut], outtmp
+        add dataBuffOut, 16
 
         add dataBuffIn, 16
-        add dataBuffOut, 16
+        add dataBuffMod, 16
         sub length, 4
         jmp cycle
 
-    remaining_frames_mono:
+    remaining_frames:
+        cmp channels, 2
+        je remaining_frames_stereo_input
+
+    remaining_frames_mono_input:
         cmp length, 0
         je fin
 
-        ;; calculo efecto mono 1 frame ;;
+        movss input, [dataBuffIn]
+        jmp remaining_frames_cycle_common
 
-        add dataBuffIn, 4
-        add dataBuffOut, 4
-        sub length, 1
-        jmp remaining_frames_mono
-
-    remaining_frames_stereo
+    remaining_frames_stereo_input:
         cmp length, 0
         je fin
 
-        movd input, [dataBuffIn]    ; input = |...|...|dataBuffIn[1]|dataBuffIn[0]|
+        movq input, [dataBuffIn]    ; input = |...|...|dataBuffIn[1]|dataBuffIn[0]|
         mulps input, halves   ; input = 0.5*input
         movaps tmp, input       ; tmp = input
         shufps tmp, tmp, 0x01 ; tmp = |...|...|...|dataBuffIn[1]
 
-        ;; calculo efecto mono 1 frame 2 floats ;;
+        addss input, tmp      ; tmp = |...|...|...|0.5*dataBuffIn[0+1]
 
-        addss tmp, input      ; tmp = |...|...|...|0.5*dataBuffIn[0+1]
+        add dataBuffIn, 4
+        sub length, 1
 
-        add dataBuffIn, 8
+    remaining_frames_cycle_common:
+        movss fcs, [dataBuffMod]
+        movss yhs, input
+
+        subss yhs, yls      ; yhs = input - yl
+        movss tmp, ybs      ; tmp = yb
+        mulss tmp, qs       ; tmp = q1*yb
+        subss yhs, tmp      ; yhs = input-yl-q1*yb
+
+        movss tmp, yhs      ; tmp = yh
+        mulss tmp, fcs      ; tmp = fc*yh
+        addss ybs, tmp      ; ybs = fc*yh+yb
+
+        movss tmp, ybs      ; tmp = yb
+        mulss tmp, fcs      ; tmp = fc*yb
+        addss yls, tmp      ; yls = fc*yb+yl
+
+        movss tmp, ybs      ; tmp = yb
+        mulss tmp, tenths   ; tmp = 0.1*yb
+
+        punpckldq input, tmp
+        movq [dataBuffOut], input
+
         add dataBuffOut, 8
-        sub framesRead, 2
-        jmp remaining_frames_stereo
+        add dataBuffMod, 4
+        add dataBuffIn, 4
+        sub length, 1
+        jmp remaining_frames
 
     ; return en rax, o xmm0
     fin:
+    movss yh, yhs
+
+    mov tmpreg, yb_stack
+    movss [tmpreg], ybs
+
+    mov tmpreg, yl_stack
+    movss [tmpreg], yls
+
     pop r15
     pop r14
     pop r13
     pop r12
-    ;add rsp, N
+    add rsp, 8
     pop rbx
     pop rbp
     ret

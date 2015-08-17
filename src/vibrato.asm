@@ -316,8 +316,6 @@ section .text
         movaps tmp, input           ; tmp = input
         shufps tmp, tmp, 0x01       ; tmp = |...|...|...|dataBuffIn[1]
 
-        ;; calculo efecto mono 1 frame 2 floats ;;
-
         addss input, tmp      ; input = |...|...|...|0.5*dataBuffIn[0+1]
 
         add dataBuffIn, 4
