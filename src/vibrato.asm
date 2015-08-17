@@ -155,8 +155,7 @@ section .text
 
     continue_cycle_zero:
         movaps tmp2, input
-;        shufps tmp2, tmp2, 00011011b
-        cvtps2dq tmp, tmp
+        cvtps2dq tmp, tmp   ; tmp = (int) tmp = (int)indices
 
         movd head, tmp
         movd eax, tmp2
@@ -180,41 +179,14 @@ section .text
         movd eax, tmp2
         mov [circularBuffer+4*head], eax
 
-;        movaps tmp3, input
-;        shufps tmp3, tmp3, 00011011b
-;        movups [circularBuffer+4*head], tmp3; dataBuffEffect[dataBuffEffectHead] = dataBuffIn[i] caso mono
-        ; dataBuffEffect[dataBuffEffectHead] = 0.5*dataBuffIn[i] + 0.5*dataBuffIn[i+1] caso stereo
-
         movaps fracs, [bufferIndex]   ; fracs = tap
         roundps ns, fracs, 01b        ; ns = floor(tap) = n
         subps fracs, ns               ; fracs = tap-floor(tap) = parte fraccionaria
-;        cvtps2dq ns, ns               ; ns = (int) ns
 
         movaps tmp, circularBufferIndices ; tmp = dataBuffEffectHead
-        ;subps tmp, ones   ; tmp = dataBuffEffectHead-1
         addps tmp, ns      ; tmp = dataBuffEffectHead+n
         movaps tmp2, tmp   ; tmp2 = dataBuffEffectHead+n
         addps tmp, ones    ; tmp = dataBuffEffectHead+n+1
-
-;    non_negative_one:
-;        movaps cmpflag, tmp
-;        pxor tmp3, tmp3
-;        cmpps cmpflag, tmp3, 2
-;        ptest cmpflag, cmpflag
-;        jz non_negative_two
-
-;        andps cmpflag, circularBufferEnds
-;        addps tmp, cmpflag
-
-;    non_negative_two:
-;        movaps cmpflag, tmp2
-;        pxor tmp3, tmp3
-;        cmpps cmpflag, tmp3, 2
-;        ptest cmpflag, cmpflag
-;        jz continue_cycle_one
-
-;        andps cmpflag, circularBufferEnds
-;        addps tmp2, cmpflag
 
     continue_cycle_one:
         movaps cmpflag, circularBufferEnds
@@ -225,7 +197,6 @@ section .text
         modulus_one:
             andps cmpflag, circularBufferEnds
             subps tmp, cmpflag  ; tmp = (dataBuffEffectHead+n+1) % dataBuffEffectEnd
-            ;addps tmp, ones     ; tmp = (dataBuffEffectHead-1+n+1) % dataBuffEffectEnd +1
 
         modulus_two:
             movaps cmpflag, circularBufferEnds
@@ -235,7 +206,6 @@ section .text
 
             andps cmpflag, circularBufferEnds
             subps tmp2, cmpflag ; tmp2 = (dataBuffEffectHead+n) % dataBuffEffectEnd
-            ;addps tmp2, ones    ; tmp2 = (dataBuffEffectHead-1+n) % dataBuffEffectEnd +1
 
     ; hasta acá, ya tengo los índices para la interpolación lineal ;
     continue_cycle_two:
@@ -297,12 +267,6 @@ section .text
 
         andps cmpflag, circularBufferEnds
         addps circularBufferIndices, cmpflag
-        ;movaps tmp3, circularBufferEnds
-        ;andps tmp3, cmpflag
-        ;andnps cmpflag, circularBufferIndices
-
-        ;addps cmpflag, tmp3
-        ;movaps circularBufferIndices, cmpflag   ; dataBuffEffectHead == 0 => dataBuffEffectHead = dataBuffEffectEnd
 
         finish_cycle:
             subps circularBufferIndices, sub_index  ; ya resté uno antes, ahora sólo resto tres en cada índice
@@ -348,9 +312,9 @@ section .text
         je fin
 
         movq input, [dataBuffIn]    ; input = |...|...|dataBuffIn[1]|dataBuffIn[0]|
-        mulps input, halves   ; input = 0.5*input
-        movaps tmp, input       ; tmp = input
-        shufps tmp, tmp, 0x01 ; tmp = |...|...|...|dataBuffIn[1]
+        mulps input, halves         ; input = 0.5*input
+        movaps tmp, input           ; tmp = input
+        shufps tmp, tmp, 0x01       ; tmp = |...|...|...|dataBuffIn[1]
 
         ;; calculo efecto mono 1 frame 2 floats ;;
 
@@ -361,7 +325,6 @@ section .text
 
     remaining_frames_cycle_common:
         cvtss2si head, circularBufferIndices
-        ;sub head, 1
         cmp head, 0
         jge continue_remaining_frames_cycle_common
 
@@ -378,7 +341,6 @@ section .text
         subss fracs, ns
 
         movss tmp, circularBufferIndices
-        ;subss tmp, ones
         addss tmp, ns
         movss tmp2, tmp
         addss tmp, ones
@@ -390,7 +352,6 @@ section .text
 
         andps cmpflag, circularBufferEnds
         subss tmp, cmpflag
-        ;addss tmp, ones
 
     continue_cycle_single_one:
         movss cmpflag, circularBufferEnds
@@ -400,7 +361,6 @@ section .text
 
         andps cmpflag, circularBufferEnds
         subss tmp2, cmpflag
-        ;addss tmp2, ones
 
     continue_cycle_single_two:
         cvtps2dq tmp, tmp
@@ -427,16 +387,8 @@ section .text
 
         andps cmpflag, circularBufferEnds
         addss circularBufferIndices, cmpflag
-;        movss tmp3, circularBufferEnds
-;        andps tmp3, cmpflag
-;        andnps cmpflag, circularBufferIndices
-
-;        addss cmpflag, tmp3
-;        movss circularBufferIndices, cmpflag
 
     finish_cycle_single:
-;        subss circularBufferIndices, ones
-
         movss cmpflag, circularBufferIndices
         pxor tmp3, tmp3
         cmpss cmpflag, tmp3, 1 ; cmpflag = (circularBufferIndices < 0)
