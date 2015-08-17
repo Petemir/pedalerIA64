@@ -344,17 +344,19 @@ void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
     clean_buffer_c(dataBuffMod, BUFFERSIZE);
 
     float delta = (float)wahfreq/inFileStr.samplerate;
-    float fc = 2*sin((float)(M_PI*minf)/inFileStr.samplerate);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
-        wah_wah_index_calc(dataBuffMod, framesRead, framesReadTotal, minf, maxf, delta, &fc, inFileStr.samplerate);
+        wah_wah_index_calc(dataBuffMod, framesRead, framesReadTotal, minf, maxf, delta, inFileStr.samplerate);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
+        for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
+            printf("%d %f\n", framesReadTotal+eff_i, dataBuffMod[eff_i]);
+        }
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
