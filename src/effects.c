@@ -297,18 +297,14 @@ void vibrato_c(float depth, float mod) {
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
-    //printf("dbEnd %d delay %f depth %f\n", maxDelayInFrames, delay, depth);
+
     // [Lecto-escritura de datos]
-    //printf("f+eff_i\t\tsin_arg\t\tc_mod\t\ttap\n");
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
-            float sine_arg = mod*2*M_PI*(framesReadTotal+eff_i+1);
             float current_mod = sinf(mod*2*M_PI*(framesReadTotal+eff_i+1));
             eff_i++;
             float tap = 1+delay+depth*current_mod;
-    //        printf("%d\t\t%f\t\t%f\t\t%f\n", framesReadTotal+eff_i-1, mod*2*M_PI*(framesReadTotal+eff_i), current_mod, tap);
-            //printf("%d\t\t%f\n", framesReadTotal+eff_i-1, tap);
             int n = floor(tap);
             float frac = tap - n;
 
@@ -327,8 +323,6 @@ void vibrato_c(float depth, float mod) {
             float a = dataBuffEffect[index_a];
             float b = dataBuffEffect[index_b];
             dataBuffOut[out_i++]  = a*frac+b*(1-frac);
-
-    //        printf("total %d eff_i %d dbEH %d dbEH+n+1 %d dbEH+n %d modDBE %d modDBE+1 %d a %f b %f sine_arg %f sine %f n %d frac %f out_i %f out_i+1 %f\n", framesReadTotal+eff_i, eff_i, dataBuffEffectHead, dataBuffEffectHead+n+1, dataBuffEffectHead+n, index_a, index_b, a, b, sine_arg, current_mod, n, frac, dataBuffOut[out_i-2], dataBuffOut[out_i-1]);
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
@@ -385,7 +379,6 @@ void bitcrusher_c(int bits, int freq) {
             }
 
             phasor += normFreq;
-
             if (phasor >= 1.0 && eff_i % 4 == 0) {
                 phasor -= 1.0;
                 last = step * floor(dataBuffEffect[eff_i]/step + 0.5);
@@ -437,7 +430,7 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
     float delta = (float)wahfreq/inFileStr.samplerate;
     int triangleWaveSize = floor((maxf-minf)/delta)+1;
 
-    float fc = 2*sin((float)(M_PI*minf)/inFileStr.samplerate);
+    float fc;
     float q1 = 2*damp;
     float yh = 0, yb = 0, yl = 0;
 
@@ -452,14 +445,14 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
                 dataBuffEffect[eff_i] = dataBuffIn[i];
             }
 
+            int parityCycle = ((framesReadTotal+eff_i)/(triangleWaveSize))%2;   // Ciclo positivo (par, 0) o negativo (impar, 1)
+            int thisCycle = (framesReadTotal+eff_i) % (triangleWaveSize)+1;     // A qué punto del ciclo correspondería
+            fc = (1-parityCycle)*(minf+(thisCycle-1)*delta)+(parityCycle)*(maxf-(thisCycle)*delta);   // Valor del punto
+            //printf("%d %d %d %f %f %f %f\n", framesReadTotal+eff_i, parityCycle, thisCycle, fc, M_PI*fc/inFileStr.samplerate, sin((M_PI*fc)/inFileStr.samplerate), 2*sin((M_PI*fc)/inFileStr.samplerate));
+            fc = 2*sin((M_PI*fc)/inFileStr.samplerate);
             yh = dataBuffEffect[eff_i] - yl - q1 * yb;
             yb = fc * yh + yb;
             yl = fc * yb + yl;
-
-            int evenCycle = ((((framesReadTotal+eff_i)/triangleWaveSize)%2) == 0);              // Ciclo positivo o negativo
-            int thisCycle = (framesReadTotal+eff_i) % (triangleWaveSize + 1);                   // A qué punto del ciclo correspondería
-            fc = evenCycle*(minf+(thisCycle-1)*delta)+(1-evenCycle)*(maxf-(thisCycle)*delta);   // Valor del punto
-            fc = 2*sin((float)(M_PI*fc)/inFileStr.samplerate);
 
             dataBuffOut[out_i++] = dataBuffIn[i];
             dataBuffOut[out_i++] = 0.1*yb;
