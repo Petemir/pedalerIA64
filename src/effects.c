@@ -448,13 +448,14 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
             int parityCycle = ((framesReadTotal+eff_i)/(triangleWaveSize))%2;   // Ciclo positivo (par, 0) o negativo (impar, 1)
             int thisCycle = (framesReadTotal+eff_i) % (triangleWaveSize)+1;     // A qué punto del ciclo correspondería
             fc = (1-parityCycle)*(minf+(thisCycle-1)*delta)+(parityCycle)*(maxf-(thisCycle)*delta);   // Valor del punto
-            //printf("%d %d %d %f %f %f %f\n", framesReadTotal+eff_i, parityCycle, thisCycle, fc, M_PI*fc/inFileStr.samplerate, sin((M_PI*fc)/inFileStr.samplerate), 2*sin((M_PI*fc)/inFileStr.samplerate));
             fc = 2*sin((M_PI*fc)/inFileStr.samplerate);
             yh = dataBuffEffect[eff_i] - yl - q1 * yb;
+            //printf("%.10f %.10f %.10f ", yl, q1, yb);
             yb = fc * yh + yb;
             yl = fc * yb + yl;
+            //printf("%d %d %.10f %.10f %.10f %.10f %.10f\n", framesReadTotal+eff_i, eff_i, fc, dataBuffEffect[eff_i], yh, yb, yl);
 
-            dataBuffOut[out_i++] = dataBuffIn[i];
+            dataBuffOut[out_i++] = dataBuffEffect[eff_i];
             dataBuffOut[out_i++] = 0.1*yb;
 
             eff_i++;
