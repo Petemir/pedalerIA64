@@ -344,7 +344,8 @@ void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
     clean_buffer_c(dataBuffMod, BUFFERSIZE);
 
     float delta = (float)wahfreq/inFileStr.samplerate;
-
+    float yh = 0, yb = 0, yl = 0;
+    
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
     // [Lecto-escritura de datos]
@@ -354,9 +355,15 @@ void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-        for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
+        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
             printf("%d %f\n", framesReadTotal+eff_i, dataBuffMod[eff_i]);
-        }
+        }*/
+
+        MEDIR_TIEMPO_START(start);
+        wah_wah_index_calc(dataBuffIn, dataBuffOut, dataBuffOut, framesRead, inFileStr.channels, 2*damp, &yh, &yb, &yl);
+        MEDIR_TIEMPO_STOP(end);
+        cantCiclos += end-start;
+
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);

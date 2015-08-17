@@ -92,7 +92,7 @@ extern void bitcrusher_asm(float *bufferIn, float *bufferOut, int bufferLen, flo
 
 void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq);
 extern void wah_wah_index_calc(float *bufferMod, unsigned long int bufferLength, unsigned long int framesReadTotal, int minf, int maxf, float delta, int samplerate);
-// extern void wah_wah_asm();
+extern void wah_wah_asm(float *bufferIn, float *bufferOut, float *bufferMod, unsigned long int bufferLength, int channels, float q1, float *yh, float *yb, float *yl);
 
 
 
