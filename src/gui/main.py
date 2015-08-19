@@ -3,8 +3,8 @@
 
 import sys
 from PyQt5.QtWidgets import (QWidget, QTextEdit,
-    QAction, QInputDialog, QFileDialog, QComboBox, QVBoxLayout, QHBoxLayout, QPushButton, QSizePolicy, QLabel, QApplication, QLineEdit)
-from PyQt5.QtGui import (QIcon)
+    QAction, QInputDialog, QFileDialog, QDial, QComboBox, QVBoxLayout, QHBoxLayout, QMainWindow, QPushButton, QSizePolicy, QLabel, QApplication, QLineEdit)
+from PyQt5.QtGui import (QIcon, QFont)
 from PyQt5.QtCore import (QFileInfo, QObject)
 
 from collections import OrderedDict
@@ -17,7 +17,7 @@ class Effects():
         self.effectInputWAV = ''
         self.effectOutputWAV = ''
 
-        self.effects = OrderedDict([
+        self.list = OrderedDict([
             ('Efecto', self.noEffectWidget),
             ('Copy', self.copyWidget),
             ('Delay', self.delayWidget),
@@ -29,85 +29,148 @@ class Effects():
 
     #def runEffect(self):
     def getEffects(self):
-        return self.effects.keys()
+        return self.list.keys()
 
-    def noEffectWidget():
+    def getEffectWidget(self, effectName):
+        return self.list[effectName]
+
+    def noEffectWidget(self):
         print("no effect")
+        return ([], [])
 
-    def copyWidget():
+    def copyWidget(self):
         print("copyWidget")
+        return ([], [])
 
-    def delayWidget():
+    def delayWidget(self):
         print("delayWidget")
+        return ([], [])
 
-    def flangerWidget():
-        print("flangerWidget")
+    def flangerWidget(self):
+        delayDial = self.getDialWidget('delay', 0, 15, 1)
+        delayTitle = self.getTitleWidget('Delay (0-15ms):')
+        delayValue = self.getValueWidget(delayDial)
 
-    def vibratoWidget():
-        print("vibratoWidget")
+        rateDial = self.getDialWidget('rate', 10, 500, 0.01)
+        rateTitle = self.getTitleWidget('Rate (0.1-5Hz):')
+        rateValue = self.getValueWidget(rateDial)
 
-    def bitcrusherWidget():
+        ampDial = self.getDialWidget('amp', 65, 75, 0.01)
+        ampTitle = self.getTitleWidget('Amp (0.65-0.75):')
+        ampValue = self.getValueWidget(ampDial)
+
+        return ([delayTitle, delayValue, rateTitle, rateValue, ampTitle, ampValue], [delayDial, rateDial, ampDial])
+
+    def vibratoWidget(self):
+        depthDial = self.getDialWidget('depth', 0, 3, 1)
+        depthTitle = self.getTitleWidget('Depth (0-3ms):')
+        depthValue = self.getValueWidget(depthDial)
+
+        modDial = self.getDialWidget('mod', 10, 500, 0.01)
+        modTitle = self.getTitleWidget('Mod Frequency (0.1-5Hz):')
+        modValue = self.getValueWidget(modDial)
+
+        return ([depthTitle, depthValue, modTitle, modValue], [depthDial, modDial])
+
+    def bitcrusherWidget(self):
         print("bitcrusherWidget")
+        return ([], [])
 
-    def wahWahWidget():
+    def wahWahWidget(self):
         print("wahWahWidget")
+        return ([], [])
+
+    def getDialWidget(self, name, minimum, maximum, mod):
+        dial = QDial(window)
+        dial.setObjectName(name)
+        dial.setWrapping(0)
+        dial.setNotchesVisible(1)
+        dial.setMinimum(minimum)
+        dial.setMaximum(maximum)
+        dial.modifier=mod
+        dial.valueChanged[int].connect(self.changeDialValue)
+        return dial
+
+    def getTitleWidget(self, label):
+        font = QFont()
+        font.setUnderline(1)
+        font.setWeight(75)
+        title = QLabel(label)
+        title.setFont(font)
+        return title
+
+    def getValueWidget(self, dial):
+        value = QLabel(str(dial.minimum()*dial.modifier))
+        value.setObjectName(dial.objectName()+'Value')
+        return value
+
+    def changeDialValue(self, value):
+        dial = window.sender()
+        dialValueWidget = window.findChild(QLabel, dial.objectName()+'Value')
+        dialValueWidget.setText(str(value*dial.modifier))
 
 class PedalerIA64(QWidget):
-
     def __init__(self, effects):
         super().__init__()
         self.initUI(effects)
 
     def initUI(self, effects):
         vbox = QVBoxLayout()
+        self.effectWidgets = ([], [])
 
-        ## input file layout ##
+        ## file box layout ##
         self.fileBox = QHBoxLayout()
+
         # input file button
         self.inputBtn = QPushButton('Input Audio', self)
         self.inputBtn.clicked.connect(self.showFileInputDialog)
-        #self.inputBtn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        #self.inputBtn.move(10, 10)
-        self.fileBox.addWidget(self.inputBtn)
-
         # input file title
         self.lblInputFile = QLabel('', self)
-        #self.lblInputFile.move(350, 10)
-        #self.lblInputFile.setFixedWidth(500)
+        self.lblInputFile.setFixedWidth(350)
+
+        # output file button
+        self.outputBtn = QPushButton('Output Audio', self)
+        self.outputBtn.clicked.connect(self.showFileOutputDialog)
+        # output file title
+        self.lblOutputFile = QLabel('', self)
+        self.lblOutputFile.setFixedWidth(350)
+
+        self.fileBox.addWidget(self.inputBtn)
         self.fileBox.addStretch(1)
         self.fileBox.addWidget(self.lblInputFile)
         self.fileBox.addStretch(1)
-
-        ## output file layout ##
-        self.outputBox = QHBoxLayout()
-        # output file button
-        self.outputBtn = QPushButton('Output Audio', self)
-        self.outputBtn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.outputBtn.clicked.connect(self.showFileOutputDialog)
-        #self.outputBtn.move(10, 50)
-
-        # output file title
-        self.lblOutputFile = QLabel('', self)
-        #self.lblOutputFile.move(350, 50)
-        #self.lblOutputFile.setFixedWidth(500)
         self.fileBox.addWidget(self.outputBtn)
         self.fileBox.addStretch(1)
         self.fileBox.addWidget(self.lblOutputFile)
         self.fileBox.addStretch(1)
 
+        ## combo boxes ##
+        self.selectBox = QHBoxLayout()
+
         # effect combo box
         self.effectSelect = QComboBox(self)
-        #self.effectSelect.move(10, 100)
         self.effectSelect.addItems(effects.getEffects())
         # handler
         self.effectSelect.currentIndexChanged[str].connect(self.onIndexEffectChange)
 
         # language combo box
         self.languageSelect = QComboBox(self)
-        #self.languageSelect.move(200, 100)
         self.languageSelect.addItems(['C', 'Assembler'])
 
+        self.selectBox.addWidget(self.effectSelect)
+        self.selectBox.addWidget(self.languageSelect)
+
+        # effect arguments box
+        self.effectsBox = QVBoxLayout()
+        self.effectLabelsBox = QHBoxLayout();
+        self.effectDialsBox = QHBoxLayout();
+        self.effectsBox.addLayout(self.effectLabelsBox)
+        self.effectsBox.addLayout(self.effectDialsBox)
+
         vbox.addLayout(self.fileBox)
+        vbox.addLayout(self.selectBox)
+        vbox.addLayout(self.effectsBox)
+        vbox.addStretch(1)
         # add all widgets
 #        vbox.addWidget(self.inputBtn)
 #        vbox.addWidget(self.outputBtn)
@@ -138,7 +201,20 @@ class PedalerIA64(QWidget):
             self.lblOutputFile.setText(outputFile.fileName())
 
     def onIndexEffectChange(self, i):
+        if (self.effectWidgets!=([],[])):
+            for widget in self.effectWidgets[0]:
+                self.effectsBox.removeWidget(widget)
+                widget.setParent(None)
+            for widget in self.effectWidgets[1]:
+                self.effectsBox.removeWidget(widget)
+                widget.setParent(None)
         effects.effectName = i
+        self.effectWidgets = effects.getEffectWidget(i)()
+        for labels in self.effectWidgets[0]:
+            self.effectLabelsBox.addWidget(labels)
+        for dials in self.effectWidgets[1]:
+            self.effectDialsBox.addWidget(dials)
+
     #def noEffectWidget():
 
 if __name__ == '__main__':
