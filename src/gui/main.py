@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import subprocess
-import sys
+import subprocess, sys
 from PyQt5.QtWidgets import (QWidget, QAction, QInputDialog, QFileDialog, QDial, QComboBox, QVBoxLayout, QHBoxLayout, QMainWindow, QMessageBox, QPushButton, QLabel, QApplication)
 from PyQt5.QtGui import (QFont)
 from PyQt5.QtCore import (QFileInfo, QObject)
+from PyQt5.QtMultimedia import (QSound)
 
 from collections import OrderedDict
 
@@ -28,7 +28,6 @@ class Effects():
             ('Wah Wah', (self.wahWahWidget, 'w')),
         ])
 
-    #def runEffect(self):
     def getEffects(self):
         return self.list.keys()
 
@@ -46,11 +45,11 @@ class Effects():
     def delayWidget(self):
         delayLabel = QLabel('Efecto delay. Delay simple.')
 
-        delayDial = self.getDialWidget('delay_delay', 0, 5, 1)
+        delayDial = self.getDialWidget('delay_delay', 0, 50, 0.1)
         delayTitle = self.getTitleWidget('Delay (0.0-5.0s):')
         delayValue = self.getValueWidget(delayDial)
 
-        decayDial = self.getDialWidget('delay_decay', 0, 100, 1)
+        decayDial = self.getDialWidget('delay_decay', 0, 100, 0.01)
         decayTitle = self.getTitleWidget('Decay (0-100%):')
         decayValue = self.getValueWidget(decayDial)
 
@@ -59,7 +58,7 @@ class Effects():
     def flangerWidget(self):
         flangerLabel = QLabel('Efecto flanger. Vibracion.')
 
-        delayDial = self.getDialWidget('flanger_delay', 0, 15, 1)
+        delayDial = self.getDialWidget('flanger_delay', 0, 15, 0.001)
         delayTitle = self.getTitleWidget('Delay (0-15ms):')
         delayValue = self.getValueWidget(delayDial)
 
@@ -76,7 +75,7 @@ class Effects():
     def vibratoWidget(self):
         vibratoLabel = QLabel('Efecto vibrato. Vibracion.')
 
-        depthDial = self.getDialWidget('vibrato_depth', 0, 3, 1)
+        depthDial = self.getDialWidget('vibrato_depth', 0, 3, 0.001)
         depthTitle = self.getTitleWidget('Depth (0-3ms):')
         depthValue = self.getValueWidget(depthDial)
 
@@ -102,7 +101,7 @@ class Effects():
     def wahWahWidget(self):
         wahwahLabel = QLabel('Efecto WahWah. Efecto loco.')
 
-        dampDial = self.getDialWidget('wahwah_damp', 1, 10, 0.1)
+        dampDial = self.getDialWidget('wahwah_damp', 1, 10, 0.01)
         dampTitle = self.getTitleWidget('Damping Factor (0.01-0.10):')
         dampValue = self.getValueWidget(dampDial)
 
@@ -148,7 +147,7 @@ class Effects():
         dial = window.sender()
         dialValueWidget = window.findChild(QLabel, dial.objectName()+'Value')
         if isinstance(dial.modifier, float):
-            dialValueWidget.setText("{0:.2f}".format((value*dial.modifier)))
+            dialValueWidget.setText("{0:.3f}".format((value*dial.modifier)))
         else:
             dialValueWidget.setText(str(value*dial.modifier))
 
@@ -232,6 +231,8 @@ class PedalerIA64(QWidget):
         vbox.addLayout(self.effectsBox)
         vbox.addLayout(self.runProgramBox)
         vbox.addStretch(1)
+        self.playButtonsBox = QHBoxLayout()
+        vbox.addLayout(self.playButtonsBox)
 
         # main window size
         self.setGeometry(250, 100, 800, 600)
@@ -258,6 +259,11 @@ class PedalerIA64(QWidget):
             self.lblOutputFile.setText(effects.outputWAV.fileName())
 
     def showRunProgramDialog(self):
+        if(window.findChild(QPushButton, 'play_input') or window.findChild(QPushButton, 'play_output')):
+            self.playButtonsBox.removeWidget(self.playInputBtn)
+            self.playButtonsBox.removeWidget(self.playOutputBtn)
+            self.playInputBtn.setParent(None)
+            self.playOutputBtn.setParent(None)
         if (effects.mainFile=='' or effects.inputWAV=='' or effects.outputWAV=='' or effects.effectName==''):
             txt = []
             if effects.inputWAV=='':
@@ -273,19 +279,39 @@ class PedalerIA64(QWidget):
             effects.effectArgs = []
             for dial in self.effectWidgets[2]:
                 if isinstance(dial.modifier, float):
-                    value = "{0:.2f}".format((dial.value()*dial.modifier))
+                    value = "{0:.3f}".format((dial.value()*dial.modifier))
                 else:
                     value = dial.value()*dial.modifier
                 effects.effectArgs.append(str(value))
 
             cmdToPrint = ['./'+effects.mainFile.fileName(), effects.inputWAV.fileName(), effects.outputWAV.fileName(), '-'+effects.effectCmd, ' '.join(effects.effectArgs)]
-            cmdToExecute = [effects.mainFile.absoluteFilePath(), effects.inputWAV.absoluteFilePath(), effects.mainFile.absolutePath()+effects.outputWAV.fileName(), '-'+effects.effectCmd, ' '.join(effects.effectArgs)]
+            cmdToExecute = [effects.mainFile.absoluteFilePath(), effects.inputWAV.absoluteFilePath(), effects.mainFile.absolutePath()+'/'+effects.outputWAV.fileName(), '-'+effects.effectCmd]+effects.effectArgs
 
             reply = QMessageBox.question(self, 'Aplicar efecto', '¿Desea ejecutar el siguiente comando?\n'+' '.join(cmdToPrint), QMessageBox.Yes, QMessageBox.No)
 
             if reply==QMessageBox.Yes:
-                print("Llamar programa")
+                res = subprocess.call(cmdToExecute, stderr=subprocess.STDOUT)
+                if res != 0:
+                    QMessageBox.information(self, "Error", "Hubo un error en la ejecución del programa. Por favor, correr el siguiente comando desde consola para verificar qué ocurrió:\n"+" ".join(cmdToExecute))
+                else:
+                    self.showPlayAudioBtns()
 
+    def showPlayAudioBtns(self):
+        self.playInputBtn = QPushButton('Play Input Audio', self)
+        self.playInputBtn.setObjectName('play_input')
+        self.playInputBtn.clicked.connect(self.playAudioInput)
+
+        self.playOutputBtn = QPushButton('Play Output Audio', self)
+        self.playOutputBtn.setObjectName('play_output')
+        self.playOutputBtn.clicked.connect(self.playAudioOutput)
+        self.playButtonsBox.addWidget(self.playInputBtn)
+        self.playButtonsBox.addWidget(self.playOutputBtn)
+
+    def playAudioInput(self):
+        QSound.play(effects.inputWAV.absoluteFilePath())
+
+    def playAudioOutput(self):
+        QSound.play(effects.mainFile.absolutePath()+'/'+effects.outputWAV.fileName())
 
     def onIndexEffectChange(self, i):
         if self.effectWidgets!=([],[],[]):

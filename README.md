@@ -21,6 +21,7 @@ Efectos
   * ~~Corroborar si hay diferencias: hecho.~~
   * ~~Probar con varios parametros: hecho.~~
   * Rehacer los audios.
+  * Chequear qué pasa con ./main inputExamples/gibson.wav output-c.wav -f 0.01 3.98 0.69, entre assembler y C
 
 
 * Vibrato:
