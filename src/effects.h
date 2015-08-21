@@ -7,7 +7,6 @@
 
 #include "./libs/tiempo.h"
 #include "./libs/sse_mathfun.h"
-// #include "./libs/sincos.h" // TODO -> REMOVE
 
 /****************************** CONSTANTES ******************************/
 #define BUFFERSIZE 8192     // Tamaño del buffer en frames

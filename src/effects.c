@@ -95,44 +95,6 @@ void normalization_right_c() {
 }
 
 
-/*void volume_c(double ampfac) {
-    bufferSize = BUFFERSIZE*inFileStr.channels;
-
-    // TODO -> CHEQUEO DE ERRORES
-    dataBuffIn = (double*)malloc(bufferSize*sizeof(double));  // Buffers de entrada y salida
-    if (dataBuffIn == NULL) exit (1);
-    dataBuffOut = (double*)malloc(bufferSize*sizeof(double));
-    if (dataBuffOut == NULL) exit (1);
-
-    // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferSize);
-    clean_buffer_c(dataBuffOut, bufferSize);
-
-    unsigned long int start, end, cantCiclos = 0;
-    while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {
-        MEDIR_TIEMPO_START(start);
-        for (unsigned int i = 0; i < bufferSize; i++) {
-            dataBuffOut[i] = dataBuffIn[i]*ampfac;
-        }
-        MEDIR_TIEMPO_STOP(end);
-        cantCiclos += end-start;
-
-        framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
-        sf_write_sync(outFilePtr);
-    }
-
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
-    free(dataBuffIn);
-    free(dataBuffOut);
-}*/
-
-
 void delay_simple_c(float delayInSec, float decay) {
     unsigned int delayInFrames = ceil(delayInSec*inFileStr.samplerate);     // Frames de delay
     unsigned int maxDelayInFrames = (int)fmax((float)(BUFFERSIZE-(BUFFERSIZE%delayInFrames)), (float)delayInFrames);
