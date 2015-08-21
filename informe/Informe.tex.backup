@@ -8,6 +8,15 @@
 \usepackage{caratula}
 \usepackage{url}
 \usepackage{gensymb}
+\usepackage{hyperref}
+
+%\hypersetup{
+%    colorlinks,
+%    citecolor=black,
+%    filecolor=black,
+%    linkcolor=black,
+%    urlcolor=black
+%}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Para que las imagenes queden en donde esta el comando poner esto en el       %
@@ -84,7 +93,7 @@
 \section{Introducción}
 \label{sec:introduccion}
 
-\indent El presente Trabajo Práctico consiste en el desarrollo de diversos efectos de audio que se pueden encontrar en softwares de edición en el contexto musical (Cubase, Audacity, ProTools, etc.), así como también en pedaleras (de allí el nombre del programa) para el caso específico de una guitarra.
+\indent El presente Trabajo Práctico consiste en el desarrollo de diversos efectos de audio que se pueden encontrar en softwares de edición en el contexto musical (Cubase, Reaktor, Audacity, etc.), así como también en pedaleras (de allí el nombre del programa) para el caso específico de una guitarra.
 
 \subsection{Proceso de desarrollo del TP}
 \label{subsec:intro-desarrollo}
@@ -96,45 +105,53 @@ Obtenido el resultado deseado utilizando \textbf{C}, se pasó finalmente a progr
 
 El objeto de la programación en \textbf{C} además de Assembler, si bien implica el ''doble'' de trabajo, se debe a dos puntos en particular. En primer medida, era una buena manera de poder bajar el nivel del código original en \textbf{MRS}, despojándolo de las bondades que dichas herramientas ofrecen. Por otro lado, tener el código en \textbf{C} sirve también para comparar la mejora de rendimiento con el uso de las instrucciones SIMD. \vspace{\baselineskip}
 
-Para calcular el rendimiento en ambos lenguajes se utilizó la librería \textit{Tiempo.h} utilizada por la cátedra en el TP N\degree2 del 1er. Cuatrimestre de 2011. Cuando los resultados con la misma no eran satisfactorios (p.ej., \textbf{Assembler} era más lento que \textbf{C}), se procedió a utilizar una herramienta de profiling (\textbf{callgrind} en conjunto con \textbf{KCacheGrind}, se hablará de ellas más adelante) para poder identificar dónde exactamente estaban las secciones lentas del código en \textbf{Assembler}, y poder tomar medidas para resolverlo. De los casos puntuales donde se utilizó esto se hablará en las secciones \ref{desarrollo}, \ref{analisis} y \ref{resultado}.\vspace{\baselineskip}
+Para calcular el rendimiento en ambos lenguajes se utilizó la librería \textit{Tiempo.h} utilizada por la cátedra en el \textbf{TP N\degree2} del 1er. Cuatrimestre de 2011. Cuando los resultados con la misma no eran satisfactorios (p.ej., \textbf{Assembler} era más lento que \textbf{C}), se procedió a utilizar una herramienta de profiling (\textbf{callgrind} en conjunto con \textbf{KCacheGrind}, se hablará de ellas más adelante) para poder identificar dónde exactamente estaban las secciones lentas del código en \textbf{Assembler}, y poder tomar medidas para resolverlo. De los casos puntuales donde se utilizó esto se hablará en las secciones \ref{desarrollo}, \ref{analisis} y \ref{resultado}.\vspace{\baselineskip}
 
 Se desarrolló también una rudimentaria interfaz gráfica para tratar de evitar la utilización de la línea de comandos (en particular por la cantidad de argumentos que hay que manipular para los diversos efectos) y que la utilización del programa sea más amigable. Se hablará de ella en la sección \ref{subsec:GUI}.
 
 \subsection{Audio}
-Simplificándolo extremamente, una señal de audio puede ser representada como una curva continua en función del tiempo. Al digitalizarla, se toman 
-El formato de audio elegido es WAV, por ser el más simple. 
+\label{subsec:audio}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{imagenes/signals.png}
+    \caption{Señales de audio}
+    \label{fig:signals}
+\end{figure}
+
+Simplificándolo extremamente, una señal de audio (\textbf{(b)} en la imagen \ref{fig:signals}) es una representación del sonido, que puede ser visualizado como una curva continua (en el caso analógico, sus valores representan voltaje eléctrico) en función del tiempo. Al digitalizar una señal, se discretiza la curva (\textbf{(a)} en la imagen \ref{fig:signals}) tomando valores cada cierta cantidad de tiempo, lo que da lugar a la \textit{frecuencia de muestreo} (\textbf{sampling rate}, expresada como cantidad de muestras por segundo, unidad \textbf{Hz}). A la vez, cada uno de esos valores no puede ser expresado con precisión infinita, sino que al pasar al dominio digital, debe poder ser representado con una cantidad específica de bits, lo que origina la \textit{tasa de bits} (\textbf{bit rate}, \textit{resolución} de una señal de audio). \vspace{\baselineskip}
+
+El formato de audio elegido para el \textbf{TP} es WAV, por ser uno de los más simples para manipular. Los datos correspondientes al audio no están comprimidos, por lo que es posible realizar directamente sobre ellos las operaciones necesarias para aplicar los diversos efectos. \vspace{\baselineskip}
+
+La librería utilizada para el manejo de este archivo se verá en la sección \ref{subsec:libsndfile}.\vspace{\baselineskip}
+
+
+\fbox{\begin{minipage}{\textwidth}
+Por recomendación del profesor durante la presentación del proyecto de \textbf{TP}, en el archivo de audio final obtenido luego de la aplicación de alguno de los efectos, la \textit{señal seca} (\textit{dry sound/dry signal}, sin efecto) va por un canal, y la \textit{señal húmeda} (\textit{wet sound/wet signal}) por el otro. De este modo, se puede apreciar con mayor claridad el efecto en cuestión. Esto implica que todos los archivos de salida tendrán dos canales (\textbf{stereo}), a pesar de que el archivo de entrada pudiera haber tenido un único canal.
+\end{minipage}}
+
 
 \subsection{Herramientas externas utilizadas}
-\label{herramientas}
+\label{subsec:herramientas}
 Además de los ya mencionados \textbf{Matlab}, \textbf{RStudio}, y \textbf{Scilab}, se utilizaron las siguientas herramientas desarrolladas por terceros.
 
 \subsubsection{libsndfile}
-\textbf{libsndfile} es una librería de código abierto desarrollada en \textbf{C} para leer y escribir archivos de audio
+\label{subsec:libsndfile}
+\textbf{libsndfile} es una librería de código abierto desarrollada en \textbf{C} para leer y escribir archivos de audio. Trabaja con el formato WAV, entre otros, por lo que se adaptaba a las necesidades del \textbf{TP}. La API puede consultarse aquí \footnote{\url{http://www.mega-nerd.com/libsndfile/api.html}}.\vspace{\baselineskip}
 
-\section{Objetivos}
-\indent La idea del TP es implementar una serie de algoritmos que produzcan efectos sobre audio, en los lenguajes $C$ y $ASM$ (mediante el uso de instrucciones $SSE$), para proceder a la comparación del rendimiento de ambos (mediante la metodología utilizada -contar ticks del procesador- en el TP2 de la materia, 1er. cuatrimestre de 2011). El TP consistirá en lo siguiente:
-\begin{itemize}
-\item Base teórica: conceptos de procesamiento de señales y de audio en particular, herramientas utilizadas (librerías, lenguajes).
-\item Utilización del programa: requerimientos a instalar para el programa, ejemplos de cómo correrlo
-\item Desarrollo: explicación de cada uno de los efectos implementados con pseudocódigo y prosa, cuál es el efecto que generan.
-\item Conclusiones: resultados obtenidos, comparación con lo esperado, dificultades encontradas a la hora de desarrollar el TP, etc.
-\end{itemize}
+Una ventaja de la librería es que hace un pasaje de integer (tipo de datos utilizado en el formato WAV) a float, que es el tipo de datos utilizado para el \textbf{TP} \footnote{Originalmente se pensaba utilizar double, pero por recomendación del profesor se decidió pasar a float para poder procesar más datos}. Por otro lado, al leer un archivo utiliza una estructura propia llamada SF\_INFO, que incluye datos importantes del mismo (cantidad de canales, de muestras, entre otros), y que son necesarios en algunas porciones del \textbf{TP} por diversos motivos.
 
-\indent Todavía no se encuentran definidas todos los efectos que se implementarán. Por lo pronto, ya se realizaron (visibles en el código adjunto) una función de copiado del archivo (sin efecto), y otra de delay simple sin feedback, ambas muy básicas. Se esperan desarrollar efectos que involucren FTT \footnote{\url{http://www.dspguide.com/ch12/2.htm}} (Fast Fourier Transform) y Convolución \footnote{\url{http://en.wikipedia.org/wiki/Convolution$_$reverb}} (que utiliza la FTT); ambos, procesos fundacionales en procesamiento de audio.
+\subsubsection{Audacity}
+\label{subsec:audacity}
+\textbf{Audacity} es un editor multiplataforma de audio digital de código abierto y que en el \textbf{TP} se utilizó para realizar las comparaciones entre los archivos finales obtenidos de los diferentes efectos para cada lenguaje. De este modo, al no encontrar diferencias entre las señales de dos archivos diferentes, se podía corroborar que el algoritmo coincide con el efecto a aplicar.
 
-\indent Una prueba que me gustaría hacer para la entrega final es ver si lo desarrollado se puede aplicar en audio en tiempo real, algo que todavía no fue experimentado (principalmente porque el manejo de audio en tiempo real varía mucho según la instalación de Linux, la placa de audio, el soft que use el OS para Audio (ALSA, OSS, etc.), etc.).
+\subsubsection*{Chequeo diferencias}
+\label{subsec:chequeo-diferencias}
+Para poder verificar si hay diferencias entre dos archivos de audio en Audacity, es necesario proceder del siguiente modo. Con el programa abierto, se arrastran los dos archivos hacia la ventana del mismo para que sean importados automáticamente (si es la primera vez, se va a preguntar si se quiere trabajar sobre los mismos archivos, o sobre una copia temporal de los mismos; por seguridad, se recomienda elegir esta última opción, y que el programa la recuerde).
 
-\section{Uso del código adjunto}
-\indent Como se dijo previamente, como ejemplo se adjuntó el código base para empezar a desarrollar el TP entero, con dos funciones, una de copiado, y otra de delay simple sin feedback, ambas implementadas tanto en $C$ como $ASM$. Para probarlo, se necesita instalar los paquetes \textbf{libsndfile1-dev} y \textbf{nasm} (sudo apt-get install libsndfile1-dev nasm), que se encuentra en los repositorios de Ubuntu. El paquete \textbf{libsndfile1-dev} es la librería que se utiliza para el manejo (lectura/escritura) de los archivos de audio. Se utilizará el formato WAV, pues no utiliza compresión y facilita el procesamiento de los datos \footnote{\url{http://en.wikipedia.org/wiki/WAV_file}}.
- 
-\indent Una vez instalado el paquete, compilar el programa con el makefile (comando: \textit{make}). Ejemplos de uso del programa: \newline \newline
-\textbf{Ver opciones}: \textit{./main} \newline
-\textbf{Copiado de archivo en C}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -c} \newline
-\textbf{Copiado de archivo en ASM}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -C} \newline
-\textbf{Delay de 1.5 segundos con 0.6 de decay en C}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -d 1.5 0.6} \newline
-\textbf{Delay de 1.5 segundos con 0.6 de decay en ASM}: \textit{./main archivo\_entrada.wav archivo\_salida.wav -D 1.5 0.6} \newline\newline
+Como ambos archivos son ``de salida'' (para nuestro programa)
 
-Se incluyen archivos de Audio de ejemplo en la carpeta \textit{inputExamples}.
+
 
 \newpage
 

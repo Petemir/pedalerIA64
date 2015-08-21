@@ -223,15 +223,18 @@ class PedalerIA64(QWidget):
         self.runProgramBtn.clicked.connect(self.showRunProgramDialog)
         self.runProgramBox.addWidget(self.runProgramBtn)
 
+        ## play audios ##
+        self.playButtonsBox = QHBoxLayout()
+
         ## add boxes to main vertical layout ##
         vbox.addLayout(self.codeBox)
         vbox.addLayout(self.fileBox)
-        vbox.addLayout(self.selectBox)
         vbox.addSpacing(10)
+        vbox.addLayout(self.selectBox)
         vbox.addLayout(self.effectsBox)
+        vbox.addStretch(3)
         vbox.addLayout(self.runProgramBox)
         vbox.addStretch(1)
-        self.playButtonsBox = QHBoxLayout()
         vbox.addLayout(self.playButtonsBox)
 
         # main window size
