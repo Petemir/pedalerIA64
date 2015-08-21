@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.7.26)  28 JUL 2014 11:22
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.21)  20 AUG 2015 23:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Preinforme.tex
 (./Preinforme.tex
 LaTeX2e <2011/06/27>
-Babel <3.9f> and hyphenation patterns for 5 languages loaded.
+Babel <3.9h> and hyphenation patterns for 78 languages loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
@@ -24,23 +24,23 @@ File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \bibindent=\dimen102
 )
 (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2013/05/16 v3.9f The Babel package
+Package: babel 2013/12/03 3.9h The Babel package
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel-spanish/spanish.ldf
-Language: spanish.ldf 2010/05/23 v5.0j Spanish support from the babel system
+Language: spanish.ldf 2014/01/29 v5.0m Spanish support from the babel system
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
-File: babel.def 2013/05/16 v3.9f Babel common definitions
+File: babel.def 2013/12/03 3.9h Babel common definitions
 \babel@savecnt=\count87
 \U@D=\dimen103
 )
 \es@datefmt=\count88
 \es@quottoks=\toks14
 \es@quotdepth=\count89
-Package babel Info: Making " an active character on input line 495.
-Package babel Info: Making . an active character on input line 588.
-Package babel Info: Making < an active character on input line 633.
-Package babel Info: Making > an active character on input line 633.
+Package babel Info: Making " an active character on input line 496.
+Package babel Info: Making . an active character on input line 599.
+Package babel Info: Making < an active character on input line 644.
+Package babel Info: Making > an active character on input line 644.
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2008/03/30 v1.1d Input encoding file
@@ -313,7 +313,7 @@ Cargando package 'caratula' v0.2 (21/4/2003)
 \intlist=\toks20
 ) (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip10
-Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
 \fancy@headwidth=\skip43
@@ -473,13 +473,13 @@ LaTeX Info: Redefining \. on input line 6.
 LaTeX Info: Redefining \% on input line 6.
 ) ) 
 Here is how much of TeX's memory you used:
- 2800 strings out of 494969
- 36635 string characters out of 6179593
- 104362 words of memory out of 5000000
- 5973 multiletter control sequences out of 15000+600000
+ 2814 strings out of 493304
+ 36860 string characters out of 6139871
+ 109097 words of memory out of 5000000
+ 6231 multiletter control sequences out of 15000+600000
  9531 words of font info for 34 fonts, out of 8000000 for 9000
- 40 hyphenation exceptions out of 8191
- 38i,12n,43p,734b,282s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 957 hyphenation exceptions out of 8191
+ 38i,12n,43p,734b,284s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></u
 sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texl
