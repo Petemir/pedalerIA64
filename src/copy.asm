@@ -2,8 +2,14 @@ global copy_asm
 
 ; input
 ; rdi: *buffer_in;
-; rsi: *buffer_out; 
+; rsi: *buffer_out;
 ; rdx: framesRead
+
+%define dataBuffIn rdi
+%define dataBuffOut rsi
+%define length rdx
+
+%define input xmm0
 
 section .text
     copy_asm:
@@ -16,25 +22,31 @@ section .text
     push r15
 
     cycle:
-    cmp rdx,0   ; ya recorrí todo el buffer?
-    je fin
-    cmp rdx, 1  ; caso borde: cantidad de frames impar
-    je odd_frames
+        cmp length,0   ; ya recorrí todo el buffer?
+        je fin
+        cmp length,4  ; caso borde: cantidad de frames impar
+        je odd_frames
 
-    movapd xmm0, [rdi]
-    movapd [rsi], xmm0
+        movaps input, [dataBuffIn]
+        movaps [dataBuffOut], input
 
-    add rdi,16
-    add rsi,16
+        add dataBuffIn,16
+        add dataBuffOut,16
 
-    inc rax
-    sub rdx,2  ; recorrí 128bits más
-    jmp cycle
+        sub length, 4  ; recorrí 4 frames
+        jmp cycle
 
     odd_frames:
-    movhpd xmm0, [rdi]
-    movhpd [rsi], xmm0
-    
+        movd input, [dataBuffIn]
+        movd [dataBuffOut], input
+
+        add dataBuffIn, 4
+        add dataBuffOut, 4
+        sub length, 1
+
+        cmp length, 0
+        jne odd_frames
+
     fin:
     pop r15
     pop r14
