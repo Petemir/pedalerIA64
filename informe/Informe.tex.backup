@@ -8,11 +8,13 @@
 \usepackage{caratula}
 \usepackage{url}
 \usepackage{listings}
+\usepackage{multirow}
 %\usepackage{textcomp}
 \usepackage{gensymb}
 \usepackage{hyperref}
 \usepackage[all]{hypcap}
-    
+\usepackage{array,booktabs}
+
 %\hypersetup{
 %    colorlinks,
 %    citecolor=black,
@@ -209,8 +211,7 @@ Una vez compilado el \textbf{TP} (mediante el comando \textit{make}, pues el arc
 
 La estructura para aplicar un efecto a un archivo de audio es la siguiente:
 
-\lstset{language=bash}          % Set your language (you can change the language for each code-block optionally)
-
+\lstset{language=bash}
 \begin{lstlisting}[frame=single]
 ./main INFILE OUTFILE EFFECT ARGS
 \end{lstlisting}
@@ -222,9 +223,53 @@ La estructura para aplicar un efecto a un archivo de audio es la siguiente:
  \item \textbf{ARGS} son los argumentos dependientes del efecto definido en \textbf{EFFECT}.
 \end{itemize}
 
+La lista de los efectos y los rangos de los argumentos correspondientes (los mismos se explicarán en la sección \ref{sec:desarrollo} de Desarrollo de cada efecto) se pueden consultar en la siguiente tabla:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|l|l|c|c|l|c|l|c|c|l|l|}
+\hline
+\multirow{2}{*}{{\bf Nombre}} & \multicolumn{2}{c|}{{\bf Caracter}} & \multicolumn{12}{c|}{\multirow{2}{*}{{\bf Argumentos}}}                                                                                                                                                                                                                                                                                                       \\ \cline{2-3}
+                              & {\bf ASM}         & {\bf C}         & \multicolumn{12}{c|}{}                                                                                                                                                                                                                                                                                                                                        \\ \hline
+Copiar                        & C                 & c               & \multicolumn{12}{c|}{Ninguno}                                                                                                                                                                                                                                                                                                                                 \\ \hline
+Delay                         & D                 & d               & \multicolumn{6}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Delay}:\\ 0.0-5.0 segundos\end{tabular}}                                                                                & \multicolumn{6}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Decay}: \\ 0.00-1.00\end{tabular}}                                                                                                      \\ \hline
+Flanger                       & F                 & f               & \multicolumn{4}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Delay}: \\ 0-15 milisegundos\end{tabular}}                   & \multicolumn{4}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Rate}: \\ 0.1-5.0 hertz\end{tabular}}                                   & \multicolumn{4}{c|}{\begin{tabular}[c]{@{}c@{}}Amp: \\ 0.65-0.75\end{tabular}}                                           \\ \hline
+Vibrato                       & V                 & v               & \multicolumn{6}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Depth}: \\ 0-3 milisegundos\end{tabular}}                                                                               & \multicolumn{6}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Mod}: \\ 0.1-5.0 hertz\end{tabular}}                                                                                                    \\ \hline
+Bitcrusher                    & B                 & b               & \multicolumn{6}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Bits}:\\ 1-16\end{tabular}}                                                                                             & \multicolumn{6}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Bitrate}: \\ 1-44100 hertz\end{tabular}}                                                                                                \\ \hline
+Wah Wah                       & W                 & w               & \multicolumn{3}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{Damp}:\\ 0.1-1.0\end{tabular}} & \multicolumn{3}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{MinFreq}:\\ 400-1000 hertz\end{tabular}} & \multicolumn{3}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{MaxFreq}:\\ 2500-3500 hertz\end{tabular}} & \multicolumn{3}{c|}{\begin{tabular}[c]{@{}c@{}}\underline{WahWah Freq}:\\ 1000-3000 hertz\end{tabular}} \\ \hline
+\end{tabular}
+\caption{Lista de comandos}
+\label{tab:efectos}
+\end{table}
+
 \newpage\subsubsection{GUI}
 \label{subsec:gui}
+La GUI intenta ser una manera más intuitiva de ejecutar el programa, sin necesidad de tener que ingresar todos los argumentos a mano. Se ejecuta (estando en la carpeta \textbf{src}) mediante el siguiente comando:
 
+\lstset{language=bash}
+\begin{lstlisting}[frame=single]
+python3 gui/main.py
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.68]{imagenes/gui.png}
+    \caption{Señales de audio}
+    \label{fig:gui}
+\end{figure}
+
+La GUI limpia se ve en la figura \ref{fig:gui}. Es necesario seleccionar dónde se encuentra el archivo \textbf{main}, el archivo de entrada sobre el cual se quiere aplicar el efecto, cuál es el nombre deseado del archivo de salida (se lo colocará en la misma carpeta donde se encuentra \textbf{main}) y, finalmente, el efecto a aplicar junto con sus argumentos.\vspace{\baselineskip}
+
+La GUI con todos los argumentos completados, y luego de seleccionar el botón ``ejecutar programa'' se ve como en la figura \ref{fig:gui-complete}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.68]{imagenes/gui-complete.png}
+    \caption{Señales de audio}
+    \label{fig:gui-complete}
+\end{figure}
+
+En caso de que falte c
 
 \newpage\subsubsection{Chequeo de diferencias con Audacity}
 \label{subsec:chequeo-diferencias}

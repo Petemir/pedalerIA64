@@ -126,12 +126,12 @@ Se desarrolló también una rudimentaria interfaz gráfica para tratar de evitar
 
 Simplificándolo extremamente, una señal de audio (\textbf{(b)} en la figura \ref{fig:signals}) es una representación del sonido, que puede ser visualizado como una curva continua (en el caso analógico, sus valores representan voltaje eléctrico) en función del tiempo. Al digitalizar una señal, se discretiza la curva (\textbf{(a)} en la figura \ref{fig:signals}) tomando valores cada cierta cantidad de tiempo, lo que da lugar a la \textit{frecuencia de muestreo} (\textbf{sampling rate}, expresada como cantidad de muestras por segundo, unidad \textbf{Hz}). A la vez, cada uno de esos valores no puede ser expresado con precisión infinita, sino que al pasar al dominio digital, debe poder ser representado con una cantidad específica de bits, lo que origina la \textit{tasa de bits} (\textbf{bit rate}, \textit{resolución} de una señal de audio). \vspace{\baselineskip}
 
-El formato de audio elegido para el \textbf{TP} es WAV, por ser uno de los más simples para manipular. Los datos correspondientes al audio no están comprimidos, por lo que es posible realizar directamente sobre ellos las operaciones necesarias para aplicar los diversos efectos. \vspace{\baselineskip}
+El formato de audio elegido para el \textbf{TP} es WAV \footnote{Más información: \url{http://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent}}, por ser uno de los más simples para manipular. Los datos correspondientes al audio no están comprimidos, por lo que es posible realizar directamente sobre ellos las operaciones necesarias para aplicar los diversos efectos. En caso de que un archivo sea \textbf{stereo}, la información va intercalada (una muestra del canal izquierdo, otra del derecho, la siguiente del izquierdo, etc.).\vspace{\baselineskip}
 
 La librería utilizada para el manejo de este archivo se verá en la sección \ref{subsec:libsndfile}.\vspace{\baselineskip}
 
 \fbox{\begin{minipage}{42em}
-Por recomendación del profesor durante la presentación del proyecto de \textbf{TP}, en el archivo de audio final obtenido luego de la aplicación de alguno de los efectos, la \textit{señal seca} (\textit{dry sound/dry signal}, sin efecto) va por un canal, y la \textit{señal húmeda} (\textit{wet sound/wet signal}) por el otro. De este modo, se puede apreciar con mayor claridad el efecto en cuestión. 
+\underline{Nota}: por recomendación del profesor durante la presentación del proyecto de \textbf{TP}, en el archivo de audio final obtenido luego de la aplicación de alguno de los efectos, la \textit{señal seca} (\textit{dry sound/dry signal}, sin efecto) va por un canal, y la \textit{señal húmeda} (\textit{wet sound/wet signal}) por el otro. De este modo, se puede apreciar con mayor claridad el efecto en cuestión. 
 
 \ \ \ \ Esto implica que todos los archivos de salida tendrán dos canales (\textbf{stereo}), a pesar de que el archivo de entrada pudiera haber tenido un único canal. En el caso de archivos de entrada con dos canales, se realiza un promedio de ambos (aunque esto sólo es válido en archivos stereo que mandan el mismo audio por los canales), y sobre ese nuevo ``canal'' se aplica el efecto correspondiente.
 \end{minipage}}
@@ -211,8 +211,7 @@ Una vez compilado el \textbf{TP} (mediante el comando \textit{make}, pues el arc
 
 La estructura para aplicar un efecto a un archivo de audio es la siguiente:
 
-\lstset{language=bash}          % Set your language (you can change the language for each code-block optionally)
-
+\lstset{language=bash}
 \begin{lstlisting}[frame=single]
 ./main INFILE OUTFILE EFFECT ARGS
 \end{lstlisting}
@@ -224,7 +223,7 @@ La estructura para aplicar un efecto a un archivo de audio es la siguiente:
  \item \textbf{ARGS} son los argumentos dependientes del efecto definido en \textbf{EFFECT}.
 \end{itemize}
 
-La lista de los efectos y los rangos de los argumentos correspondientes (los mismos se explicarán en la sección de Desarrollo de cada efecto) se pueden consultar en la siguiente tabla:
+La lista de los efectos y los rangos de los argumentos correspondientes (los mismos se explicarán en la sección \ref{sec:desarrollo} de Desarrollo de cada efecto) se pueden consultar en la siguiente tabla:\vspace{\baselineskip}
 
 \begin{table}[H]
 \centering
@@ -245,13 +244,54 @@ Wah Wah                       & W                 & w               & \multicolu
 
 \newpage\subsubsection{GUI}
 \label{subsec:gui}
+La GUI intenta ser una manera más intuitiva de ejecutar el programa, sin necesidad de tener que ingresar todos los argumentos a mano. Se ejecuta (estando en la carpeta \textbf{src}) mediante el siguiente comando:
 
+\lstset{language=bash}
+\begin{lstlisting}[frame=single]
+python3 gui/main.py
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.68]{imagenes/gui.png}
+    \caption{GUI}
+    \label{fig:gui}
+\end{figure}
+
+La GUI limpia se ve en la figura \ref{fig:gui}. Es necesario seleccionar dónde se encuentra el archivo \textbf{main}, el archivo de entrada sobre el cual se quiere aplicar el efecto, cuál es el nombre deseado del archivo de salida (se lo colocará en la misma carpeta donde se encuentra \textbf{main}) y, finalmente, el efecto a aplicar junto con sus argumentos.\vspace{\baselineskip}
+
+La GUI con todos los argumentos completados, y luego de seleccionar el botón ``ejecutar programa'' se ve como en la figura \ref{fig:gui-complete}.\vspace{\baselineskip}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.68]{imagenes/gui-complete.png}
+    \caption{GUI con todas las opciones seleccionadas}
+    \label{fig:gui-complete}
+\end{figure}
+
+\fbox{\begin{minipage}{42em}
+\underline{Nota}: En el popup para confirmar si el comando es el correcto, el mismo no representa exactamente lo que se ejecuta, pues faltan los paths hacia cada archivo. Para que no quede un texto largo e incomprensible en el popup, se decidió poner únicamente los nombres de los MAIN, INFILE y OUTFILE, aún cuando los primeros dos podrían no compartir carpeta (OUTFILE siempre está en la misma carpeta que MAIN).
+\end{minipage}}\vspace{\baselineskip}
+
+Al poner ``Yes'', la interfaz ejecutará el comando y, en caso de que todo haya salido correctamente, ofrecerá dos botones para poder reproducir el audio de entrada, el de salida, y comparar, como se puede ver en la figura \ref{fig:gui-play-buttons}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.68]{imagenes/gui-play-buttons.png}
+    \caption{Botones de reproducción}
+    \label{fig:gui-play-buttons}
+\end{figure}
+
+En caso de que falle, se dará noticia de eso, pero no se manejará ni mostrará el error (se recomienda ejecutar el mismo comando que hubiera ejecutado la GUI en la CLI para ver qué pasó; de todos modos, es posible ver el error en la terminal desde donde se haya corrido Python).
+
+En caso de que falte completar alguna opción, al hacer click en ``Ejecutar programa'' aparecerá un popup informando de cuál es la opción que falta llenar.
 
 \newpage\subsubsection{Chequeo de diferencias con Audacity}
 \label{subsec:chequeo-diferencias}
 Para poder verificar si hay diferencias entre dos archivos de audio en Audacity, es necesario proceder del siguiente modo. Con el programa abierto, se arrastran los dos archivos hacia la ventana del mismo para que sean importados automáticamente (si es la primera vez, se va a preguntar si se quiere trabajar sobre los mismos archivos, o sobre una copia temporal de los mismos; por seguridad, se recomienda elegir esta última opción, y que el programa la recuerde).\vspace{\baselineskip}
 
 Como ambos archivos son ``de salida'' (para nuestro programa), serán los dos stereo. Es necesario separar los canales de cada uno de los archivos, para compararlos entre sí. Hacer click sobre la flecha al lado del nombre del archivo, y clickear en ``Split Stereo to Mono'' (o presionar la tecla \textbf{n}); ver figura \ref{fig:audacity-split-stereo}.
+
 
 \begin{figure}[H]
     \centering
@@ -290,6 +330,7 @@ Los dos canales seleccionados que fueron mezclados, originalmente tenían la mis
 
 El canal izquierdo es la señal seca; repetir luego el mismo procedimiento con los dos canales derechos restantes.
 
+\newpage\section{Desarrollo}
 
 \newpage\section{Fuentes}
 \begin{itemize}
@@ -342,6 +383,9 @@ El canal izquierdo es la señal seca; repetir luego el mismo procedimiento con l
 \item \url{https://ccrma.stanford.edu/~jos/}
 \item \url{http://www.musicdsp.org/}
 \item \url{http://www.kvraudio.org/}
+\item \url{http://en.wikipedia.org/wiki/Sampling_rate}
+\item \url{http://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent}
+
 \end{itemize}
 
 \end{document}
