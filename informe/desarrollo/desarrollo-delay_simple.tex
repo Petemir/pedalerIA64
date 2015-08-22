@@ -1,0 +1,45 @@
+\subsection{Delay simple}
+\label{subsec:desarrollo-delay}
+
+\subsubsection{Descripción}
+\label{subsec:desarrollo-delay-desc}
+
+El delay simple es uno de los efectos más básicos en Audio DSP. Consiste simplemente en retrasar la entrada una cantidad arbitraria de segundos; se puede, también, aplicar un modificador para que la señal húmeda sea un porcentaje de la señal original (para que no suenen ambas con la misma intensidad).
+
+A diferencia de otros efectos en los que se hace uso de una cantidad mínima (medida en milisegundos) para delay, aquí tiene una magnitud mayor, por lo que el archivo de salida tendrá una duración mayor que el de entrada. Esto ocasiona que cuando ya no quedan más datos para leer, se realice un ciclo más de escritura, donde se vierte la entrada obtenida en el último ciclo de lectura.
+
+En este efecto, se calcula a cuántas muestras (\textbf{frames}) equivale el argumento de delay (que está en segundos), mediante el cálculo
+\begin{center}$delayInFrames = ceil(delayInSec*inFileStr.samplerate)$.\end{center}
+
+El tamaño de los buffers a usar (\textit{dataBuffIn}, \textit{dataBuffOut} y \textit{dataBuffEffect}) será el máximo entre \textit{delayInFrames} y el mayor múltiplo de dicho valor que sea menor que BUFFERSIZE (8192). \textit{dataBuffEffect} contiene siempre la entrada del ciclo anterior; de este modo, nos aseguramos que en cada ciclo de lecto/escritura se pueda acceder mediante \textit{dataBuffEffect} a lo que se leyó en el ciclo anterior, que pasó hace una cantidad \textit{delay} de segundos, que es lo que necesita el efecto.
+
+\vspace{\baselineskip}
+
+Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{ASM} de este algoritmo se verán en la sección \fullref{subsec:resultados-delay}, y el análisis en \fullref{subsec:analisis-delay}.
+
+\subsubsection{Pseudocódigo}
+\label{subsec:desarrollo-delay-code}
+
+\lstset{language=C}
+\begin{lstlisting}[frame=single]
+dataBuffOut.canalDerecho = dataBuffIn.cicloAnterior * decay
+dataBuffOut.canalIzquierdo = dataBuffIn.cicloActual
+\end{lstlisting}
+
+\subsubsection{Comando}
+\label{subsec:desarrollo-delay-call}
+
+\underline{\textbf{C}}:
+\begin{center}
+ \textit{./main INFILE OUTFILE -d delay decay}
+\end{center}
+
+\underline{\textbf{ASM}}:
+\begin{center}
+ \textit{./main INFILE OUTFILE -D delay decay}
+\end{center}
+
+\begin{itemize}
+ \item \textit{DELAY}: argumento sin rango específico, pero por conveniencia se lo limitó en la GUI al rango [0.0, 5.0] segundos. Es la cantidad de segundos de retraso que se quiere tener en la señal húmeda.
+ \item \textit{DECAY}: argumento con rango entre 0.00 y 1.00. Es el porcentaje de la amplitud de la señal seca que se quiere en la señal húmeda.
+\end{itemize}

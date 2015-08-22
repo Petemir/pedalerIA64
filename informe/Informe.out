@@ -15,20 +15,21 @@
 \BOOKMARK [1][-]{section.2}{Desarrollo}{}% 15
 \BOOKMARK [2][-]{subsection.2.1}{Estructura del c\363digo}{section.2}% 16
 \BOOKMARK [2][-]{subsection.2.2}{Funciones auxiliares}{section.2}% 17
-\BOOKMARK [2][-]{subsection.2.3}{C\363digo com\372n para los efecto}{section.2}% 18
+\BOOKMARK [2][-]{subsection.2.3}{C\363digo com\372n para los efectos}{section.2}% 18
 \BOOKMARK [3][-]{subsubsection.2.3.1}{Pseudoc\363digo}{subsection.2.3}% 19
 \BOOKMARK [2][-]{subsection.2.4}{Copy}{section.2}% 20
 \BOOKMARK [3][-]{subsubsection.2.4.1}{Descripci\363n}{subsection.2.4}% 21
 \BOOKMARK [3][-]{subsubsection.2.4.2}{Pseudoc\363digo}{subsection.2.4}% 22
 \BOOKMARK [3][-]{subsubsection.2.4.3}{Comando}{subsection.2.4}% 23
-\BOOKMARK [2][-]{subsection.2.5}{Delay}{section.2}% 24
+\BOOKMARK [2][-]{subsection.2.5}{Delay simple}{section.2}% 24
 \BOOKMARK [3][-]{subsubsection.2.5.1}{Descripci\363n}{subsection.2.5}% 25
 \BOOKMARK [3][-]{subsubsection.2.5.2}{Pseudoc\363digo}{subsection.2.5}% 26
 \BOOKMARK [3][-]{subsubsection.2.5.3}{Comando}{subsection.2.5}% 27
-\BOOKMARK [2][-]{subsection.2.6}{Problemas en el Desarrollo}{section.2}% 28
-\BOOKMARK [1][-]{section.3}{Resultados}{}% 29
-\BOOKMARK [1][-]{section.4}{Analisis}{}% 30
-\BOOKMARK [1][-]{section.5}{Fuentes}{}% 31
-\BOOKMARK [1][-]{section.6}{Bibliograf\355a tentativa}{}% 32
-\BOOKMARK [2][-]{subsection.6.1}{Libros}{section.6}% 33
-\BOOKMARK [2][-]{subsection.6.2}{Internet}{section.6}% 34
+\BOOKMARK [2][-]{subsection.2.6}{Flanger}{section.2}% 28
+\BOOKMARK [2][-]{subsection.2.7}{Problemas en el Desarrollo}{section.2}% 29
+\BOOKMARK [1][-]{section.3}{Resultados}{}% 30
+\BOOKMARK [1][-]{section.4}{Analisis}{}% 31
+\BOOKMARK [1][-]{section.5}{Bibliograf\355a tentativa}{}% 32
+\BOOKMARK [2][-]{subsection.5.1}{Libros}{section.5}% 33
+\BOOKMARK [2][-]{subsection.5.2}{Internet - conceptos generales}{section.5}% 34
+\BOOKMARK [2][-]{subsection.5.3}{Fuentes de cosas espec\355ficas del TP}{section.5}% 35

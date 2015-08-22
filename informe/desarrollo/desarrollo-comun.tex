@@ -1,8 +1,10 @@
-\subsection{Código común para los efecto}
+\subsection{Código común para los efectos}
 \label{subsec:desarrollo-comun}
 
 Todos los efectos tienen una parte común en su código, en lo que respecta a \textit{setteo} de variables, la creación de los buffers que serán utilizados, la lectura del archivo de entrada y escritura del archivo de salida. Esa parte común sigue más o menos la siguiente estructura.\vspace{\baselineskip}
 El tamaño de los buffers depende de cada efecto en particular, pues no todos necesitan acceder en un ciclo a la misma cantidad de datos. Si bien se definió un tamaño ``común'' (BUFFERSIZE, definido en \textbf{effects.h}, de 8192), en algunos casos un efecto puede necesitar acceder a una cantidad de elementos que es función de alguno de los argumentos (en el caso de los efectos con delay, por ejemplo, donde se necesita que el tamaño del buffer sea múltiplo del argumento en cuestión).
+
+El análisis del rendimiento se hace específicamente sobre las partes del código que involucran la aplicación del efecto, y no en secciones colaterales como lectura y escritura del archivo, creación e inicialización de los buffers, etc. 
 
 \subsubsection{Pseudocódigo}
 
@@ -26,8 +28,9 @@ Definición de variables para la creación de los buffers
 
 Crear los buffers necesarios con el tamaño adecuado
 
-Definición de variables utilizadas para los efectos (no ocurre en todos).
+Definición de variables utilizadas para los efectos (no ocurre en todos)
 
+Limpieza de los buffers
 
 Mientras haya datos por leer
     Leer archivo de entrada y guardar los datos en el buffer de entrada
