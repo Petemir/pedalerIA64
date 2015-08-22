@@ -1,0 +1,34 @@
+\subsubsection{Paquetes a instalar}
+\label{subsec:instalar}
+Para esta sección, se instaló la distribución Linux Mint 17.1 (basada en Ubuntu) en una máquina virtual, de modo de poder saber qué es necesario instalar en un sistema desde 0 para poder correr el \textbf{TP}.
+
+\subsubsection*{Compilar TP}
+Para poder compilar el \textbf{TP} mediante el comando \textit{Make}, se necesitan los paquetes: 
+\begin{itemize}
+ \item \textbf{libsndfile1-dev} (librería libsndfile)
+ \item \textbf{build-essential} (librería stdio.h)
+ \item \textbf{nasm}
+\end{itemize}
+
+\subsubsection*{Interfaz gráfica}
+Para poder ejecutar la interfaz gráfica:
+\begin{itemize}
+ \item \textbf{python3}
+ \item \textbf{python3-pyqt5} (bindings de Qt para python3)
+ \item \textbf{python3-pyqt5.multimedia} (para poder reproducir archivos de audio desde la GUI)
+\end{itemize}
+
+\subsubsection*{Debug}
+Para las herramientas de debug, es necesario instalar:
+\begin{itemize}
+ \item \textbf{valgrind}
+ \item \textbf{kdbg}
+ \item \textbf{kcachegrind}
+ \item \textbf{graphviz libgraphviz-perl} (sólo para poder ver el Call Graph en KCacheGrind)
+\end{itemize}
+
+\subsubsection*{Comparación visual señales de audio}
+Si se desea realizar la comparación visual de las señales de audio explicada en la sección \ref{subsec:chequeo-diferencias}, será necesario instalar el siguiente paquete:
+\begin{itemize}
+ \item \textbf{audacity}
+\end{itemize}
