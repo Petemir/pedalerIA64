@@ -1,0 +1,48 @@
+\subsection{Código común para los efecto}
+\label{subsec:desarrollo-comun}
+
+Todos los efectos tienen una parte común en su código, en lo que respecta a \textit{setteo} de variables, la creación de los buffers que serán utilizados, la lectura del archivo de entrada y escritura del archivo de salida. Esa parte común sigue más o menos la siguiente estructura.\vspace{\baselineskip}
+El tamaño de los buffers depende de cada efecto en particular, pues no todos necesitan acceder en un ciclo a la misma cantidad de datos. Si bien se definió un tamaño ``común'' (BUFFERSIZE, definido en \textbf{effects.h}, de 8192), en algunos casos un efecto puede necesitar acceder a una cantidad de elementos que es función de alguno de los argumentos (en el caso de los efectos con delay, por ejemplo, donde se necesita que el tamaño del buffer sea múltiplo del argumento en cuestión).
+
+\subsubsection{Pseudocódigo}
+
+\lstset{literate={á}{{\'a}}1
+        {ã}{{\~a}}1
+        {é}{{\'e}}1
+        {ó}{{\'o}}1
+        {í}{{\'i}}1
+        {ñ}{{\~n}}1
+        {¡}{{!`}}1
+        {¿}{{?`}}1
+        {ú}{{\'u}}1
+        {Í}{{\'I}}1
+        {Ó}{{\'O}}1
+        }
+        
+\begin{lstlisting}[frame=single]
+
+Definición de variables para la creación de los buffers
+	  (de entrada, de salida, y los necesarios para los efectos)
+
+Crear los buffers necesarios con el tamaño adecuado
+
+Definición de variables utilizadas para los efectos (no ocurre en todos).
+
+
+Mientras haya datos por leer
+    Leer archivo de entrada y guardar los datos en el buffer de entrada
+    Recorrer el buffer de entrada
+      Si el archivo es stereo, calcular promedio de los dos canales
+    
+      Contar cantidad de ciclos de reloj
+	Aplicar operación sobre los datos de entrada
+      Dejar de contar cantidad de ciclos de reloj
+    
+      Guardar el resultado en el buffer de salida
+    Dejar de recorrer el buffer de entrada
+    
+    Guardar el buffer de salida en el archivo de salida
+Dejar de leer datos
+
+Liberar memoria utilizada por los buffers
+\end{lstlisting}

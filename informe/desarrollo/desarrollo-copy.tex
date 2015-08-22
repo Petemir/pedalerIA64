@@ -1,0 +1,33 @@
+\subsection{Copy}
+\label{subsec:desarrollo-copy}
+
+\subsubsection{Descripción}
+\label{subsec:desarrollo-copy-desc}
+
+No es un efecto en sí, pero fue desarrollado como prueba de concepto para el preinforme, como método para verificar que se estuviera usando bien la API de libsndfile (\ref{subsec:libsndfile-api}), la convención de llamado de funciones de ASM desde C, entre otras cosas.
+
+\begin{center}
+\fbox{\begin{minipage}{32em}
+\underline{Nota}: en el preinforme, este algoritmo utilizaba doubles en vez de floats.
+\end{minipage}}
+\end{center}
+
+Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{ASM} de este algoritmo se verán en la sección \fullref{subsec:resultados-copy}, y el análisis en \fullref{subsec:analisis-copy}.
+
+\subsubsection{Pseudocódigo}
+\label{subsec:desarrollo-copy-code}
+
+No se adjunta el pseudocódigo para este algoritmo por no aportar nada, pues es literalmente grabar en la salida lo que entra.
+
+\subsubsection{Comando}
+\label{subsec:desarrollo-copy-call}
+
+\underline{\textbf{C}}:
+\begin{center}
+ \textit{./main INFILE OUTFILE -c}
+\end{center}
+
+\underline{\textbf{ASM}}:
+\begin{center}
+ \textit{./main INFILE OUTFILE -C}
+\end{center}

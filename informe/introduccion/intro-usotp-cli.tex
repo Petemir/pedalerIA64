@@ -4,10 +4,7 @@ Una vez compilado el \textbf{TP} (mediante el comando \textit{make}, pues el arc
 
 La estructura para aplicar un efecto a un archivo de audio es la siguiente:
 
-\lstset{language=bash}
-\begin{lstlisting}[frame=single]
-./main INFILE OUTFILE EFFECT ARGS
-\end{lstlisting}
+\begin{center}\textit{./main INFILE OUTFILE EFFECT ARGS}\end{center}
 
 \begin{itemize}
  \item \textbf{INFILE} es el archivo de audio de entrada, siempre en formato WAV.
@@ -16,7 +13,7 @@ La estructura para aplicar un efecto a un archivo de audio es la siguiente:
  \item \textbf{ARGS} son los argumentos dependientes del efecto definido en \textbf{EFFECT}.
 \end{itemize}
 
-La lista de los efectos y los rangos de los argumentos correspondientes (los mismos se explicarán en la sección \ref{sec:desarrollo} de Desarrollo de cada efecto) se pueden consultar en la siguiente tabla:\vspace{\baselineskip}
+La lista de los efectos y los rangos de los argumentos correspondientes (los mismos se explicarán en la sección \fullref{sec:desarrollo} de Desarrollo de cada efecto) se pueden consultar en la siguiente tabla:\vspace{\baselineskip}
 
 \begin{table}[H]
 \centering
@@ -34,3 +31,5 @@ Wah Wah                       & W                 & w               & \multicolu
 \caption{Lista de comandos}
 \label{tab:efectos}
 \end{table}
+
+Además de los efectos definidos en la tabla anterior, se desarrollaron algunas funciones auxiliares que serán oportunamente definidas en \fullref{subsec:desarrollo-auxiliares}

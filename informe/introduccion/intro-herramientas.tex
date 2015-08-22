@@ -8,9 +8,20 @@ Además de los ya mencionados \textbf{Matlab}, \textbf{RStudio}, y \textbf{Scila
 
 Una ventaja de la librería es que hace un pasaje de integer (tipo de datos utilizado en el formato WAV) a float, que es el tipo de datos utilizado para el \textbf{TP} \footnote{Originalmente se pensaba utilizar double, pero por recomendación del profesor se decidió pasar a float para poder procesar más datos}. Por otro lado, al leer un archivo utiliza una estructura propia llamada SF\_INFO, que incluye datos importantes del mismo (cantidad de canales, de muestras, entre otros), y que son necesarios en algunas porciones del \textbf{TP} por diversos motivos.
 
+\subsubsection*{API}
+\label{subsec:libsndfile-api}
+
+TODO -> AGREGAR FUNCIONES USADAS ??
+
+\subsubsection{SSE Math}
+\label{subsec:ssemath}
+\textbf{ssemath} es una librería hecha en C que provee las funciones trascendentales básicas (seno, coseno, exponenciales) implementadas con instrucciones SIMD. Fue desarrollada para poder suplantar la \textbf{Intel Approximate Library}\footnote{No disponible un link oficial. \url{http://forum.devmaster.net/t/approximate-math-library/11679/7}}, que entre otros detalles era -como su nombre aclara-, aproximada.\vspace{\baselineskip}
+
+Varios efectos necesitan realizar operaciones con seno, por lo que fue necesario buscar y utilizar una librería externa para poder realizar operaciones con seno vectorizables, ya que el set de instrucciones de Intel no ofrece ninguna que cumpla ese cometido. Como se verá en las secciones correspondientes de \fullref{sec:resultados} y \fullref{sec:analisis}, gracias al uso del profiler se descubrió que al utilizar esta librería se generaba una pérdida de performance que ocasionaba que los efectos en \textbf{Assembler} sean por lo menos iguales en rendimiento (o en algunos casos considerablemente más lento) que \textbf{C}. Finalmente, se recurrió a una adaptación de la solución provista \href{http://forum.devmaster.net/t/fast-and-accurate-sine-cosine/9648}{aquí}.
+
 \subsubsection{Audacity}
 \label{subsec:audacity}
-\textbf{Audacity} es un editor multiplataforma de audio digital de código abierto y que en el \textbf{TP} se utilizó para realizar las comparaciones entre los archivos finales obtenidos de los diferentes efectos para cada lenguaje. De este modo, al no encontrar diferencias entre las señales de dos archivos diferentes, se podía corroborar que el algoritmo coincide con el efecto a aplicar.
+\textbf{Audacity} es un editor multiplataforma de audio digital de código abierto y que en el \textbf{TP} se utilizó para realizar las comparaciones entre los archivos finales obtenidos de los diferentes efectos para cada lenguaje. De este modo, al no encontrar diferencias entre las señales de dos archivos diferentes, se podía corroborar que el algoritmo en sus dos implementaciones coincide con el efecto a aplicar.
 
 \subsubsection{PyQt}
 Para desarrollar la interfaz gráfica del TP, se utilizó PyQt5 (\textit{versión 5.2.1}), que provee bindings de Python (\textit{versión 3.x}) para el framework QT (\textit{versión 5.2.1}). Se verán los paquetes que será necesario instalar para usar la GUI en la sección \ref{subsec:instalar}
@@ -28,4 +39,4 @@ Si bien en la materia se recomendaba utilizar DDD, a mi parecer tenía una inter
 Cuando había dudas con respecto a la performance del código en \textbf{Assembler} al compararlo con \textbf{C}, se buscó información sobre herramientas para profiling. Es posible utilizar \textbf{Valgrind} con una serie de argumentos especiales (\textit{--tool=callgrind --dump-instr=yes --collect-jumps=yes}) que devuelven un archivo de nombre callgrind.out.XXXXX (siendo XXXXX el número del proceso corrido) donde se encuentra toda la información sobre los llamados a instrucciones y dónde se pierde más tiempo en la ejecución de un programa.
 
 \subsubsection*{KCacheGrind}
-Para visualizar el archivo anterior, se utiliza KCacheGrind, que muestra toda la información de manera completamente intuitiva, y que permite identificar rápidamente dónde están los cuellos de botella del programa. Se verán los resultados obtenidos con el programa en la sección \ref{desarrolloponele}. 
+Para visualizar el archivo anterior, se utiliza KCacheGrind, que muestra toda la información de manera completamente intuitiva, y que permite identificar rápidamente dónde están los cuellos de botella del programa. Se verán los resultados obtenidos con el programa en la sección \ref{sec:resultados}.

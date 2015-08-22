@@ -1,0 +1,20 @@
+\subsection{Estructura del código}
+\label{subsec:desarrollo-estructura}
+La carpeta correspondiente al código del \textbf{TP} (\textbf{src}) contiene 4 carpetas, y varios archivos. Las carpetas son las siguientes:
+\begin{itemize}
+  \item \textbf{gui}: contiene únicamente el archivo main.py, que es el que provee la interfaz gráfica para el \textbf{TP}.
+  \item \textbf{inputExamples}: algunos archivos de audio en formato WAV como ejemplo de entrada.
+  \item \textbf{outputExamples}: algunos archivos de audio en formato WAV como ejemplo de salida del programa. En sus nombres se encuentra expresado cuál fue el archivo de audio de entrada utilizado, cuál fue el efecto aplicado (y la versión, \textbf{C} o \textbf{Assembler}), y los valores de los argumentos de entrada.
+  \item \textbf{libs}: incluye los archivos ssemathfun.h (sección \nameref{subsec:ssemath}) y tiempo.h (ver \ref{subsec:intro-desarrollo}).
+\end{itemize}
+
+Los archivos son los siguientes:
+
+\begin{itemize}
+ \item \textbf{main.c}: el archivo principal, que da nombre al ejecutable. Muestra la ayuda del programa, hace chequeo básico de errores en cuanto a los parámetros de entrada, crea punteros a los archivos de entrada y de salida, y llama al efecto correspondiente.
+ \item \textbf{effects.h}: archivo donde se incluyen las librerías utilizadas, se declaran variables y constantes globales, y los encabezados de las funciones tanto en \textbf{C} como en \textbf{Assembler} (que serán de tipo \textit{extern}). Al final de este archivo se encuentra comentado el template básico (\fullref{subsec:desarrollo-comun}) con el código común que utilizan todos los efectos.
+ \item \textbf{effects.c}: aquí se encuentran definidas todas las funciones auxiliares, y los efectos hechos en \textbf{C}.
+ \item \textbf{effects\_asm.c}: el mismo contenido el anterior, pero donde se aplica un efecto o se realiza una operación en una función auxiliar, se llama a la función correspondiente en \textbf{Assembler}.
+ \item \textbf{ARCHIVO.asm}: cada archivo con extensión .ASM corresponde al efecto o función auxiliar en cuestión.
+ \item \textbf{Makefile}: archivo que permite compilar todo el \textbf{TP} mediante el comando \textit{make}.
+\end{itemize}

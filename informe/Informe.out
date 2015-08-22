@@ -3,16 +3,32 @@
 \BOOKMARK [2][-]{subsection.1.2}{Audio}{section.1}% 3
 \BOOKMARK [2][-]{subsection.1.3}{Herramientas externas utilizadas}{section.1}% 4
 \BOOKMARK [3][-]{subsubsection.1.3.1}{libsndfile}{subsection.1.3}% 5
-\BOOKMARK [3][-]{subsubsection.1.3.2}{Audacity}{subsection.1.3}% 6
-\BOOKMARK [3][-]{subsubsection.1.3.3}{PyQt}{subsection.1.3}% 7
-\BOOKMARK [3][-]{subsubsection.1.3.4}{Valgrind, KDbg, Callgrind, KCacheGrind}{subsection.1.3}% 8
-\BOOKMARK [2][-]{subsection.1.4}{Uso TP}{section.1}% 9
-\BOOKMARK [3][-]{subsubsection.1.4.1}{Paquetes a instalar}{subsection.1.4}% 10
-\BOOKMARK [3][-]{subsubsection.1.4.2}{Linea comandos}{subsection.1.4}% 11
-\BOOKMARK [3][-]{subsubsection.1.4.3}{GUI}{subsection.1.4}% 12
-\BOOKMARK [3][-]{subsubsection.1.4.4}{Chequeo de diferencias con Audacity}{subsection.1.4}% 13
-\BOOKMARK [1][-]{section.2}{Desarrollo}{}% 14
-\BOOKMARK [1][-]{section.3}{Fuentes}{}% 15
-\BOOKMARK [1][-]{section.4}{Bibliograf\355a tentativa}{}% 16
-\BOOKMARK [2][-]{subsection.4.1}{Libros}{section.4}% 17
-\BOOKMARK [2][-]{subsection.4.2}{Internet}{section.4}% 18
+\BOOKMARK [3][-]{subsubsection.1.3.2}{SSE Math}{subsection.1.3}% 6
+\BOOKMARK [3][-]{subsubsection.1.3.3}{Audacity}{subsection.1.3}% 7
+\BOOKMARK [3][-]{subsubsection.1.3.4}{PyQt}{subsection.1.3}% 8
+\BOOKMARK [3][-]{subsubsection.1.3.5}{Valgrind, KDbg, Callgrind, KCacheGrind}{subsection.1.3}% 9
+\BOOKMARK [2][-]{subsection.1.4}{Uso TP}{section.1}% 10
+\BOOKMARK [3][-]{subsubsection.1.4.1}{Paquetes a instalar}{subsection.1.4}% 11
+\BOOKMARK [3][-]{subsubsection.1.4.2}{Linea comandos}{subsection.1.4}% 12
+\BOOKMARK [3][-]{subsubsection.1.4.3}{GUI}{subsection.1.4}% 13
+\BOOKMARK [3][-]{subsubsection.1.4.4}{Chequeo de diferencias con Audacity}{subsection.1.4}% 14
+\BOOKMARK [1][-]{section.2}{Desarrollo}{}% 15
+\BOOKMARK [2][-]{subsection.2.1}{Estructura del c\363digo}{section.2}% 16
+\BOOKMARK [2][-]{subsection.2.2}{Funciones auxiliares}{section.2}% 17
+\BOOKMARK [2][-]{subsection.2.3}{C\363digo com\372n para los efecto}{section.2}% 18
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Pseudoc\363digo}{subsection.2.3}% 19
+\BOOKMARK [2][-]{subsection.2.4}{Copy}{section.2}% 20
+\BOOKMARK [3][-]{subsubsection.2.4.1}{Descripci\363n}{subsection.2.4}% 21
+\BOOKMARK [3][-]{subsubsection.2.4.2}{Pseudoc\363digo}{subsection.2.4}% 22
+\BOOKMARK [3][-]{subsubsection.2.4.3}{Comando}{subsection.2.4}% 23
+\BOOKMARK [2][-]{subsection.2.5}{Delay}{section.2}% 24
+\BOOKMARK [3][-]{subsubsection.2.5.1}{Descripci\363n}{subsection.2.5}% 25
+\BOOKMARK [3][-]{subsubsection.2.5.2}{Pseudoc\363digo}{subsection.2.5}% 26
+\BOOKMARK [3][-]{subsubsection.2.5.3}{Comando}{subsection.2.5}% 27
+\BOOKMARK [2][-]{subsection.2.6}{Problemas en el Desarrollo}{section.2}% 28
+\BOOKMARK [1][-]{section.3}{Resultados}{}% 29
+\BOOKMARK [1][-]{section.4}{Analisis}{}% 30
+\BOOKMARK [1][-]{section.5}{Fuentes}{}% 31
+\BOOKMARK [1][-]{section.6}{Bibliograf\355a tentativa}{}% 32
+\BOOKMARK [2][-]{subsection.6.1}{Libros}{section.6}% 33
+\BOOKMARK [2][-]{subsection.6.2}{Internet}{section.6}% 34

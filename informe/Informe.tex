@@ -15,6 +15,8 @@
 \usepackage[all]{hypcap}
 \usepackage{array,booktabs}
 
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\nameref*{#1} (\autoref*{#1})}} % One single link
+
 %\hypersetup{
 %    colorlinks,
 %    citecolor=black,
@@ -95,9 +97,12 @@
 %                                                             %
 %*************************************************************%
 \input{introduccion/introduccion}
-
-
-\newpage\section{Desarrollo}
+\newpage
+\input{desarrollo/desarrollo}
+\newpage
+\input{resultados/resultados}
+\newpage
+\input{analisis/analisis}
 
 \newpage\section{Fuentes}
 \begin{itemize}
@@ -151,7 +156,6 @@
 \item \url{http://www.musicdsp.org/}
 \item \url{http://www.kvraudio.org/}
 \item \url{http://en.wikipedia.org/wiki/Sampling_rate}
-\item \url{http://stackoverflow.com/questions/13039846/what-do-the-bytes-in-a-wav-file-represent}
 
 \end{itemize}
 

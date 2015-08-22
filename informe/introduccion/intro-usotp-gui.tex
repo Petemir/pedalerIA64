@@ -2,10 +2,7 @@
 \label{subsec:gui}
 La GUI intenta ser una manera más intuitiva de ejecutar el programa, sin necesidad de tener que ingresar todos los argumentos a mano. Se ejecuta (estando en la carpeta \textbf{src}) mediante el siguiente comando:
 
-\lstset{language=bash}
-\begin{lstlisting}[frame=single]
-python3 gui/main.py
-\end{lstlisting}
+\begin{center}\textit{python3 gui/main.py}\end{center}\vspace{\baselineskip}
 
 \begin{figure}[H]
     \centering
@@ -25,9 +22,11 @@ La GUI con todos los argumentos completados, y luego de seleccionar el botón ``
     \label{fig:gui-complete}
 \end{figure}
 
+\begin{center}
 \fbox{\begin{minipage}{42em}
 \underline{Nota}: En el popup para confirmar si el comando es el correcto, el mismo no representa exactamente lo que se ejecuta, pues faltan los paths hacia cada archivo. Para que no quede un texto largo e incomprensible en el popup, se decidió poner únicamente los nombres de los MAIN, INFILE y OUTFILE, aún cuando los primeros dos podrían no compartir carpeta (OUTFILE siempre está en la misma carpeta que MAIN).
-\end{minipage}}\vspace{\baselineskip}
+\end{minipage}}
+\end{center}\vspace{\baselineskip}
 
 Al poner ``Yes'', la interfaz ejecutará el comando y, en caso de que todo haya salido correctamente, ofrecerá dos botones para poder reproducir el audio de entrada, el de salida, y comparar, como se puede ver en la figura \ref{fig:gui-play-buttons}.
 
