@@ -7,6 +7,7 @@
 \usepackage{lastpage}
 \usepackage{caratula}
 \usepackage{url}
+\usepackage{listings}
 %\usepackage{textcomp}
 \usepackage{gensymb}
 \usepackage{hyperref}
@@ -56,7 +57,7 @@
 {15mm}% top margin
 {15mm}% right margin
 {10mm}% bottom margin
-{0mm}{20mm}{0mm}{30mm}% we needed -- related to headers and footers
+{0mm}{10mm}{0mm}{20mm}% we needed -- related to headers and footers
 
 %%%%%%%%%
 \pagestyle{fancy}
@@ -128,7 +129,9 @@ El formato de audio elegido para el \textbf{TP} es WAV, por ser uno de los más 
 La librería utilizada para el manejo de este archivo se verá en la sección \ref{subsec:libsndfile}.\vspace{\baselineskip}
 
 \fbox{\begin{minipage}{42em}
-Por recomendación del profesor durante la presentación del proyecto de \textbf{TP}, en el archivo de audio final obtenido luego de la aplicación de alguno de los efectos, la \textit{señal seca} (\textit{dry sound/dry signal}, sin efecto) va por un canal, y la \textit{señal húmeda} (\textit{wet sound/wet signal}) por el otro. De este modo, se puede apreciar con mayor claridad el efecto en cuestión. Esto implica que todos los archivos de salida tendrán dos canales (\textbf{stereo}), a pesar de que el archivo de entrada pudiera haber tenido un único canal. En el caso de archivos de entrada con dos canales, se realiza un promedio de ambos (aunque esto sólo es válido en archivos stereo que mandan el mismo audio por los canales), y sobre ese nuevo ``canal'' se aplica el efecto correspondiente.
+Por recomendación del profesor durante la presentación del proyecto de \textbf{TP}, en el archivo de audio final obtenido luego de la aplicación de alguno de los efectos, la \textit{señal seca} (\textit{dry sound/dry signal}, sin efecto) va por un canal, y la \textit{señal húmeda} (\textit{wet sound/wet signal}) por el otro. De este modo, se puede apreciar con mayor claridad el efecto en cuestión. 
+
+\ \ \ \ Esto implica que todos los archivos de salida tendrán dos canales (\textbf{stereo}), a pesar de que el archivo de entrada pudiera haber tenido un único canal. En el caso de archivos de entrada con dos canales, se realiza un promedio de ambos (aunque esto sólo es válido en archivos stereo que mandan el mismo audio por los canales), y sobre ese nuevo ``canal'' se aplica el efecto correspondiente.
 \end{minipage}}
 
 \newpage\subsection{Herramientas externas utilizadas}
@@ -145,7 +148,85 @@ Una ventaja de la librería es que hace un pasaje de integer (tipo de datos util
 \label{subsec:audacity}
 \textbf{Audacity} es un editor multiplataforma de audio digital de código abierto y que en el \textbf{TP} se utilizó para realizar las comparaciones entre los archivos finales obtenidos de los diferentes efectos para cada lenguaje. De este modo, al no encontrar diferencias entre las señales de dos archivos diferentes, se podía corroborar que el algoritmo coincide con el efecto a aplicar.
 
-\subsubsection*{Chequeo diferencias}
+\subsubsection{PyQt}
+Para desarrollar la interfaz gráfica del TP, se utilizó PyQt5 (\textit{versión 5.2.1}), que provee bindings de Python (\textit{versión 3.x}) para el framework QT (\textit{versión 5.2.1}). Se verán los paquetes que será necesario instalar para usar la GUI en la sección \ref{subsec:instalar}
+
+\subsubsection{Valgrind, KDbg, Callgrind, KCacheGrind}
+Todas las herramientas mencionadas en el título fueron utilizadas para el debug del \textbf{TP}.
+
+\subsubsection*{Valgrind}
+\textbf{Valgrind} fue utilizado para saber cómo era el manejo de memoria del programa. En el caso de que el programa terminara repentinamente debido a algún \textit{segmentation fault}, mediante \textbf{Valgrind} se podía saber en qué línea del código ocurría, pasando entonces a ver cuál fue el acceso erróneo viendo los valores de los registros con \textbf{Kdbg}. 
+
+\subsubsection*{KDbg}
+Si bien en la materia se recomendaba utilizar DDD, a mi parecer tenía una interfaz bastante anticuada, y \textit{crasheaba} mucho; por esa razón se buscó una alternativa, y \textbf{Kdbg} resultó ser una opción más que adecuada para mis requerimientos, más estable y más amigable en cuanto a UI.
+
+\subsubsection*{Callgrind}
+Cuando había dudas con respecto a la performance del código en \textbf{Assembler} al compararlo con \textbf{C}, se buscó información sobre herramientas para profiling. Es posible utilizar \textbf{Valgrind} con una serie de argumentos especiales (\textit{--tool=callgrind --dump-instr=yes --collect-jumps=yes}) que devuelven un archivo de nombre callgrind.out.XXXXX (siendo XXXXX el número del proceso corrido) donde se encuentra toda la información sobre los llamados a instrucciones y dónde se pierde más tiempo en la ejecución de un programa.
+
+\subsubsection*{KCacheGrind}
+Para visualizar el archivo anterior, se utiliza KCacheGrind, que muestra toda la información de manera completamente intuitiva, y que permite identificar rápidamente dónde están los cuellos de botella del programa. Se verán los resultados obtenidos con el programa en la sección \ref{desarrolloponele}.
+
+
+\newpage\subsection{Uso TP}
+\subsubsection{Paquetes a instalar}
+\label{subsec:instalar}
+Para esta sección, se instaló la distribución Linux Mint 17.1 (basada en Ubuntu) en una máquina virtual, de modo de poder saber qué es necesario instalar en un sistema desde 0 para poder correr el \textbf{TP}.
+
+\subsubsection*{Compilar TP}
+Para poder compilar el \textbf{TP} mediante el comando \textit{Make}, se necesitan los paquetes: 
+\begin{itemize}
+ \item \textbf{libsndfile1-dev} (librería libsndfile)
+ \item \textbf{build-essential} (librería stdio.h)
+ \item \textbf{nasm}
+\end{itemize}
+
+\subsubsection*{Interfaz gráfica}
+Para poder ejecutar la interfaz gráfica:
+\begin{itemize}
+ \item \textbf{python3}
+ \item \textbf{python3-pyqt5} (bindings de Qt para python3)
+ \item \textbf{python3-pyqt5.multimedia} (para poder reproducir archivos de audio desde la GUI)
+\end{itemize}
+
+\subsubsection*{Debug}
+Para las herramientas de debug, es necesario instalar:
+\begin{itemize}
+ \item \textbf{valgrind}
+ \item \textbf{kdbg}
+ \item \textbf{kcachegrind}
+ \item \textbf{graphviz libgraphviz-perl} (sólo para poder ver el Call Graph en KCacheGrind)
+\end{itemize}
+
+\subsubsection*{Comparación visual señales de audio}
+Si se desea realizar la comparación visual de las señales de audio explicada en la sección \ref{subsec:chequeo-diferencias}, será necesario instalar el siguiente paquete:
+\begin{itemize}
+ \item \textbf{audacity}
+\end{itemize}
+
+\newpage\subsubsection{Linea comandos}
+\label{subsec:cli}
+Una vez compilado el \textbf{TP} (mediante el comando \textit{make}, pues el archivo Makefile se encuentra incluido), se puede ver la ayuda del programa ejecutando únicamente \textit{./main}. Por razones de completitud, se explica aquí también cómo utilizar el programa. \vspace{\baselineskip}
+
+La estructura para aplicar un efecto a un archivo de audio es la siguiente:
+
+\lstset{language=bash}          % Set your language (you can change the language for each code-block optionally)
+
+\begin{lstlisting}[frame=single]
+./main INFILE OUTFILE EFFECT ARGS
+\end{lstlisting}
+
+\begin{itemize}
+ \item \textbf{INFILE} es el archivo de audio de entrada, siempre en formato WAV.
+ \item \textbf{OUTFILE} es el nombre deseado del archivo de salida, con extensión .WAV.
+ \item \textbf{EFFECT} es un guión, seguido del caracter asociado al efecto a aplicar.
+ \item \textbf{ARGS} son los argumentos dependientes del efecto definido en \textbf{EFFECT}.
+\end{itemize}
+
+\newpage\subsubsection{GUI}
+\label{subsec:gui}
+
+
+\newpage\subsubsection{Chequeo de diferencias con Audacity}
 \label{subsec:chequeo-diferencias}
 Para poder verificar si hay diferencias entre dos archivos de audio en Audacity, es necesario proceder del siguiente modo. Con el programa abierto, se arrastran los dos archivos hacia la ventana del mismo para que sean importados automáticamente (si es la primera vez, se va a preguntar si se quiere trabajar sobre los mismos archivos, o sobre una copia temporal de los mismos; por seguridad, se recomienda elegir esta última opción, y que el programa la recuerde).\vspace{\baselineskip}
 
@@ -188,34 +269,6 @@ Los dos canales seleccionados que fueron mezclados, originalmente tenían la mis
 
 El canal izquierdo es la señal seca; repetir luego el mismo procedimiento con los dos canales derechos restantes.
 
-\subsubsection{PyQt}
-Para desarrollar la interfaz gráfica del TP, se utilizó PyQt5 (\textit{versión 5.2.1}), que provee bindings de Python (\textit{versión 3.x}) para el framework QT (\textit{versión 5.2.1}). Se verán los paquetes que será necesario instalar para usar la GUI en la sección \ref{subsec:instalar}
-
-\subsubsection{Valgrind, KDbg, Callgrind, KCacheGrind}
-Todas las herramientas mencionadas en el título fueron utilizadas para el debug del \textbf{TP}.\vspace{\baselineskip} 
-
-\subsubsection*{Valgrind}
-\textbf{Valgrind} fue utilizado para saber cómo era el manejo de memoria del programa. En el caso de que el programa terminara repentinamente debido a algún \textit{segmentation fault}, mediante \textbf{Valgrind} se podía saber en qué línea del código ocurría, pasando entonces a ver cuál fue el acceso erróneo viendo los valores de los registros con \textbf{Kdbg}. 
-
-\subsubsection*{KDbg}
-Si bien en la materia se recomendaba utilizar DDD, a mi parecer tenía una interfaz bastante anticuada, y \textit{crasheaba} mucho; por esa razón se buscó una alternativa, y \textbf{Kdbg} resultó ser una opción más que adecuada para mis requerimientos, más estable y más amigable en cuanto a UI.\vspace{\baselineskip}
-
-\subsubsection*{Callgrind}
-Cuando había dudas con respecto a la performance del código en \textbf{Assembler} al compararlo con \textbf{C}, se buscó información sobre herramientas para profiling. Es posible utilizar \textbf{Valgrind} con una serie de argumentos especiales (--tool=callgrind --dump-instr=yes --collect-jumps=yes) que devuelven un archivo de nombre callgrind.out.XXXXX (siendo XXXXX el número del proceso corrido) donde se encuentra toda la información sobre los llamados a instrucciones y dónde se pierde más tiempo en la ejecución de un programa.
-
-\subsubsection*{KCacheGrind}
-Para visualizar el archivo anterior, se utiliza KCacheGrind, que muestra toda la información de manera completamente intuitiva, y que permite identificar rápidamente dónde están los cuellos de botella del programa. Se verán los resultados obtenidos con el programa en la sección \ref{desarrolloponele}.
-
-
-\newpage\subsection{Uso TP}
-\subsubsection{Paquetes a instalar}
-\label{subsec:instalar}
-Es necesario instalar los siguientes paquetes para poder ejecutar la interfaz gráfica: ??? ??? ???.
-\subsubsection{Linea comandos}
-\label{subsec:cli}
-
-\subsubsection{GUI}
-\label{subsec:gui}
 
 \newpage\section{Fuentes}
 \begin{itemize}
