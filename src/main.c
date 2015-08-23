@@ -15,7 +15,7 @@ void imprimir_ayuda() {
     printf("-D a b\t\t Delay simple (en ASM)\t\t\t a: segundos de delay (float), b: decay (float)\n");
     printf("-f a b c\t Flanging (en C)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
     printf("-F a b c\t Flanging (en ASM)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
-    printf("\t\t (Recomendado para flanging: a entre 0.003s y 0.015s, rate entre 0.1 y 5Hz, amp en 0.7)\n");
+    printf("\t\t (Recomendado para flanging: a entre 0.003s y 0.015s, rate entre 0.10 y 1.00Hz, amp entre 0.65 y 0.75)\n");
     printf("\n\nEjemplo: %s input.wav output.wav -d 1.5 0.6\n", nombrePrograma);
     printf("Aplica un efecto de delay (implementado en C) sobre el archivo input.wav, con 1.5 segundos de delay y 0.6 como coeficiente de decay, con el resultado en output.wav.\n");
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import subprocess, sys
+import subprocess, sys, decimal
 from PyQt5.QtWidgets import (QWidget, QAction, QInputDialog, QFileDialog, QDial, QComboBox, QVBoxLayout, QHBoxLayout, QMainWindow, QMessageBox, QPushButton, QLabel, QApplication)
 from PyQt5.QtGui import (QFont)
 from PyQt5.QtCore import (QFileInfo, QObject)
@@ -62,7 +62,7 @@ class Effects():
         delayTitle = self.getTitleWidget('Delay (0-15ms):')
         delayValue = self.getValueWidget(delayDial)
 
-        rateDial = self.getDialWidget('flanger_rate', 10, 500, 0.01)
+        rateDial = self.getDialWidget('flanger_rate', 10, 100, 0.01)
         rateTitle = self.getTitleWidget('Rate (0.1-5Hz):')
         rateValue = self.getValueWidget(rateDial)
 
@@ -147,7 +147,9 @@ class Effects():
         dial = window.sender()
         dialValueWidget = window.findChild(QLabel, dial.objectName()+'Value')
         if isinstance(dial.modifier, float):
-            dialValueWidget.setText("{0:.3f}".format((value*dial.modifier)))
+            cantDec = round(abs(decimal.Decimal(str(dial.modifier)).as_tuple().exponent),2)
+            formatString = "{0:."+str(cantDec)+"f}"
+            dialValueWidget.setText(formatString.format((value*dial.modifier)))
         else:
             dialValueWidget.setText(str(value*dial.modifier))
 
@@ -282,7 +284,9 @@ class PedalerIA64(QWidget):
             effects.effectArgs = []
             for dial in self.effectWidgets[2]:
                 if isinstance(dial.modifier, float):
-                    value = "{0:.3f}".format((dial.value()*dial.modifier))
+                    cantDec = round(abs(decimal.Decimal(str(dial.modifier)).as_tuple().exponent),2)
+                    formatString = "{0:."+str(cantDec)+"f}"
+                    value = formatString.format((dial.value()*dial.modifier))
                 else:
                     value = dial.value()*dial.modifier
                 effects.effectArgs.append(str(value))
