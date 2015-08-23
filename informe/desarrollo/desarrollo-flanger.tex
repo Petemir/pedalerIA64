@@ -4,6 +4,9 @@
 \subsubsection{Descripción}
 \label{subsec:desarrollo-flanger-desc}
 
+Flanger es un efecto que en sus orígenes se conseguía del siguiente modo. Se tenían dos cintas con el mismo material de audio, el original y una copia, y se mezclaban en un tercer canal. Este hecho ya generaba una pequeña diferencia de fase; pero además, durante la reproducción de la cinta duplicada, se presionaba sutilmente con el dedo el borde (\textit{flange}) de la bobina de la cinta, lo que afectaba la velocidad de reproducción y agregaba a la diferencia de fase una leve diferencia temporal, proununciado el efecto.
+
+En el caso digital, se utiliza un \textbf{LFO} (\textit{low frequency oscillator}) para variar la velocidad de reproducción de la copia. El LFO se genera calculando el valor absoluto del seno de un valor que es función del índice de la muestra actual y del parámetro \textbf{rate} del efecto; este resultado parcial (que está entre 0 y 1, y es una onda que varía periódicamente según el índice de la muestra) se multiplica por el parámetro  \textbf{delay}; de este modo, se obtiene para el índice actual (señal original), cuál es la muestra anterior (de la señal duplicada) que se le debe sumar. Esta señal original no se añade en su totalidad, sino que se multiplica por el parámetro \textbf{amp} para atenuarla levemente.
 
 \vspace{\baselineskip}
 
@@ -14,6 +17,15 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \lstset{language=C}
 \begin{lstlisting}[frame=single]
+Para cada muestra
+  arg_seno = 2*PI*indice_muestra * rate/archivoEntrada.samplerate
+  seno_actual = | seno(arg_seno) |
+  delay_actual = ceiling(seno_actual*delay)
+  indice_copia = indice_muestra-delay_actual
+  
+  dataBuffOut.canalDerecho =  dataBuffIn.muestraCicloActual*amp + 
+			      dataBuffIn.muestra_indice_copia*amp
+  dataBuffOut.canalIzquierdo = dataBuffIn.muestraCicloActual
 \end{lstlisting}
 
 \subsubsection{Comando}
@@ -21,16 +33,16 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \underline{\textbf{C}}:
 \begin{center}
- \textit{./main INFILE OUTFILE -f}
+ \textit{./main INFILE OUTFILE -f delay rate amp}
 \end{center}
 
 \underline{\textbf{ASM}}:
 \begin{center}
- \textit{./main INFILE OUTFILE -F}
+ \textit{./main INFILE OUTFILE -F delay rate amp}
 \end{center}
 
 \begin{itemize}
- \item \textit{}: .
- \item \textit{}: .
+ \item \textit{delay}: argumento con rango entre 0.000-0.015s. Es el delay máximo que puede tener la muestra duplicada.
+ \item \textit{rate}: argumento con rango entre 0.1-5Hz. Es la frecuencia del LFO.
+ \item \textit{amp}: argumento con rango entre 0.65 y 0.75. Según bibliografía consultada \footnote{\cite[p.~77]{zolzer11}}, el valor es 0.7, pero para hacerlo variable se eligió el rango 0.65-0.75. Es el porcentaje de la amplitud de la señal duplicada.
 \end{itemize}
- 

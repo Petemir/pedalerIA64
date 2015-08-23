@@ -22,8 +22,8 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \lstset{language=C}
 \begin{lstlisting}[frame=single]
-dataBuffOut.canalDerecho = dataBuffIn.cicloAnterior * decay
-dataBuffOut.canalIzquierdo = dataBuffIn.cicloActual
+dataBuffOut.canalDerecho = dataBuffIn.muestraCicloAnterior * decay
+dataBuffOut.canalIzquierdo = dataBuffIn.muestracicloActual
 \end{lstlisting}
 
 \subsubsection{Comando}
@@ -40,6 +40,6 @@ dataBuffOut.canalIzquierdo = dataBuffIn.cicloActual
 \end{center}
 
 \begin{itemize}
- \item \textit{DELAY}: argumento sin rango específico, pero por conveniencia se lo limitó en la GUI al rango [0.0, 5.0] segundos. Es la cantidad de segundos de retraso que se quiere tener en la señal húmeda.
- \item \textit{DECAY}: argumento con rango entre 0.00 y 1.00. Es el porcentaje de la amplitud de la señal seca que se quiere en la señal húmeda.
+ \item \textit{delay}: argumento sin rango específico, pero por conveniencia se lo limitó en la GUI al rango [0.0, 5.0] segundos. Es la cantidad de segundos de retraso que se quiere tener en la señal húmeda.
+ \item \textit{decay}: argumento con rango entre 0.00 y 1.00. Es el porcentaje de la amplitud de la señal seca que se quiere en la señal húmeda.
 \end{itemize}
