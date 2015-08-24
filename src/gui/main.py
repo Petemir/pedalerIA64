@@ -92,11 +92,11 @@ class Effects():
         bitsTitle = self.getTitleWidget('Bits (1-16):')
         bitsValue = self.getValueWidget(bitsDial)
 
-        bitrateDial = self.getDialWidget('bitcrusher_bitrate', 1, 44100, 1)
-        bitrateTitle = self.getTitleWidget('Bitrate (1, 44100Hz):')
-        bitrateValue = self.getValueWidget(bitrateDial)
+        freqDial = self.getDialWidget('bitcrusher_freq', 1, 11025, 1)
+        freqTitle = self.getTitleWidget('Freq (1, 11025Hz):')
+        freqValue = self.getValueWidget(freqDial)
 
-        return ([bitcrusherLabel], [bitsTitle, bitsValue, bitrateTitle, bitrateValue], [bitsDial, bitrateDial])
+        return ([bitcrusherLabel], [bitsTitle, bitsValue, freqTitle, freqValue], [bitsDial, freqDial])
 
     def wahWahWidget(self):
         wahwahLabel = QLabel('Efecto WahWah. Efecto loco.')

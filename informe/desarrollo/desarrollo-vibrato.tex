@@ -4,6 +4,10 @@
 \subsubsection{Descripción}
 \label{subsec:desarrollo-vibrato-desc}
 
+Vibrato es un efecto que consiste en \textit{la variación periódica de la frecuencia de un sonido}\footnote{\url{https://es.wikipedia.org/wiki/Vibrato}}. Esta variación puede conseguirse utilizando un \textbf{LFO}, como en el efecto anterior, pero en este caso lo que oscilará es la frecuencia (\textbf{pitch}) del sonido, y no el delay de la señal (que además, en el vibrato, el delay toma un valor mucho menor, 0-3ms). 
+
+Para este efecto, se utilizó un buffer circular (\textit{dataBuffEffect}). El \textbf{LFO} toma los mismos parámetros que en \fullref{subsec:desarrollo-flanger}, el argumento \textbf{mod} del efecto (que simboliza la frecuencia de modulación) y el índice de la muestra actual. La parte entera de este resultado es el índice de la muestra que se utiliza en la señal húmeda, mientras que la parte fraccionaria se usa para realizar una interpolación entre la mencionada muestra y la anterior.
+
 
 \vspace{\baselineskip}
 
@@ -14,6 +18,19 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \lstset{language=C}
 \begin{lstlisting}[frame=single]
+Argumentos = mod, depth
+depth = redondear(depth*archivoEntrada.samplerate)
+delay = depth
+mod = mod/archivoEntrada.samplerate
+Para cada muestra
+  mod_actual = sen(mod*2*PI*indice_actual)
+  tap = 1+delay+depth*mod_actual
+  indice_muestra_humeda = floor(tap)
+  frac = tap - indice_muestra_humeda
+
+  dataBuffOut.canalDerecho =  dataBuffIn.muestra_humeda*frac + 
+			      dataBuffIn.(muestra_humeda-1)*(1-frac)
+  dataBuffOut.canalIzquierdo = dataBuffIn.muestraCicloActual
 \end{lstlisting}
 
 \subsubsection{Comando}
@@ -30,7 +47,7 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 \end{center}
 
 \begin{itemize}
- \item \textit{depth}: argumento con rango entre 0.
- \item \textit{mod}: .
+ \item \textit{depth}: argumento con rango entre 0.000 y 0.003s. Es el delay de la señal de entrada.
+ \item \textit{mod}: argumento con rango entre 0.10 y 5.00Hz. Es la frecuencia de modulación del efecto.
 \end{itemize}
  

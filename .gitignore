@@ -32,6 +32,9 @@ guitar-*.wav
 # callgrind
 callgrind.out.*
 
-# VIM
+# vim
 .*.swp
 .*.swo
+
+# tex
+*.tex.backup
