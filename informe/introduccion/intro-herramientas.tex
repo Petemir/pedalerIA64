@@ -10,8 +10,17 @@ Una ventaja de la librería es que hace un pasaje de integer (tipo de datos util
 
 \subsubsection*{API}
 \label{subsec:libsndfile-api}
+Las funciones de la librería utilizada son las siguientes:
 
-TODO -> AGREGAR FUNCIONES USADAS ??
+\begin{itemize}
+ \item \textbf{sf\_open}: para abrir un archivo de audio. 
+ \item \textbf{sf\_strerror}: para descubrir el error en caso de una apertura fallida de archivo.
+ \item \textbf{sf\_seek}: para reapuntar los punteros de lectura/escritura del archivo. Útil para volver a leer un archivo abierto (por ej., cuando se corren varias iteraciones del mismo efecto, o en el caso de normalización post-aplicación del efecto (\ref{subsec:desarrollo-problemas-modulo}).
+ \item \textbf{sf\_readf\_float}: para leer una cantidad determinada de muestras (o menos, cuando es el final del archivo) de un archivo ya abierto. La función las convierte a tipo float, independientemente del tipo que tengan las muestras en el archivo original.
+ \item \textbf{sf\_write\_float}: para escribir una cantidad determinada de muestras con valores de tipo float
+ \item \textbf{sf\_write\_sync}: fuerza la escritura de los datos en el buffer al archivo de salida (\textit{flush}).
+\end{itemize}
+
 
 \subsubsection{SSE Math}
 \label{subsec:ssemath}
@@ -36,6 +45,7 @@ Todas las herramientas mencionadas en el título fueron utilizadas para el debug
 Si bien en la materia se recomendaba utilizar DDD, a mi parecer tenía una interfaz bastante anticuada, y \textit{crasheaba} mucho; por esa razón se buscó una alternativa, y \textbf{Kdbg} resultó ser una opción más que adecuada para mis requerimientos, más estable y más amigable en cuanto a UI.
 
 \subsubsection*{Callgrind}
+\label{subsec:callgrind}
 Cuando había dudas con respecto a la performance del código en \textbf{Assembler} al compararlo con \textbf{C}, se buscó información sobre herramientas para profiling. Es posible utilizar \textbf{Valgrind} con una serie de argumentos especiales (\textit{--tool=callgrind --dump-instr=yes --collect-jumps=yes}) que devuelven un archivo de nombre callgrind.out.XXXXX (siendo XXXXX el número del proceso corrido) donde se encuentra toda la información sobre los llamados a instrucciones y dónde se pierde más tiempo en la ejecución de un programa.
 
 \subsubsection*{KCacheGrind}
