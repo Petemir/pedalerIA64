@@ -47,6 +47,7 @@ SF_INFO outFileStr;
 /****************** FUNCIONES AUXILIARES C *********************/
 void clean_buffer_c(float *buffer, int bufferLen);  // Llena el buffer de 0s
 // void copy_c();
+float sine_approx(float x);
 
 float maxsamp_right_c();
 void normalization_right_c();

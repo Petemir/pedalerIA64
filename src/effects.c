@@ -7,6 +7,18 @@ void clean_buffer_c(float *buffer, int bufferLen) {
     }
 }
 
+float sine_approx(float x)
+{
+    const float B = 4/M_PI;
+    const float C = -4/(M_PI*M_PI);
+
+    float y = B * x + C * x * abs(x);
+
+    const float P = 0.218;
+
+    y = P * (y * abs(y) - y) + y;
+    return y;
+}
 
 /*void copy_c() {
     bufferSize = BUFFERSIZE*inFileStr.channels;
@@ -239,6 +251,9 @@ void vibrato_c(float depth, float mod) {
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
+            /*float sine_arg = fmod((mod*2*M_PI*(framesReadTotal+eff_i+1)),(2*M_PI));
+            if(sine_arg>M_PI) { sine_arg -= 2*M_PI; }
+            float current_mod = sine_approx(sine_arg);*/
             float current_mod = sinf(mod*2*M_PI*(framesReadTotal+eff_i+1));
             eff_i++;
             float tap = 1+delay+depth*current_mod;
