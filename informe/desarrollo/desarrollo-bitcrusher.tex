@@ -13,7 +13,7 @@ En la siguiente imagen, puede apreciarse cómo el efecto distorsiona la señal o
     \centering
     \includegraphics[scale=0.6]{imagenes/bitcrusher-signal.png}
     \caption{Señal superior: original. Señal inferior: al aplicar el efecto.}
-    \label{fig:signals}
+    \label{fig:bitcrusher-signals}
 \end{figure}
 
 
@@ -26,6 +26,7 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \lstset{language=C}
 \begin{lstlisting}[frame=single]
+??
 \end{lstlisting}
 
 \subsubsection{Comando}
@@ -43,7 +44,7 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \begin{itemize}
  \item \textit{bits}: argumento con rango entre 1 y 16. Es la cantidad de bits que se pueden utilizar para el valor de cada muestra.
- \item \textit{freq}: argumento con rango entre 1 y 11025Hz. Es la frecuencia de sampleo de la señal húmeda.
+ \item \textit{freq}: argumento con rango entre 2048 y 11025Hz. Es la frecuencia de sampleo de la señal húmeda.
 \end{itemize}
  
  

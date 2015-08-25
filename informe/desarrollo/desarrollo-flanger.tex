@@ -8,6 +8,8 @@ Flanger es un efecto que en sus orígenes se conseguía del siguiente modo. Se t
 
 En el caso digital, se utiliza un \textbf{LFO} (\textit{low frequency oscillator}) para variar la velocidad de reproducción de la copia. El LFO se genera calculando el valor absoluto del seno de un valor que es función del índice de la muestra actual y del parámetro \textbf{rate} del efecto; este resultado parcial (que está entre 0 y 1, y es una onda que varía periódicamente según el índice de la muestra) se multiplica por el parámetro  \textbf{delay}; de este modo, se obtiene para el índice actual (señal original), cuál es la muestra anterior (de la señal duplicada) que se le debe sumar. Esta señal original no se añade en su totalidad, sino que se multiplica por el parámetro \textbf{amp} para atenuarla levemente.
 
+La rutina en \textbf{ASM} se encuentra dividida en dos archivos, \textbf{flanger.asm} y \textbf{flanger\_index\_calc.asm}. Por un lado (en el último archivo mencionado), se calculan cuáles serán los índices de las muestras que se usarán para la señal húmeda (cálculo de los argumentos del seno, aplicación del mismo, y posterior modificación, obteniendo todos los indice\_copia), y por el otro se aplica el efecto utilizando tales muestras (primer archivo).
+
 \vspace{\baselineskip}
 
 Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{ASM} de este algoritmo se verán en la sección \fullref{subsec:resultados-flanger}, y el análisis en \fullref{subsec:analisis-flanger}.

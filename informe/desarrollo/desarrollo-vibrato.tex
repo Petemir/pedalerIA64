@@ -8,6 +8,7 @@ Vibrato es un efecto que consiste en \textit{la variación periódica de la frec
 
 Para este efecto, se utilizó un buffer circular (\textit{dataBuffEffect}). El \textbf{LFO} toma los mismos parámetros que en \fullref{subsec:desarrollo-flanger}, el argumento \textbf{mod} del efecto (que simboliza la frecuencia de modulación) y el índice de la muestra actual. La parte entera de este resultado es el índice de la muestra que se utiliza en la señal húmeda, mientras que la parte fraccionaria se usa para realizar una interpolación entre la mencionada muestra y la anterior.
 
+Al igual que para el caso del \fullref{subsec:desarrollo-flanger}, la rutina en \textbf{ASM} se encuentra dividida en dos archivos, \textbf{vibrato\_index\_calc.asm} y \textbf{vibrato.asm}.
 
 \vspace{\baselineskip}
 

@@ -4,6 +4,20 @@
 \subsubsection{Descripción}
 \label{subsec:desarrollo-wahwah-desc}
 
+WahWah es uno de los efectos más conocidos y fáciles de identificar, pues su nombre describe el sonido que genera. El efecto se genera con la aplicación de un filtro pasabanda (sólo deja pasar las frecuencias entre dos valores, mínimo y máximo, preestablecidos) que varía con el tiempo. El filtro pasabanda se implementó mediante un filtro de estado variable (que permite separar a la señal original \textit{x} en tres, debajo del pasa banda $y_{l}$, en el pasa banda $y_{b}$, y por arriba del pasa banda $y_{h}$), que sigue las siguientes ecuaciones:
+
+\begin{center}
+ $y_{l}(n) = F_{c} * y_{b}(n) + y_{l}(n-1) $ \\
+ $y_{b}(n) = F_{c} * y_{h}(n) + y_{b}(n-1) $\\
+ $y_{h}(n) = x(n) - y_{l}(n-1) - Q_{1} * y_{b}(n-1)$
+\end{center}
+
+$F_{c}$ es un valor que depende de las frecuencias de corte del filtro pasa banda (implementado con una onda triangular con los valores centrales de frecuencia), y $Q_{1}$ está relacionado con el argumento \textit{damp}, que especifica el tamaño de las bandas. La onda triangular es cíclica, tiene mínimo \textbf{minf} y máximo \textbf{maxf}, y en cada punto va creciendo/decreciendo en el valor \textbf{delta}. Para no guardar los valores de la onda triangular en un buffer, se generan puntualmente; primero se calcula para cada muestra si correspondería a un punto de un ciclo de crecimiento (``par'') o decrecimiento (``impar'') de la onda, y luego qué punto de ese ciclo es. Este valor es intermedio al cálculo final del $F_{c}$ que se ve en la ecuación de arriba.
+
+En este efecto se dio la particularidad de que en algunos casos las operaciones \textit{saturaban} algunas muestras. Por esa razón se debió optar por la \fullref{subsec:desarrollo-normalizacion} del archivo, pero por razones que se explicarán más adelante en \fullref{subsec:desarrollo-problemas}, primero se tuvo que ``achicar'' el valor de las muestras, por lo que se les aplicó un modificador de 0.1 a la señal húmeda. Si bien esto aumenta el error numérico, fue la solución más convincente.
+
+
+La rutina en \textbf{ASM} se encuentra dividida también en dos archivos, \textbf{wah\_wah\_index\_calc.asm} y \textbf{wah\_wah.asm}.
 
 \vspace{\baselineskip}
 
@@ -14,6 +28,30 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \lstset{language=C}
 \begin{lstlisting}[frame=single]
+Argumentos: damp, minFreq, maxFreq, wahWahFreq
+q1 = 2*damp
+delta = wahWahFreq/archivoEntrada.samplerate	
+triangleWaveSize = floor((maxFreq-minFreq)/delta)+1
+
+yh = yb = yl = 0
+
+Para cada muestra
+  cicloPar = (indice_muestra_actual/triangleWaveSize)%2 
+  esteCiclo = (indice_muestra_actual) % triangleWaveSize + 1
+  
+  fc = (1 - cicloPar) * (minFreq + (esteCiclo-1) *delta) +
+	   (cicloPar) * (maxFreq - esteCiclo*delta)  
+	   ; valor del punto de la onda triangular
+  
+  fc = 2*seno(PI*fc/archivoEntrada.samplerate)
+  
+  yh = archivoEntrada.muestraCicloActual - yl - q1*b	; aplico filtro
+  yb = fc * yh + yb					
+  yl = fc * yb + yl
+  
+  dataBuffOut.canalDerecho = 0.1*yb
+  dataBuffOut.canalIzquierdo = dataBuffIn.muestraCicloActual
+  
 \end{lstlisting}
 
 \subsubsection{Comando}
@@ -21,17 +59,19 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \underline{\textbf{C}}:
 \begin{center}
- \textit{./main INFILE OUTFILE -}
+ \textit{./main INFILE OUTFILE -w damp minFreq maxFreq wahwahFreq}
 \end{center}
 
 \underline{\textbf{ASM}}:
 \begin{center}
- \textit{./main INFILE OUTFILE -}
+ \textit{./main INFILE OUTFILE -W damp minFreq maxFreq wahwahFreq}
 \end{center}
 
 \begin{itemize}
- \item \textit{}: argumento con rango entre .
- \item \textit{}: argumento con rango entre .
+ \item \textit{damp}: argumento con rango entre 0.01-0.10. Determina el tamaño del filtro (cuánto afecta a la señal).
+ \item \textit{minFreq}: argumento con rango entre 400-1000Hz. Es la frecuencia de corte inferior del filtro pasabandas.
+ \item \textit{maxFreq}: argumento con rango entre 2500-3500Hz. Es la frecuencia de corte superior del filtro pasabandas.
+ \item \textit{wahwahFreq}: argumento con rango entre 1000-3000Hz. Es la frecuencia del filtro.
 \end{itemize}
  
  

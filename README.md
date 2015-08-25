@@ -45,17 +45,17 @@ Efectos
 * WahWah:
   * ~~C: hecho.~~
   * ~~Mejorar codigo hecho en C, no está igual a matlab.~~
-  * ASM: no hecho.
+  * ~~ASM: no hecho.~~
   * Corroborar diferencias.
   * Ejemplos con varios parametros.
 
 
 * Normalize:
  * ~~C: modularizar.~~
- * ASM: no hecho.
+ * ~~ASM: no hecho.~~
  * ~~Los ejemplos no hacen falta.~~
  * ~~Falta codigo para ultimos dos frames~~
- * Pensar si conviene llamarla siempre que se termina de usar algún efecto.
+ * ~~Pensar si conviene llamarla siempre que se termina de usar algún efecto.~~
  * ~~Falta hacer que sume a cantCiclos (ultimo item ToDo)~~
 
 * MaxSamp:
