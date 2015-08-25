@@ -22,13 +22,6 @@
         sf_write_sync(outFilePtr);
     }
 
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start)    ;
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
     free(dataBuffIn);
     free(dataBuffOut);
 }*/
@@ -43,7 +36,6 @@ float maxsamp_right_asm_caller() {
         cantCiclos += end-start;
     }
     sf_seek(outFilePtr, 0, SEEK_SET);
-    printf("max: %f\n", maxSamp);
 
     return maxSamp;
 }
@@ -113,13 +105,6 @@ void delay_simple_asm_caller(float delayInSec, float decay) {
     framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRemaining*outFileStr.channels);
     sf_write_sync(outFilePtr);
 
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
     // [Limpieza]
     free(dataBuffIn);
     free(dataBuffOut);
@@ -137,13 +122,11 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
     dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
     dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
-    //float *dataBuffSin = (float*)malloc(maxDelayInFrames*sizeof(float));
     unsigned int *dataBuffIndex = (unsigned int*)malloc(maxDelayInFrames*sizeof(unsigned int));
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
     clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
     clean_buffer_c(dataBuffEffect, maxDelayInFrames);
-    //clean_buffer_c(dataBuffSin, maxDelayInFrames);
     clean_buffer_c((float*)dataBuffIndex, maxDelayInFrames);
 
     start = end = cantCiclos = 0;
@@ -167,23 +150,12 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-/*        for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
-            printf("%d %d\n", framesReadTotal+eff_i, dataBuffIndex[eff_i]);
-//            dataBuffIndex[eff_i] = (int)((framesReadTotal+eff_i-ceil((fabs(dataBuffSin[eff_i]))*delayInFrames)))%maxDelayInFrames;
-        }*/
-
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
+
     // [Limpieza]
     free(dataBuffIn);
     free(dataBuffOut);
@@ -220,14 +192,7 @@ void bitcrusher_asm_caller(int bits, int freq) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);
@@ -254,7 +219,6 @@ void vibrato_asm_caller(float depth, float mod) {
     int dataBuffEffectHead = maxDelayInFrames-1;
 
     float *dataBuffIndex = (float*)malloc(maxDelayInFrames*sizeof(float));
-    //printf("start %x end %x delay %f depth %f\n", dataBuffIndex, &dataBuffIndex[maxDelayInFrames], delay, depth);
 
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferFrameSize);
@@ -284,43 +248,20 @@ void vibrato_asm_caller(float depth, float mod) {
                 eff_i++;
             }
         }*/
-        /*printf("%x.\n", dataBuffIn);
-        printf("%x.\n", dataBuffOut);
-        printf("%x.\n", dataBuffEffect);
-        printf("%x.\n", dataBuffIndex);
-        printf("%f.\n", delay);
-        printf("%x.\n", &dataBuffEffectHead);
-        printf("%x.\n", &dataBuffEffectEnd);
-        printf("%d.\n", inFileStr.channels);
-        */
         MEDIR_TIEMPO_START(start);
         vibrato_index_calc(dataBuffIndex, framesRead, framesReadTotal, mod, depth);
         MEDIR_TIEMPO_STOP(end);
 
-        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
-            printf("%d %f\n", framesReadTotal+eff_i, dataBuffIndex[eff_i]);
-        }*/
-        //printf("head: %x %d end %x %d \n", &dataBuffEffectHead, dataBuffEffectHead, dataBuffEffectEnd, dataBuffEffectEnd);
         MEDIR_TIEMPO_START(start);
         vibrato_asm(dataBuffIn, dataBuffOut, dataBuffEffect, dataBuffIndex, &dataBuffEffectHead, &maxDelayInFrames, framesRead*inFileStr.channels, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-/*        for (unsigned int eff_i = 0, i = 0; eff_i < framesRead; eff_i++) {
-            printf("%d %d %f %f %f\n", eff_i, framesReadTotal+eff_i, dataBuffIndex[eff_i],  dataBuffOut[i++], dataBuffOut[i++]);
-        }*/
         framesReadTotal += framesRead;
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);
@@ -379,10 +320,6 @@ void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-/*        for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
-            printf("%d %f\n", framesReadTotal+eff_i, dataBuffMod[eff_i]);
-        }*/
-
         MEDIR_TIEMPO_START(start);
         wah_wah_asm(dataBuffIn, dataBuffOut, dataBuffMod, framesRead*inFileStr.channels, inFileStr.channels, 2*damp, &yh, &yb, &yl);
         MEDIR_TIEMPO_STOP(end);
@@ -392,14 +329,7 @@ void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);

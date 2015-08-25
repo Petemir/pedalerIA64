@@ -34,13 +34,6 @@ void clean_buffer_c(float *buffer, int bufferLen) {
         sf_write_sync(outFilePtr);
     }
 
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
-
     free(dataBuffIn);
     free(dataBuffOut);
 }*/
@@ -60,7 +53,6 @@ float maxsamp_right_c() {
         cantCiclos += end-start;
     }
     sf_seek(outFilePtr, 0, SEEK_SET);
-    printf("max: %f\n", maxSamp);
     return maxSamp;
 }
 
@@ -76,7 +68,7 @@ void normalization_right_c() {
 
     float maxSamp = maxsamp_right_c();
 
-    start = end = cantCiclos = framesReadTotal = 0;
+    framesReadTotal = 0;
     while ((framesRead = sf_readf_float(outFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, out_i = 0; i < bufferFrameSize; i++) {
@@ -110,7 +102,6 @@ void delay_simple_c(float delayInSec, float decay) {
     clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
     clean_buffer_c(dataBuffEffect, maxDelayInFrames);
 
-    start = end = cantCiclos = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
@@ -156,12 +147,6 @@ void delay_simple_c(float delayInSec, float decay) {
     }
 
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);
@@ -186,7 +171,6 @@ void flanger_c(float delayInSec, float rate, float amp) {
     clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
     clean_buffer_c(dataBuffEffect, maxDelayInFrames);
 
-    start = end = cantCiclos = 0;
     framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
@@ -216,14 +200,7 @@ void flanger_c(float delayInSec, float rate, float amp) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);
@@ -257,9 +234,7 @@ void vibrato_c(float depth, float mod) {
     clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
     clean_buffer_c(dataBuffEffect, maxDelayInFrames);
 
-    start = end = cantCiclos = 0;
     framesReadTotal = 0;
-
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
@@ -294,14 +269,7 @@ void vibrato_c(float depth, float mod) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);
@@ -328,7 +296,7 @@ void bitcrusher_c(int bits, int freq) {
     float last = 0, phasor = 0;
     float normFreq = roundf(((float)freq/inFileStr.samplerate)*100)/100;
 
-    start = end = cantCiclos = framesReadTotal = 0;
+    framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
@@ -358,14 +326,7 @@ void bitcrusher_c(int bits, int freq) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
     // [/Lecto-escritura de datos]
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);
@@ -396,7 +357,7 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
     float q1 = 2*damp;
     float yh = 0, yb = 0, yl = 0;
 
-    start = end = cantCiclos = framesReadTotal = 0;
+    framesReadTotal = 0;
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
         for (unsigned int i = 0, eff_i = 0, out_i = 0; i < bufferFrameSize; i++) {
@@ -429,13 +390,6 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*outFileStr.channels);
         sf_write_sync(outFilePtr);
     }
-
-    printf("\tTiempo de ejecución:\n");
-    printf("\t  Comienzo                          : %lu\n", start);
-    printf("\t  Fin                               : %lu\n", end);
-    // printf("\t  # iteraciones                     : %d\n", cant_iteraciones);
-    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclos);
-    // printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclos/(float)cant_iteraciones);
 
     // [Limpieza]
     free(dataBuffIn);

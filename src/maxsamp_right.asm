@@ -28,7 +28,7 @@ section .text
     jmp comparison
 
     remaining_frames:
-    movq xmm3, [rdi]    ; xmm3 = dataBuffIn[0..1] | 0 | 0 | (entonces nunca van a ser maximos)
+    movq xmm3, [rdi]    ; xmm3 = |0|0|dataBuffIn[0..1] (entonces nunca van a ser maximos)
 
     comparison:
     pxor xmm2, xmm2     ; xmm2 = | 0 | 0 | 0 | 0 |
@@ -51,8 +51,8 @@ section .text
     fin:
     ; tengo que fijarme cuál es máximo, entre xmm1[1] y xmm1[3]
     movaps xmm0, xmm1
-    shufps xmm0, xmm0, 0x01 ; xmm0 = xmm1[1] | ... | ... | ... |
-    shufps xmm1, xmm1, 0x03 ; xmm1 = xmm1[3] | ... | ... | ... |
+    shufps xmm0, xmm0, 0x01 ; xmm0 = |...|...|...|...|xmm1[1]|
+    shufps xmm1, xmm1, 0x03 ; xmm1 = |...|...|...|...|xmm1[3]|
 
     maxss xmm0, xmm1
     movss [rsi], xmm0

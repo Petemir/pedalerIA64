@@ -92,7 +92,7 @@ class Effects():
         bitsTitle = self.getTitleWidget('Bits (1-16):')
         bitsValue = self.getValueWidget(bitsDial)
 
-        freqDial = self.getDialWidget('bitcrusher_freq', 1, 11025, 1)
+        freqDial = self.getDialWidget('bitcrusher_freq', 2048, 11025, 1)
         freqTitle = self.getTitleWidget('Freq (1, 11025Hz):')
         freqValue = self.getValueWidget(freqDial)
 

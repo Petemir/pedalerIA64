@@ -23,6 +23,8 @@ unsigned int framesRemaining = 0;   // Frames que quedan por usar en el buffer d
 unsigned int framesReadTotal = 0;   // Frames totales leidos hasta el momento
 
 // Variables para contar ciclos de reloj
+int cantIteraciones = 0;
+unsigned long int cantCiclosTotales = 0;
 unsigned long int cantCiclos = 0;
 unsigned long int start = 0;
 unsigned long int end = 0;
@@ -34,6 +36,7 @@ float *dataBuffOut;
 // Punteros a los archivos de entrada y salida
 SNDFILE *inFilePtr;
 SNDFILE *outFilePtr;
+SNDFILE *tmpFilePtr;    // Caso en que necesito pasar por 2 archivos
 
 // Estructuras de los archivos
 SF_INFO inFileStr;

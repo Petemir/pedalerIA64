@@ -5,7 +5,7 @@
 const char* nombrePrograma;
 
 void imprimir_ayuda() {
-    printf(" Uso: %s nombre_archivo_entrada nombre_archivo_salida opciones\n", nombrePrograma);
+    printf(" Uso: %s nombre_archivo_entrada nombre_archivo_salida cant_iteraciones opciones\n", nombrePrograma);
     printf(" Opciones disponibles:\n");
     printf("Comando\t\t Descripción\t\t\t\t Parámetros\n");
     printf("------------------------------------------------------------------------------------\n");
@@ -15,25 +15,34 @@ void imprimir_ayuda() {
     printf("-D a b\t\t Delay simple (en ASM)\t\t\t a: segundos de delay (float), b: decay (float)\n");
     printf("-f a b c\t Flanging (en C)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
     printf("-F a b c\t Flanging (en ASM)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
-    printf("-v a b \t Vibrato (en C)\t\t\t a: segundos de delay (float), b: modulation rate (float)\n")
-    printf("-V a b \t Vibrato (en ASM)\t\t\t a: segundos de delay (float), b: modulation rate (float)\n")
-    printf("\t\t (Recomendado para flanging: a entre 0.003s y 0.015s, rate entre 0.10 y 1.00Hz, amp entre 0.65 y 0.75)\n");
-    printf("\t\t (Recomendado para vibrato: a entre 0.000s y 0.003s, rate entre 0.10 y 5.00Hz\n");
+    printf("-v a b \t Vibrato (en C)\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
+    printf("-v a b \t Vibrato (en C)\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
+    printf("-b a b \t Bitcrusher (en C)\t\t\t a: bits de resolución (int), b: frecuencia de sampleo (int)\n");
+    printf("-B a b \t Bitcrusher (en ASM)\t\t\t a: bits de resolución (int), b: frecuencia de sampleo (int)\n");
+    printf("-w a b c d\t WahWah (en C)\t\t\t a: (), b: (), c: (), d: ()\n");
+    printf("-W a b c d\t WahWah (en ASM)\t\t\t a: (), b: (), c: (), d: ()\n");
+    printf("\t\t (Rango para delay: a entre 0.0 y 5.0s, b entre 0.00 y 1.00 \n");
+    printf("\t\t (Rango para flanging: a entre 0.003s y 0.015s, b entre 0.10 y 1.00Hz, c entre 0.65 y 0.75)\n");
+    printf("\t\t (Rango para vibrato: a entre 0.000s y 0.003s, b entre 0.10 y 5.00Hz\n");
+    printf("\t\t (Rango para bitcrusher: a entre 1 y 16, b entre 2048 y 11025Hz\n");
+    printf("\t\t (Rango para wahwah: a entre  y , b entre \n");
+
     printf("\n\nEjemplo: %s input.wav output.wav -d 1.5 0.6\n", nombrePrograma);
     printf("Aplica un efecto de delay (implementado en C) sobre el archivo input.wav, con 1.5 segundos de delay y 0.6 como coeficiente de decay, con el resultado en output.wav.\n");
 }
 
 int main(int argc, char* argv[]) {
     nombrePrograma = argv[0];
-    if (argc < 4) {  // Por lo menos 4 argumentos (nombre de programa, archivo entrada, archivo salida y opcion)
+    if (argc < 5) {  // Por lo menos 5 argumentos (nombre de programa, archivo entrada, archivo salida, cant_iter y opcion)
         imprimir_ayuda();
         return 1;
     }
-    int siguienteOpcion = 3;  // Hay, por lo menos, 4 argumentos
+    int siguienteOpcion = 4;  // Hay, por lo menos, 5 argumentos
 
 // [Declaración de variables de archivo]
     char *inFileName = argv[1];
     char *outFileName = argv[2];
+    cantIteraciones = atoi(argv[3]);
 // [/Declaración de variables de archivo]
 
 // [Archivo de entrada]
@@ -59,99 +68,101 @@ int main(int argc, char* argv[]) {
     }
 // [/Archivo de salida]
 
-    cantCiclos = 0;  // Inicializo contador de ticks de procesador
-    while (siguienteOpcion < argc) {
-        if ((strlen(argv[siguienteOpcion]) != 2) || (argv[siguienteOpcion][0] != '-')) {
-            printf("Opción inválida. \n");
-            printf("Releer ayuda del programa ejecutando: %s\n", nombrePrograma);
-            break;
+    cantCiclosTotales = 0;
+    for(int i = 0; i < cantIteraciones; i++) {
+        start = end = cantCiclos = 0;  // Inicializo contador de ticks de procesador
+        sf_seek(inFilePtr, 0, SEEK_SET);
+        sf_seek(outFilePtr, 0, SEEK_SET);
+
+        siguienteOpcion = 4;
+        while (siguienteOpcion < argc) {
+            if ((strlen(argv[siguienteOpcion]) != 2) || (argv[siguienteOpcion][0] != '-')) {
+                printf("%d\n", argv[siguienteOpcion][0]);
+                printf("Opción inválida. \n");
+                printf("Releer ayuda del programa ejecutando: %s\n", nombrePrograma);
+                break;
+            }
+
+            sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo de entrada
+
+            switch (argv[siguienteOpcion][1]) {
+    /*
+                case 'c':
+                    printf("Copy c.\n");
+                    copy_c();
+                    siguienteOpcion+=1;
+                    break;
+                case 'C':
+                    printf("Copy asm.\n");
+                    copy_asm_caller();
+                    siguienteOpcion+=1;
+                    break;*/
+                case 'd':
+                    printf("Delay simple c: iteración %d.\n", i);
+                    delay_simple_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
+                    siguienteOpcion+=3;
+                    break;
+                case 'D':
+                    printf("Delay simple asm: iteración %d.\n", i);
+                    delay_simple_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
+                    siguienteOpcion+=3;
+                    break;
+                case 'f':
+                    printf("Flanger c: iteración %d.\n", i);
+                    flanger_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
+                    siguienteOpcion+=4;
+                    break;
+                case 'F':
+                    printf("Flanger asm: iteración %d.\n", i);
+                    flanger_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
+                    siguienteOpcion+=4;
+                    break;
+                case 'v':
+                    vibrato_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
+                    printf("Vibrato c: iteración %d.\n", i);
+                    siguienteOpcion+=3;
+                    break;
+                case 'V':
+                    printf("Vibrato asm: iteración %d.\n", i);
+                    vibrato_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
+                    siguienteOpcion+=3;
+                    break;
+                case 'b':
+                    printf("Bitcrusher c: iteración %d.\n", i);
+                    bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
+                    siguienteOpcion+=3;
+                    break;
+                case 'B':
+                    printf("Bitcrusher asm: iteración %d.\n", i);
+                    bitcrusher_asm_caller((int)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
+                    siguienteOpcion+=3;
+                    break;
+                case 'w':
+                    printf("Wahwah c: iteración %d.\n", i);
+                    wah_wah_c((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
+                    sf_seek(outFilePtr, 0, SEEK_SET);       // Reinicio puntero al archivo
+                    normalization_right_c();                // Normalizo el canal de efecto
+                    siguienteOpcion+=5;
+                    break;
+                case 'W':
+                    printf("Wahwah asm: iteración %d.\n", i);
+                    wah_wah_asm_caller((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
+                    sf_seek(outFilePtr, 0, SEEK_SET);   // Reinicio puntero al archivo
+                    normalization_right_asm_caller();
+                    siguienteOpcion+=5;
+                    break;
+
+            }
         }
-
-        sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo de entrada
-
-        switch (argv[siguienteOpcion][1]) {
-/*            case 'v':
-                printf("Change volume c.\n");
-                volume_c(atof(argv[siguienteOpcion+1]));
-                siguienteOpcion+=2;
-                break;
-            case 'n':
-                printf("Normalize file c.\n");  // dbval < 0.0
-                normalization_c(atof(argv[siguienteOpcion+1]));
-                siguienteOpcion+=2;
-                break;
-            case 'p':
-                printf("Stereo Panning c.\n");  // -1.0 < panpos < 1.0 // check it's mono
-                panning_c(atof(argv[siguienteOpcion+1]));
-                siguienteOpcion+=2;
-                break;
-            case 'c':
-                printf("Copy c.\n");
-                copy_c();
-                siguienteOpcion+=1;
-                break;
-            case 'C':
-                printf("Copy asm.\n");
-                copy_asm_caller();
-                siguienteOpcion+=1;
-                break;*/
-            case 'd':
-                printf("Delay simple c.\n");
-                delay_simple_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
-                siguienteOpcion+=3;
-                break;
-            case 'D':
-                printf("Delay simple asm.\n");
-                delay_simple_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay
-                siguienteOpcion+=3;
-                break;
-            case 'f':
-                printf("Flanger c.\n");
-                flanger_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
-                siguienteOpcion+=4;
-                break;
-            case 'F':
-                printf("Flanger asm.\n");
-                flanger_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]), (float)atof(argv[siguienteOpcion+3]));  // delay, rate, amp
-                siguienteOpcion+=4;
-                break;
-            case 'v':
-                printf("Vibrato c.\n");
-                vibrato_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
-                siguienteOpcion+=3;
-                break;
-            case 'V':
-                printf("Vibrato asm.\n");
-                vibrato_asm_caller((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay depth, modulation frequency
-                siguienteOpcion+=3;
-                break;
-            case 'b':
-                printf("Bitcrusher c.\n");
-                bitcrusher_c((int)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
-                siguienteOpcion+=3;
-                break;
-            case 'B':
-                printf("Bitcrusher asm.\n");
-                bitcrusher_asm_caller((int)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // int bitDepth, int bitRate
-                siguienteOpcion+=3;
-                break;
-            case 'w':
-                printf("Wahwah c.\n");
-                wah_wah_c((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
-                sf_seek(outFilePtr, 0, SEEK_SET);   // Reinicio puntero al archivo
-                normalization_right_c();                  // Normalizo el canal de efecto
-                siguienteOpcion+=5;
-                break;
-            case 'W':
-                printf("Wahwah asm.\n");
-                wah_wah_asm_caller((float)atof(argv[siguienteOpcion+1]), (int)atof(argv[siguienteOpcion+2]), (int)atof(argv[siguienteOpcion+3]), (int)atof(argv[siguienteOpcion+4]));  // float damp, int minf, int maxf, int wahfreq
-                sf_seek(outFilePtr, 0, SEEK_SET);   // Reinicio puntero al archivo
-                normalization_right_asm_caller();
-                siguienteOpcion+=5;
-                break;
-
-        }
+        cantCiclosTotales += cantCiclos;
+        // printf("\tCiclos: %lu\n", cantCiclos);
     }
+    printf("\tTiempo de ejecución:\n");
+    //printf("\t  Comienzo                          : %lu\n", start);
+    //printf("\t  Fin                               : %lu\n", end);
+    printf("\t  # de ciclos insumidos totales     : %lu\n", cantCiclosTotales);
+    printf("\t  # iteraciones                     : %d\n", cantIteraciones);
+    printf("\t  # de ciclos insumidos por llamada : %.3f\n", (float)cantCiclosTotales/(float)cantIteraciones);
 
     /* [Libero archivos y memoria] */
     sf_close(inFilePtr);
