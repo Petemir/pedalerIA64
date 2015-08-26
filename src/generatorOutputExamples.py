@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from collections import OrderedDict
-import random, subprocess
+import random, subprocess, sys
 
 Effects = OrderedDict([
     ('delay',  {'cmd' : 'd',
@@ -41,11 +41,14 @@ if __name__ == '__main__':
                 args.append(str(random.randint(min, max)*mod))
 
             for lang in ['c','asm']:
-                filename = "-".join([inputFile[:-4], effect, lang, "-".join(args)])
+                filename = "-".join([inputFile[:-4], effect, lang, str(cantIter)+"iter", "-".join(args)])+".wav"
                 if lang=='c':
                     cmd = effect[0].lower()
                 else:
                     cmd = effect[0].upper()
-                cmdToExecute = ["./main", 'inputExamples/'+inputFile, 'output/'+filename, "-"+cmd," ".join(args)]
-                subprocess.call(cmdToExecute, stderr=subprocess.STDOUT)
-                #print(cmdToExecute)
+                cmdToExecute = ["/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '//home/petemir/Projects/orga2dantooine/pedalerIA64/src/output/'+filename,
+                str(cantIter), "-"+cmd," ".join(args)]
+                print(" ".join(cmdToExecute))
+                #res = subprocess.call(cmdToExecute, stderr=subprocess.STDOUT)
+                #print(res)
+                #sys.exit()
