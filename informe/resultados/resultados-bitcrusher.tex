@@ -1,0 +1,54 @@
+\subsection{Bitcrusher}
+\label{subsec:resultados-bitcrusher} 
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    ybar=4pt,
+    bar width=12pt,
+    x=3cm,
+    ymin=0,
+    axis on top,
+    %ymax=12,
+    xtick=data,
+    enlarge x limits=0.2,
+    symbolic x coords={Guitar,Gibson,Beirut, DiMarzio},
+    legend style={at={(0.5,1.0)}, anchor=north,legend columns=1},   
+    %restrict y to domain*=0:14, % Cut values off at 14
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    after end axis/.code={ % Draw line indicating break
+      \draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0,1.05) -- (rel axis cs:1,1.05);
+    },
+    nodes near coords={%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot coordinates {(Guitar.wav,13478947) (Gibson,4030649) (Beirut,30549640) (DiMarzio, 84020784)};
+\addplot coordinates {(Guitar.wav,2505268) (Gibson,661215) (Beirut,4749857) (DiMarzio, 14452590)};
+\legend{C, ASM}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\lstset{language=bash}
+\begin{lstlisting}[frame=single]
+./main guitar.wav guitar-bitcrusher-c-100iter-9-10233.wav
+					100 -b 9 10233
+./main guitar.wav guitar-bitcrusher-asm-100iter-9-10233.wav
+					100 -B 9 10233
+./main gibson.wav gibson-bitcrusher-c-100iter-12-10024.wav 
+					100 -b 12 10024
+./main gibson.wav gibson-bitcrusher-asm-100iter-12-10024.wav 
+					100 -B 12 10024
+./main beirut.wav beirut-bitcrusher-c-100iter-14-6752.wav 
+					100 -b 14 6752
+./main beirut.wav beirut-bitcrusher-asm-100iter-14-6752.wav 
+					100 -B 14 6752
+./main DiMarzio.wav DiMarzio-bitcrusher-c-100iter-12-7888.wav 
+					100 -b 12 7888
+./main DiMarzio.wav DiMarzio-bitcrusher-asm-100iter-12-7888.wav 
+					100 -B 12 7888
+\end{lstlisting} 

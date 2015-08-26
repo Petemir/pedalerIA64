@@ -4,11 +4,12 @@ Una vez compilado el \textbf{TP} (mediante el comando \textit{make}, pues el arc
 
 La estructura para aplicar un efecto a un archivo de audio es la siguiente:
 
-\begin{center}\textit{./main INFILE OUTFILE EFFECT ARGS}\end{center}
+\begin{center}\textit{./main INFILE OUTFILE CANT\_ITER EFFECT ARGS}\end{center}
 
 \begin{itemize}
  \item \textbf{INFILE} es el archivo de audio de entrada, siempre en formato WAV.
  \item \textbf{OUTFILE} es el nombre deseado del archivo de salida, con extensión .WAV.
+ \item \textbf{CANT\_ITER} cantidad de iteraciones de los efectos.
  \item \textbf{EFFECT} es un guión, seguido del caracter asociado al efecto a aplicar.
  \item \textbf{ARGS} son los argumentos dependientes del efecto definido en \textbf{EFFECT}.
 \end{itemize}

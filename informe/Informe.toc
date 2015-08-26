@@ -50,8 +50,14 @@
 \contentsline {subsection}{\numberline {2.13}Restas versus divisi\IeC {\'o}n}{33}{subsection.2.13}
 \contentsline {subsection}{\numberline {2.14}Normalizaci\IeC {\'o}n}{34}{subsection.2.14}
 \contentsline {section}{\numberline {3}Resultados}{35}{section.3}
-\contentsline {section}{\numberline {4}An\IeC {\'a}lisis}{36}{section.4}
-\contentsline {section}{\numberline {5}Bibliograf\IeC {\'\i }a tentativa}{37}{section.5}
-\contentsline {subsection}{\numberline {5.1}Libros}{37}{subsection.5.1}
-\contentsline {subsection}{\numberline {5.2}Internet - links generales}{37}{subsection.5.2}
-\contentsline {subsection}{\numberline {5.3}Fuentes de cosas espec\IeC {\'\i }ficas del TP}{38}{subsection.5.3}
+\contentsline {subsection}{\numberline {3.1}Copy}{35}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Delay}{35}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Flanger}{36}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Vibrato}{37}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Bitcrusher}{38}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}wahwah}{39}{subsection.3.6}
+\contentsline {section}{\numberline {4}An\IeC {\'a}lisis}{40}{section.4}
+\contentsline {section}{\numberline {5}Bibliograf\IeC {\'\i }a tentativa}{41}{section.5}
+\contentsline {subsection}{\numberline {5.1}Libros}{41}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Internet - links generales}{41}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Fuentes de cosas espec\IeC {\'\i }ficas del TP}{42}{subsection.5.3}

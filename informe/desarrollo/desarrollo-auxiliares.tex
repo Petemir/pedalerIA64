@@ -7,8 +7,6 @@ Como se verá en la sección \fullref{subsec:desarrollo-problemas}, fue necesari
 
 Como la normalización sólo se realiza sobre un archivo al que le fue aplicado el efecto, sabemos que éste siempre va a ser stereo (\ref{output-stereo}) y, además, que la operación sólo será necesario hacerla sobre el canal derecho, que es el que tiene la señal húmeda (de allí el nombre \textbf{\_right}).
 
-Se desarrollaron ambas rutinas tanto en ASM como en C, y la comparación de las versiones se verá en \fullref{subsec:resultados-normalization} y el análisis en \fullref{subsec:analisis-normalization}.
-
 \subsubsection{Seno}
 \label{subsec:desarrollo-seno}
 En un principio, se intentó utilizar una librería para calcular el seno con instrucciones SIMD (\fullref{subsec:ssemath}) con bastante precisión; sin embargo, la pérdida de rendimiento al usar dicha librería de los algoritmos en ASM frente a los de C era muy notoria. Por esa razón, se recurrió a una solución \footnote{\url{http://forum.devmaster.net/t/fast-and-accurate-sine-cosine/9648/4}} para calcular el seno que realiza una aproximación mediante parábolas.

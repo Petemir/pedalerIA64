@@ -31,6 +31,7 @@ Effects = OrderedDict([
 if __name__ == '__main__':
     for effect in Effects.keys():
         cantIter = 100
+        cantIter = 1 # TODO -> COMENTAR
         #for cantIter in [10, 50, 100]:
 	for inputFile in ['guitar.wav', 'gibson.wav', 'beirut.wav', 'DiMarzio.wav']:
             args = []
@@ -48,7 +49,10 @@ if __name__ == '__main__':
                     cmd = effect[0].upper()
                 cmdToExecute = ["/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/output/'+filename,
                 str(cantIter), "-"+cmd," ".join(args)]
-                print(" ".join(cmdToExecute))
+                cmdToExecuteWithValgrind = ["valgrind", "--tool=callgrind", "--callgrind-out-file=/home/petemir/Projects/orga2dantooine/pedalerIA64/src/callgrind/"+filename+".out", "--dump-instr=yes", "--collect-jumps=yes", "/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/output/'+filename,
+                str(cantIter), "-"+cmd," ".join(args)]
+
+                print(" ".join(cmdToExecuteWithValgrind))
                 #res = subprocess.call(cmdToExecute, stderr=subprocess.STDOUT)
                 #print(res)
                 #sys.exit()

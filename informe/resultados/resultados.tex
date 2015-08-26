@@ -1,2 +1,13 @@
 \section{Resultados}
 \label{sec:resultados}
+
+Para generar un conjunto de archivos de salida que pudieran ser usados para la presente sección, se utilizó el archivo \textbf{generatorOutputExamples.py}, que para 4 de los archivos de audio de entrada en \textit{inputExamples/} (\textit{guitar.wav, gibson.wav, beirut.wav, DiMarzio.wav}) aplica todos los efectos (generando un archivo de salida por cada uno) con valores al azar en los argumentos (dentro de los rangos determinados). Este archivo genera la lista de comandos (que se halla en \textbf{generatorOutputExamples.sh}), y que es el que finalmente se usa para correr el programa.
+ 
+Cada efecto se ejecutó 100 veces, para que la librería \textit{tiempo.h} pudiera tener una cantidad aceptable de iteraciones sobre la cual evaluar la cantidad de ciclos de procesador utilizados en cada algoritmo. Se incluyen en cada sección los comandos utilizados para generar esos resultados (aunque se omitieron los directorios que formaban parte del path absoluto de cada uno).
+
+\input{resultados/resultados-copy}
+\input{resultados/resultados-delay}
+\input{resultados/resultados-flanger}
+\input{resultados/resultados-vibrato}
+\input{resultados/resultados-bitcrusher}
+\input{resultados/resultados-wahwah}

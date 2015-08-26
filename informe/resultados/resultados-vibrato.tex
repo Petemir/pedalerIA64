@@ -1,0 +1,55 @@
+\subsection{Vibrato}
+\label{subsec:resultados-vibrato} 
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    ybar=4pt,
+    bar width=12pt,
+    x=3cm,
+    ymin=0,
+    axis on top,
+    %ymax=12,
+    xtick=data,
+    enlarge x limits=0.2,
+    symbolic x coords={Guitar,Gibson,Beirut, DiMarzio},
+    legend style={at={(0.5,1.0)}, anchor=north,legend columns=1},   
+    %restrict y to domain*=0:14, % Cut values off at 14
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    after end axis/.code={ % Draw line indicating break
+      \draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0,1.05) -- (rel axis cs:1,1.05);
+    },
+    nodes near coords={%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot coordinates {(Guitar.wav,54332088) (Gibson,22116198) (Beirut,121003160) (DiMarzio, 326084704)};
+\addplot coordinates {(Guitar.wav,5137922) (Gibson,2162678) (Beirut,11273407) (DiMarzio, 31488804)};
+\legend{C, ASM}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\lstset{language=bash}
+\begin{lstlisting}[frame=single]
+./main guitar.wav guitar-vibrato-c-100iter-0.002-3.77.wav 
+					    100 -v 0.002 3.77
+./main guitar.wav guitar-vibrato-asm-100iter-0.002-3.77.wav 
+					    100 -V 0.002 3.77
+./main gibson.wav gibson-vibrato-c-100iter-0.003-2.89.wav 
+					    100 -v 0.003 2.89
+./main gibson.wav gibson-vibrato-asm-100iter-0.003-2.89.wav 
+					    100 -V 0.003 2.89
+./main beirut.wav beirut-vibrato-c-100iter-0.002-4.39.wav 
+					    100 -v 0.002 4.39
+./main beirut.wav beirut-vibrato-asm-100iter-0.002-4.39.wav 
+					    100 -V 0.002 4.39
+./main DiMarzio.wav DiMarzio-vibrato-c-100iter-0.0-4.23.wav 
+					    100 -v 0.0 4.23
+./main DiMarzio.wav DiMarzio-vibrato-asm-100iter-0.0-4.23.wav 
+					    100 -V 0.0 4.23
+
+\end{lstlisting} 
