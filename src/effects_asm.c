@@ -133,13 +133,27 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
     framesReadTotal = 0;
     // [Lecto-escritura de datos]
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
-        /*for (unsigned int eff_i = 0; eff_i < framesRead; eff_i++) {
-            float x = 2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate);
-            while (x > M_PI) { x -= 2*M_PI; }
-            dataBuffSin[eff_i] = x;
-        }
+        /*for (unsigned int eff_i = 0; eff_i < fmin(framesRead, maxDelayInFrames); eff_i = eff_i) {
+            v4sf index_vector;
+            // Número que se utiliza para calcular el índice que se usará para el efecto
+            for (unsigned int j = 0; j < 4; j++) {
+                index_vector[j] = 2*M_PI*((framesReadTotal+1)+eff_i)*(rate/inFileStr.samplerate);
+                eff_i++;
+            }
 
-        sine_asm(dataBuffSin, framesRead);*/
+            MEDIR_TIEMPO_START(start);
+            index_vector = sin_ps(index_vector);    // Seno
+            index_vector = _mm_and_ps(index_vector, *(v4sf*)_ps_inv_sign_mask);             // Valor absoluto
+            MEDIR_TIEMPO_STOP(end);
+            cantCiclos += end-start;
+
+            // Guardo los índices en el buffer que se le pasará a la rutina en ASM
+            eff_i-=4;
+            for (unsigned int j = 0; j <= 3 && eff_i < framesRead; j++) {
+                dataBuffIndex[eff_i] = (int) ((framesReadTotal+(eff_i)-ceil(index_vector[j]*delayInFrames)))%maxDelayInFrames;
+                eff_i++;
+            }
+        }*/
 
         MEDIR_TIEMPO_START(start);
         flanger_index_calc(dataBuffIndex, framesRead, framesReadTotal, rate/inFileStr.samplerate, delayInFrames, maxDelayInFrames);

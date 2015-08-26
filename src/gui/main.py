@@ -291,8 +291,8 @@ class PedalerIA64(QWidget):
                     value = dial.value()*dial.modifier
                 effects.effectArgs.append(str(value))
 
-            cmdToPrint = ['./'+effects.mainFile.fileName(), effects.inputWAV.fileName(), effects.outputWAV.fileName(), '-'+effects.effectCmd, ' '.join(effects.effectArgs)]
-            cmdToExecute = [effects.mainFile.absoluteFilePath(), effects.inputWAV.absoluteFilePath(), effects.mainFile.absolutePath()+'/'+effects.outputWAV.fileName(), '-'+effects.effectCmd]+effects.effectArgs
+            cmdToPrint = ['./'+effects.mainFile.fileName(), effects.inputWAV.fileName(), effects.outputWAV.fileName(),str(1), '-'+effects.effectCmd, ' '.join(effects.effectArgs)]
+            cmdToExecute = [effects.mainFile.absoluteFilePath(), effects.inputWAV.absoluteFilePath(), effects.mainFile.absolutePath()+'/'+effects.outputWAV.fileName(),str(1), '-'+effects.effectCmd]+effects.effectArgs
 
             reply = QMessageBox.question(self, 'Aplicar efecto', '¿Desea ejecutar el siguiente comando?\n'+' '.join(cmdToPrint), QMessageBox.Yes, QMessageBox.No)
 

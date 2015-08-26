@@ -13,19 +13,19 @@ void imprimir_ayuda() {
 //    printf("-C \t\t Copiar sin efecto (en ASM)\t\t Sin parámetros\n");
     printf("-d a b\t\t Delay simple (en C)\t\t\t a: segundos de delay (float), b: decay (float)\n");
     printf("-D a b\t\t Delay simple (en ASM)\t\t\t a: segundos de delay (float), b: decay (float)\n");
+    printf("(Rango para delay: a entre 0.0 y 5.0s, b entre 0.00 y 1.00 \n");
     printf("-f a b c\t Flanging (en C)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
     printf("-F a b c\t Flanging (en ASM)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
-    printf("-v a b \t Vibrato (en C)\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
-    printf("-v a b \t Vibrato (en C)\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
-    printf("-b a b \t Bitcrusher (en C)\t\t\t a: bits de resolución (int), b: frecuencia de sampleo (int)\n");
-    printf("-B a b \t Bitcrusher (en ASM)\t\t\t a: bits de resolución (int), b: frecuencia de sampleo (int)\n");
-    printf("-w a b c d\t WahWah (en C)\t\t\t a: (), b: (), c: (), d: ()\n");
-    printf("-W a b c d\t WahWah (en ASM)\t\t\t a: (), b: (), c: (), d: ()\n");
-    printf("\t\t (Rango para delay: a entre 0.0 y 5.0s, b entre 0.00 y 1.00 \n");
-    printf("\t\t (Rango para flanging: a entre 0.003s y 0.015s, b entre 0.10 y 1.00Hz, c entre 0.65 y 0.75)\n");
-    printf("\t\t (Rango para vibrato: a entre 0.000s y 0.003s, b entre 0.10 y 5.00Hz\n");
-    printf("\t\t (Rango para bitcrusher: a entre 1 y 16, b entre 2048 y 11025Hz\n");
-    printf("\t\t (Rango para wahwah: a entre  y , b entre \n");
+    printf("(Rango para flanging: a entre 0.003s y 0.015s, b entre 0.10 y 1.00Hz, c entre 0.65 y 0.75)\n");
+    printf("-v a b \t\t Vibrato (en C)\t\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
+    printf("-v a b \t\t Vibrato (en C)\t\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
+    printf("(Rango para vibrato: a entre 0.000s y 0.003s, b entre 0.10 y 5.00Hz\n");
+    printf("-b a b \t\t Bitcrusher (en C)\t\t\t a: bits de resolución (int), b: frecuencia de sampleo (int)\n");
+    printf("-B a b \t\t Bitcrusher (en ASM)\t\t\t a: bits de resolución (int), b: frecuencia de sampleo (int)\n");
+    printf("(Rango para bitcrusher: a entre 1 y 16, b entre 2048 y 11025Hz\n");
+    printf("-w a b c d\t\t WahWah (en C)\t\t\t a: damping (float), b: min. freq. pasabandas (int), c: max. freq. pasabandas (int), d: freq. wahwah (int)\n");
+    printf("-W a b c d\t\t WahWah (en ASM)\t\t a: damping (float), b: min. freq. pasabandas (int), c: max. freq. pasabandas (int), d: freq. wahwah (int)\n");
+    printf("(Rango para wahwah: a entre 0.01 y 0.10, b entre  400 y 1000, c entre 2500 y 3500, d entre 1000 y 3000\n");
 
     printf("\n\nEjemplo: %s input.wav output.wav -d 1.5 0.6\n", nombrePrograma);
     printf("Aplica un efecto de delay (implementado en C) sobre el archivo input.wav, con 1.5 segundos de delay y 0.6 como coeficiente de decay, con el resultado en output.wav.\n");
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 // [/Archivo de salida]
 
     cantCiclosTotales = 0;
-    for(int i = 0; i < cantIteraciones; i++) {
+    for(int i = 1; i <= cantIteraciones; i++) {
         start = end = cantCiclos = 0;  // Inicializo contador de ticks de procesador
         sf_seek(inFilePtr, 0, SEEK_SET);
         sf_seek(outFilePtr, 0, SEEK_SET);
