@@ -29,10 +29,10 @@ Effects = OrderedDict([
     ])
 
 if __name__ == '__main__':
-    inputFile = 'guitar.wav'
-
     for effect in Effects.keys():
-        for cantIter in [10, 50, 100]:
+        cantIter = 100
+        #for cantIter in [10, 50, 100]:
+	for inputFile in ['guitar.wav', 'gibson.wav', 'beirut.wav', 'DiMarzio.wav']:
             args = []
             for arg in Effects[effect]['args'].keys():
                 min = Effects[effect]['args'][arg]['min']
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                     cmd = effect[0].lower()
                 else:
                     cmd = effect[0].upper()
-                cmdToExecute = ["/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '//home/petemir/Projects/orga2dantooine/pedalerIA64/src/output/'+filename,
+                cmdToExecute = ["/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/output/'+filename,
                 str(cantIter), "-"+cmd," ".join(args)]
                 print(" ".join(cmdToExecute))
                 #res = subprocess.call(cmdToExecute, stderr=subprocess.STDOUT)
