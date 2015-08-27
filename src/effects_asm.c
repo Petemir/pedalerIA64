@@ -1,30 +1,30 @@
 // PedalerIA64 Copyright [2014] <Matias Laporte>
 //#include "./effects.h"
 
-/*void copy_asm_caller() {
-    bufferSize = BUFFERSIZE*inFileStr.channels;
+void copy_asm_caller() {
+    unsigned int bufferSize = BUFFERSIZE*inFileStr.channels;
 
-    dataBuffIn = (double*)malloc(bufferSize*sizeof(double));   // Buffers de entrada y salida
-    dataBuffOut = (double*)malloc(bufferSize*sizeof(double));
+    dataBuffIn = (float*)malloc(bufferSize*sizeof(float));   // Buffers de entrada y salida
+    dataBuffOut = (float*)malloc(bufferSize*sizeof(float));
 
     // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferSize);
-    clean_buffer_c(dataBuffOut, bufferSize);
+    clean_buffer_asm(dataBuffIn, bufferSize);
+    clean_buffer_asm(dataBuffOut, bufferSize);
 
     unsigned long int start, end, cantCiclos = 0;
-    while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
         copy_asm(dataBuffIn, dataBuffOut, framesRead*inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos+= end-start;
 
-        framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
         sf_write_sync(outFilePtr);
     }
 
     free(dataBuffIn);
     free(dataBuffOut);
-}*/
+}
 
 
 float maxsamp_right_asm_caller() {
@@ -47,8 +47,8 @@ void normalization_right_asm_caller() {
     dataBuffIn = (float*)malloc(bufferFrameSize*sizeof(float));
     dataBuffOut = (float*)malloc(bufferFrameSize*sizeof(float));
 
-    clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffOut, bufferFrameSize);
+    clean_buffer_asm(dataBuffIn, bufferFrameSize);
+    clean_buffer_asm(dataBuffOut, bufferFrameSize);
 
     float maxSamp = 1/maxsamp_right_asm_caller();
 
@@ -79,9 +79,9 @@ void delay_simple_asm_caller(float delayInSec, float decay) {
     float *dataBuffEffect = (float*)malloc(bufferFrameSize*sizeof(float));
 
     // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffEffect, bufferFrameSize);
-    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_asm(dataBuffIn, bufferFrameSize);
+    clean_buffer_asm(dataBuffEffect, bufferFrameSize);
+    clean_buffer_asm(dataBuffOut, bufferFrameSizeOut);
 
     start = end = cantCiclos = 0;
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
@@ -93,7 +93,7 @@ void delay_simple_asm_caller(float delayInSec, float decay) {
         framesWritten = sf_write_float(outFilePtr, dataBuffOut, bufferFrameSizeOut);
         sf_write_sync(outFilePtr);
 
-        clean_buffer_c(dataBuffIn, bufferFrameSize);
+        clean_buffer_asm(dataBuffIn, bufferFrameSize);
         framesRemaining = framesRead;
     }
 
@@ -124,10 +124,10 @@ void flanger_asm_caller(float delayInSec, float rate, float amp) {
     float *dataBuffEffect = (float*)malloc(maxDelayInFrames*sizeof(float));  // El buffer de efecto sólo va a contener el canal derecho de la salida
     unsigned int *dataBuffIndex = (unsigned int*)malloc(maxDelayInFrames*sizeof(unsigned int));
     // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
-    clean_buffer_c(dataBuffEffect, maxDelayInFrames);
-    clean_buffer_c((float*)dataBuffIndex, maxDelayInFrames);
+    clean_buffer_asm(dataBuffIn, bufferFrameSize);
+    clean_buffer_asm(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_asm(dataBuffEffect, maxDelayInFrames);
+    clean_buffer_asm((float*)dataBuffIndex, maxDelayInFrames);
 
     start = end = cantCiclos = 0;
     framesReadTotal = 0;
@@ -187,8 +187,8 @@ void bitcrusher_asm_caller(int bits, int freq) {
     dataBuffOut = (float*)malloc(bufferFrameSizeOut*sizeof(float));
 
     // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_asm(dataBuffIn, bufferFrameSize);
+    clean_buffer_asm(dataBuffOut, bufferFrameSizeOut);
 
     float last = 0, phasor = 0;   // Las variables se definen acá porque se necesita que se conserven entre ciclo y ciclo
     float normFreq = roundf(((float)freq/inFileStr.samplerate)*100)/100;
@@ -235,10 +235,10 @@ void vibrato_asm_caller(float depth, float mod) {
     float *dataBuffIndex = (float*)malloc(maxDelayInFrames*sizeof(float));
 
     // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
-    clean_buffer_c(dataBuffEffect, maxDelayInFrames);
-    clean_buffer_c(dataBuffIndex, maxDelayInFrames);
+    clean_buffer_asm(dataBuffIn, bufferFrameSize);
+    clean_buffer_asm(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_asm(dataBuffEffect, maxDelayInFrames);
+    clean_buffer_asm(dataBuffIndex, maxDelayInFrames);
 
     start = end = cantCiclos = framesReadTotal = 0;
     // [Lecto-escritura de datos]
@@ -294,9 +294,9 @@ void wah_wah_asm_caller(float damp, int minf, int maxf, int wahfreq) {
     float *dataBuffMod = (float*)malloc(BUFFERSIZE*sizeof(float));
 
     // Limpio buffers
-    clean_buffer_c(dataBuffIn, bufferFrameSize);
-    clean_buffer_c(dataBuffOut, bufferFrameSizeOut);
-    clean_buffer_c(dataBuffMod, BUFFERSIZE);
+    clean_buffer_asm(dataBuffIn, bufferFrameSize);
+    clean_buffer_asm(dataBuffOut, bufferFrameSizeOut);
+    clean_buffer_asm(dataBuffMod, BUFFERSIZE);
 
     float delta = (float)wahfreq/inFileStr.samplerate;
     float yh = 0, yb = 0, yl = 0;

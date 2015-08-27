@@ -100,7 +100,6 @@ section .text
         movlps tmp, [_numbers10]
         subps circularBufferIndices, tmp ; circularBufferIndices = |head-3.0|head-2.0|head-1.0|head|
 
-        ; TODO -> CHEQUEO head==0
     cycle:
         cmp channels, 2
         je input_stereo

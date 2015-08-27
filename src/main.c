@@ -9,8 +9,8 @@ void imprimir_ayuda() {
     printf(" Opciones disponibles:\n");
     printf("Comando\t\t Descripción\t\t\t\t Parámetros\n");
     printf("------------------------------------------------------------------------------------\n");
-//    printf("-c \t\t Copiar sin efecto (en C)\t\t Sin parámetros\n");
-//    printf("-C \t\t Copiar sin efecto (en ASM)\t\t Sin parámetros\n");
+    printf("-c \t\t Copiar sin efecto (en C)\t\t Sin parámetros\n");
+    printf("-C \t\t Copiar sin efecto (en ASM)\t\t Sin parámetros\n");
     printf("-d a b\t\t Delay simple (en C)\t\t\t a: segundos de delay (float), b: decay (float)\n");
     printf("-D a b\t\t Delay simple (en ASM)\t\t\t a: segundos de delay (float), b: decay (float)\n");
     printf("(Rango para delay: a entre 0.0 y 5.0s, b entre 0.00 y 1.00 \n");
@@ -86,17 +86,18 @@ int main(int argc, char* argv[]) {
             sf_seek(inFilePtr, 0, SEEK_SET);  // Si aplico más de un efecto, empiezo de cero en el archivo de entrada
 
             switch (argv[siguienteOpcion][1]) {
-    /*
                 case 'c':
                     printf("Copy c.\n");
+                    outFileStr.channels = inFileStr.channels;
                     copy_c();
                     siguienteOpcion+=1;
                     break;
                 case 'C':
                     printf("Copy asm.\n");
+                    outFileStr.channels = inFileStr.channels;
                     copy_asm_caller();
                     siguienteOpcion+=1;
-                    break;*/
+                    break;
                 case 'd':
                     printf("Delay simple c: iteración %d.\n", i);
                     delay_simple_c((float)atof(argv[siguienteOpcion+1]), (float)atof(argv[siguienteOpcion+2]));  // delay, decay

@@ -20,35 +20,32 @@ float sine_approx(float x)
     return y;
 }
 
-/*void copy_c() {
-    bufferSize = BUFFERSIZE*inFileStr.channels;
+void copy_c() {
+    unsigned int bufferSize = BUFFERSIZE*inFileStr.channels;
 
-    // TODO -> CHEQUEO DE ERRORES
     dataBuffIn = (float*)malloc(bufferSize*sizeof(float));  // Buffers de entrada y salida
-    if (dataBuffIn == NULL) exit (1);
     dataBuffOut = (float*)malloc(bufferSize*sizeof(float));
-    if (dataBuffOut == NULL) exit (1);
 
     // Limpio buffers
     clean_buffer_c(dataBuffIn, bufferSize);
     clean_buffer_c(dataBuffOut, bufferSize);
 
     unsigned long int start, end, cantCiclos = 0;
-    while ((framesRead = sf_readf_double(inFilePtr, dataBuffIn, BUFFERSIZE))) {
+    while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, BUFFERSIZE))) {
         MEDIR_TIEMPO_START(start);
-        for (unsigned int i = 0; i < bufferSize; i++) {
-            dataBuffOut[i] = dataBuffIn[i];
+        for (unsigned int i = 0, out_i = 0; i < bufferSize; i++) {
+            dataBuffOut[out_i++] = dataBuffIn[i];
         }
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
-        framesWritten = sf_write_double(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
+        framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRead*inFileStr.channels);
         sf_write_sync(outFilePtr);
     }
 
     free(dataBuffIn);
     free(dataBuffOut);
-}*/
+}
 
 
 float maxsamp_right_c() {

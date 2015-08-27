@@ -56,10 +56,10 @@ void normalization_right_c();
 
 /***************** FUNCIONES AUXILIARES ASM ********************/
 // void clean_buffer_asm_caller();
-// extern void clean_buffer_asm();
+extern void clean_buffer_asm(float *bufferIn, unsigned int bufferLen);
 
-// void copy_asm_caller();
-// extern void copy_asm(double *bufferIn, double *bufferOut, int bufferLen) __asm__("copy_asm");
+void copy_asm_caller();
+extern void copy_asm(float *bufferIn, float *bufferOut, unsigned int framesRead) __asm__("copy_asm");
 
 float maxsamp_right_asm_caller();
 extern void maxsamp_right_asm(float *bufferIn, float *maxTemp, unsigned int framesRead);
