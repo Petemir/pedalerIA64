@@ -80,7 +80,7 @@ void wah_wah_c(float damp, int minf, int maxf, int wahfreq);
 
 /************************* EFECTOS ASM *************************/
 void delay_simple_asm_caller(float delayInSec, float decay);
-extern void delay_simple_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float *decay, int channels) __asm__("delay_simple_asm");
+extern void delay_simple_asm(float *bufferIn, float *bufferOut, float *bufferEffect, int bufferLen, float decay, int channels) __asm__("delay_simple_asm");
 
 void flanger_asm_caller(float delay, float rate, float amp);
 extern void flanger_asm(float *bufferIn, float *bufferOut, float *bufferEffect, unsigned int *bufferIndex,  unsigned int framesReadTotal, int channels, float amp);

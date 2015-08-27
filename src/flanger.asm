@@ -66,10 +66,6 @@ section .text
         cmp length, 4  ; caso borde: cantidad de frames restantes menor que 4
         jl remaining_frames_mono_input
 
-        ; dataBuffEffect[eff_i] = dataBuffIn[i];
-        ; dataBuffOut[out_i] = dataBuffEffect[eff_i];
-        ; dataBuffOut[out_i+1] = dataBuffEffect[eff_i]*amp + amp*dataBuffEffect[dataBuffIndex[eff_i]];
-
         movaps input, [dataBuffIn]   ; input = dataBuffIn[i..i+3]
         jmp cycle_common
 
@@ -88,6 +84,8 @@ section .text
         movlpd stereotmp, input     ; stereotmp = |0.5*dataBuffIn[2+3]|0.5*dataBuffIn[0+1]|
 
         add dataBuffIn, 16
+        sub length, 4
+
         movaps input, [dataBuffIn]  ; input = |dataBuffIn[7]|dataBuffIn[6]|dataBuffIn[5]|dataBuffIn[4]|
         mulps input, halves         ; input = 0.5*dataBuffIn[4..7]
         movaps tmp, input               ; tmp = input
@@ -97,7 +95,6 @@ section .text
         movlhps input, input          ; input = |0.5*dataBuffIn[7+6]|0.5*dataBuffIn[5+4]|...|...|
         movlpd input, stereotmp       ; input = 0.5*dataBuffIn[|(7+6)|(5+4)|(3+2)|(1+0)|]
 
-        sub length, 4
 
     cycle_common:
         movaps [dataBuffEffect+eff_i*4], input  ; dataBuffEffect[eff_i..eff_i+3] = dataBuffIn[i..i+3]

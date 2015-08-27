@@ -86,7 +86,7 @@ void delay_simple_asm_caller(float delayInSec, float decay) {
     start = end = cantCiclos = 0;
     while ((framesRead = sf_readf_float(inFilePtr, dataBuffIn, maxDelayInFrames))) {
         MEDIR_TIEMPO_START(start);
-        delay_simple_asm(dataBuffIn, dataBuffOut, dataBuffEffect, bufferFrameSize, &decay, inFileStr.channels);
+        delay_simple_asm(dataBuffIn, dataBuffOut, dataBuffEffect, bufferFrameSize, decay, inFileStr.channels);
         MEDIR_TIEMPO_STOP(end);
         cantCiclos += end-start;
 
@@ -99,7 +99,7 @@ void delay_simple_asm_caller(float delayInSec, float decay) {
 
     // Completo con los frames de efecto que quedaron cuando framesRead < bufferFrameSize
     MEDIR_TIEMPO_START(start);
-    delay_simple_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRemaining*inFileStr.channels, &decay, inFileStr.channels);
+    delay_simple_asm(dataBuffIn, dataBuffOut, dataBuffEffect, framesRemaining*inFileStr.channels, decay, inFileStr.channels);
     MEDIR_TIEMPO_STOP(end);
     cantCiclos += end-start;
     framesWritten = sf_write_float(outFilePtr, dataBuffOut, framesRemaining*outFileStr.channels);
