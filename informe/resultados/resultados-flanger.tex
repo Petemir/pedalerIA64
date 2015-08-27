@@ -1,6 +1,7 @@
 \subsection{Flanger}
 \label{subsec:resultados-flanger}
 
+\begin{figure}[H]
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
@@ -23,6 +24,7 @@
     nodes near coords={%
             \pgfmathprintnumber{\rawy}% Print unclipped values
         },
+    every node near coord/.append style={font=\tiny, inner sep=1pt},
     axis lines*=left,
     clip=false
     ]
@@ -31,24 +33,65 @@
 \legend{C, ASM}
 \end{axis}
 \end{tikzpicture}
+\caption{Flanger Libreria Tiempo.h}
+\label{fig:resultados-flanger-tiempo}
 \end{center}
+\end{figure}
 
-\lstset{language=bash}
-\begin{lstlisting}[frame=single]
-./main guitar.wav guitar-flanger-c-100iter-0.011-0.4-0.73.wav 
-                                    100 -f 0.011 0.4 0.73
-./main guitar.wav guitar-flanger-asm-100iter-0.011-0.4-0.73.wav 
-                                    100 -F 0.011 0.4 0.73
-./main gibson.wav gibson-flanger-c-100iter-0.006-0.83-0.7.wav 
-                                    100 -f 0.006 0.83 0.7
-./main gibson.wav gibson-flanger-asm-100iter-0.006-0.83-0.7.wav 
-                                    100 -F 0.006 0.83 0.7
-./main beirut.wav beirut-flanger-c-100iter-0.001-0.56-0.68.wav 
-                                    100 -f 0.001 0.56 0.68
-./main beirut.wav beirut-flanger-asm-100iter-0.001-0.56-0.68.wav 
-                                    100 -F 0.001 0.56 0.68
-./main DiMarzio.wav DiMarzio-flanger-c-100iter-0.015-0.97-0.73.wav 
-                                    100 -f 0.015 0.97 0.73
-./main DiMarzio.wav DiMarzio-flanger-asm-100iter-0.015-0.97-0.73.wav 
-                                    100 -F 0.015 0.97 0.73
-\end{lstlisting} 
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    ybar=4pt,
+    bar width=12pt,
+    x=3cm,
+    ymin=0,
+    axis on top,
+    %ymax=12,
+    xtick=data,
+    enlarge x limits=0.2,
+    symbolic x coords={Guitar,Gibson,Beirut, DiMarzio},
+    legend style={at={(0.5,1.0)}, anchor=north,legend columns=1},   
+    %restrict y to domain*=0:14, % Cut values off at 14
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    after end axis/.code={ % Draw line indicating break
+      \draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0,1.05) -- (rel axis cs:1,1.05);
+    },
+    nodes near coords={%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    every node near coord/.append style={font=\tiny, inner sep=1pt},
+    axis lines*=left,
+    clip=false
+    ]
+\addplot coordinates {(Guitar.wav,45589754) (Gibson,16193510) (Beirut,98608569) (DiMarzio,293681149)};
+\addplot coordinates {(Guitar.wav,13833230) (Gibson,4666771) (Beirut,30540123) (DiMarzio,108581732)};
+\legend{C, ASM}
+\end{axis}
+\end{tikzpicture}
+\caption{Flanger Callgrind}
+\label{fig:resultados-flanger-callgrind}
+\end{center}
+\end{figure}
+
+%\lstset{language=bash}
+%\begin{lstlisting}[frame=single]
+%./main guitar.wav guitar-flanger-c-100iter-0.011-0.4-0.73.wav 
+%                                    100 -f 0.011 0.4 0.73
+%./main guitar.wav guitar-flanger-asm-100iter-0.011-0.4-0.73.wav 
+%                                    100 -F 0.011 0.4 0.73
+%./main gibson.wav gibson-flanger-c-100iter-0.006-0.83-0.7.wav 
+%                                    100 -f 0.006 0.83 0.7
+%./main gibson.wav gibson-flanger-asm-100iter-0.006-0.83-0.7.wav 
+%                                    100 -F 0.006 0.83 0.7
+%./main beirut.wav beirut-flanger-c-100iter-0.001-0.56-0.68.wav 
+%                                    100 -f 0.001 0.56 0.68
+%./main beirut.wav beirut-flanger-asm-100iter-0.001-0.56-0.68.wav 
+%                                    100 -F 0.001 0.56 0.68
+%./main DiMarzio.wav DiMarzio-flanger-c-100iter-0.015-0.97-0.73.wav 
+%                                    100 -f 0.015 0.97 0.73
+%./main DiMarzio.wav DiMarzio-flanger-asm-100iter-0.015-0.97-0.73.wav 
+%                                    100 -F 0.015 0.97 0.73
+%\end{lstlisting} 

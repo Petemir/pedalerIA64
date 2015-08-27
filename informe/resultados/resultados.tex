@@ -1,13 +1,22 @@
 \section{Resultados}
 \label{sec:resultados}
 
-Para generar un conjunto de archivos de salida que pudieran ser usados para la presente sección, se utilizó el archivo \textbf{generatorOutputExamples.py}, que para 4 de los archivos de audio de entrada en \textit{inputExamples/} (\textit{guitar.wav, gibson.wav, beirut.wav, DiMarzio.wav}) aplica todos los efectos (generando un archivo de salida por cada uno) con valores al azar en los argumentos (dentro de los rangos determinados). Este archivo genera la lista de comandos (que se halla en \textbf{generatorOutputExamples.sh}), y que es el que finalmente se usa para correr el programa.
+Para generar un conjunto de archivos de salida que pudieran ser usados para la presente sección, se utilizó el archivo \textbf{generatorOutputExamples.py}, que para 4 de los archivos de audio de entrada en \textit{inputExamples/} (\textit{guitar.wav, gibson.wav, beirut.wav, DiMarzio.wav}) aplica todos los efectos (generando un archivo de salida por cada uno) con valores al azar en los argumentos (dentro de los rangos determinados). Este archivo genera la lista de comandos (que se halla en \textbf{generatorOutputExamples.sh}), y que es el que finalmente se usó para correr el programa y generar los siguientes resultados.
  
 Cada efecto se ejecutó 100 veces, para que la librería \textit{tiempo.h} pudiera tener una cantidad aceptable de iteraciones sobre la cual evaluar la cantidad de ciclos de procesador utilizados en cada algoritmo. Se incluyen en cada sección los comandos utilizados para generar esos resultados (aunque se omitieron los directorios que formaban parte del path absoluto de cada uno).
 
-\input{resultados/resultados-copy}
+En las mediciones con Callgrind, una única iteración del algoritmo era suficiente (pues la cantidad de instrucciones llamadas en cada iteración es siempre la misma). Los archivos de salida de \textbf{callgrind} (para abrirlos con \textbf{KCacheGrind}) se encuentran en el directorio \textit{callgrind/}, y fueron generados por el mismo script \textbf{generatorOutputExamples.py}, con el código que se encuentra comentado donde corresponde. Los valores fueron sacados del costo inclusivo en el llamado al efecto (por ejemplo, \textit{delay\_simple\_c} o \textit{delay\_simple\_asm\_caller}), para obviar todo el overhead del archivo \textbf{main.c}.
+
+
+
+%\input{resultados/resultados-copy}
+\newpage
 \input{resultados/resultados-delay}
+\newpage
 \input{resultados/resultados-flanger}
+\newpage
 \input{resultados/resultados-vibrato}
+\newpage
 \input{resultados/resultados-bitcrusher}
+\newpage
 \input{resultados/resultados-wahwah}

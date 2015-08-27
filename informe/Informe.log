@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.21)  26 AUG 2015 17:46
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.21)  27 AUG 2015 14:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -885,11 +885,11 @@ Package: booktabs 2005/04/14 v1.61803 publication quality tables
 )
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 72.
+less on input line 73.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 73.
+less on input line 74.
 
 \@indexfile=\write4
 \openout4 = `Informe.idx'.
@@ -901,22 +901,22 @@ LaTeX Info: Redefining \% on input line 23.
 )
 \openout1 = `Informe.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 80.
-LaTeX Font Info:    ... okay on input line 80.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 80.
-LaTeX Font Info:    ... okay on input line 80.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 80.
-LaTeX Font Info:    ... okay on input line 80.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 80.
-LaTeX Font Info:    ... okay on input line 80.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 80.
-LaTeX Font Info:    ... okay on input line 80.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 80.
-LaTeX Font Info:    ... okay on input line 80.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 80.
-LaTeX Font Info:    ... okay on input line 80.
-LaTeX Info: Redefining \. on input line 80.
-LaTeX Info: Redefining \% on input line 80.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 81.
+LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 81.
+LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 81.
+LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 81.
+LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 81.
+LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 81.
+LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 81.
+LaTeX Font Info:    ... okay on input line 81.
+LaTeX Info: Redefining \. on input line 81.
+LaTeX Info: Redefining \% on input line 81.
  (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count143
@@ -951,29 +951,26 @@ Package lastpage Info: Please have a look at the pageslts package at
 (lastpage)             or
 (lastpage)             http://www.ctan.org/tex-archive/ 
 (lastpage)             install/macros/latex/contrib/pageslts.tds.zip
-(lastpage)             ! on input line 80.
+(lastpage)             ! on input line 81.
 \c@lstlisting=\count149
 
 ABD: EveryShipout initializing macros
+Package pgfplots notification 'compat/show suggested version=true': document ha
+s been generated with the most recent feature set (\pgfplotsset{compat=1.9}).
 
-Package pgfplots Warning: running in backwards compatibility mode (unsuitable t
-ick labels; missing features). Consider writing \pgfplotsset{compat=1.9} into y
-our preamble.
- on input line 80.
-
-LaTeX Info: Redefining \celsius on input line 80.
-Package gensymb Info: Faking symbols for \degree and \celsius on input line 80.
+LaTeX Info: Redefining \celsius on input line 81.
+Package gensymb Info: Faking symbols for \degree and \celsius on input line 81.
 
 
 Package gensymb Warning: Not defining \perthousand.
 
-LaTeX Info: Redefining \ohm on input line 80.
-Package gensymb Info: Using \Omega for \ohm on input line 80.
+LaTeX Info: Redefining \ohm on input line 81.
+Package gensymb Info: Using \Omega for \ohm on input line 81.
 
 Package gensymb Warning: Not defining \micro.
 
 \AtBeginShipoutBox=\box44
-Package hyperref Info: Link coloring OFF on input line 80.
+Package hyperref Info: Link coloring OFF on input line 81.
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
@@ -982,44 +979,44 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count150
 )
-LaTeX Info: Redefining \ref on input line 80.
-LaTeX Info: Redefining \pageref on input line 80.
-LaTeX Info: Redefining \nameref on input line 80.
+LaTeX Info: Redefining \ref on input line 81.
+LaTeX Info: Redefining \pageref on input line 81.
+LaTeX Info: Redefining \nameref on input line 81.
 
 (./Informe.out) (./Informe.out)
 \@outlinefile=\write5
 \openout5 = `Informe.out'.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 96.
+(Font)              <12> on input line 97.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 96.
+(Font)              <8> on input line 97.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 96.
+(Font)              <6> on input line 97.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 96.
+(babel)             in language  on input line 97.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./Informe.toc
@@ -1054,29 +1051,29 @@ Package babel Info: Redefining spanish shorthand "?
 \openout6 = `Informe.toc'.
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 104.
+(babel)             in language  on input line 105.
  [3] (./introduccion/introduccion.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
@@ -1665,29 +1662,29 @@ Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 42.
  [17 <./imagenes/audacity-mix-and-render.png>]))
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 106.
+(babel)             in language  on input line 107.
  [18 <./imagenes/audacity-no-wave.png>] (./desarrollo/desarrollo.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
@@ -1879,19 +1876,6 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 4.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 4.
-
-
-LaTeX Warning: Hyper reference `subsec:analisis-copy' on page 22 undefined on i
-nput line 15.
-
-
-LaTeX Warning: Reference `subsec:analisis-copy' on page 22 undefined on input l
-ine 15.
-
-
-LaTeX Warning: Reference `subsec:analisis-copy' on page 22 undefined on input l
-ine 15.
-
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 17.
 Package babel Info: Redefining spanish shorthand >>
@@ -1941,7 +1925,8 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 11.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 11.
- [22] (./desarrollo/desarrollo-delay_simple.tex
+
+[22] (./desarrollo/desarrollo-delay_simple.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand >>
@@ -1966,19 +1951,6 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 4.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 4.
-
-
-LaTeX Warning: Hyper reference `subsec:analisis-delay' on page 23 undefined on 
-input line 18.
-
-
-LaTeX Warning: Reference `subsec:analisis-delay' on page 23 undefined on input 
-line 18.
-
-
-LaTeX Warning: Reference `subsec:analisis-delay' on page 23 undefined on input 
-line 18.
-
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 20.
 Package babel Info: Redefining spanish shorthand >>
@@ -1991,6 +1963,7 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 20.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 20.
+
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2013/08/26 1.5b listings language file
 )
@@ -2067,19 +2040,6 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 4.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 4.
-
-
-LaTeX Warning: Hyper reference `subsec:analisis-flanger' on page 24 undefined o
-n input line 15.
-
-
-LaTeX Warning: Reference `subsec:analisis-flanger' on page 24 undefined on inpu
-t line 15.
-
-
-LaTeX Warning: Reference `subsec:analisis-flanger' on page 24 undefined on inpu
-t line 15.
-
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 17.
 Package babel Info: Redefining spanish shorthand >>
@@ -2128,7 +2088,7 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 50.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 50.
-[24])
+ [24])
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 15.
 Package babel Info: Redefining spanish shorthand >>
@@ -2153,7 +2113,8 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 15.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 15.
- [25] (./desarrollo/desarrollo-vibrato.tex
+ [25]
+(./desarrollo/desarrollo-vibrato.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand >>
@@ -2178,19 +2139,6 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 4.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 4.
-
-
-LaTeX Warning: Hyper reference `subsec:analisis-vibrato' on page 26 undefined o
-n input line 15.
-
-
-LaTeX Warning: Reference `subsec:analisis-vibrato' on page 26 undefined on inpu
-t line 15.
-
-
-LaTeX Warning: Reference `subsec:analisis-vibrato' on page 26 undefined on inpu
-t line 15.
-
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 17.
 Package babel Info: Redefining spanish shorthand >>
@@ -2240,7 +2188,8 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 17.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 17.
- [26] (./desarrollo/desarrollo-bitcrusher.tex
+ [26]
+(./desarrollo/desarrollo-bitcrusher.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand >>
@@ -2266,25 +2215,12 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 4.
 
-<imagenes/bitcrusher-signal.png, id=616, 638.385pt x 241.76036pt>
+<imagenes/bitcrusher-signal.png, id=618, 638.385pt x 241.76036pt>
 File: imagenes/bitcrusher-signal.png Graphic file (type png)
 
 <use imagenes/bitcrusher-signal.png>
 Package pdftex.def Info: imagenes/bitcrusher-signal.png used on input line 14.
 (pdftex.def)             Requested size: 383.03394pt x 145.05731pt.
-
-
-LaTeX Warning: Hyper reference `subsec:analisis-bitcrusher' on page 27 undefine
-d on input line 22.
-
-
-LaTeX Warning: Reference `subsec:analisis-bitcrusher' on page 27 undefined on i
-nput line 22.
-
-
-LaTeX Warning: Reference `subsec:analisis-bitcrusher' on page 27 undefined on i
-nput line 22.
-
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 24.
 Package babel Info: Redefining spanish shorthand >>
@@ -2334,7 +2270,8 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 19.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 19.
- [27 <./imagenes/bitcrusher-signal.png>] (./desarrollo/desarrollo-wahwah.tex
+ [27 <./imagenes/bitcrusher-signal.png>]
+(./desarrollo/desarrollo-wahwah.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand >>
@@ -2359,19 +2296,6 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 4.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 4.
-
-
-LaTeX Warning: Hyper reference `subsec:analisis-wahwah' on page 28 undefined on
- input line 24.
-
-
-LaTeX Warning: Reference `subsec:analisis-wahwah' on page 28 undefined on input
- line 24.
-
-
-LaTeX Warning: Reference `subsec:analisis-wahwah' on page 28 undefined on input
- line 24.
-
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 26.
 Package babel Info: Redefining spanish shorthand >>
@@ -2408,7 +2332,7 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 46.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 46.
-[28]
+ [28]
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 57.
 Package babel Info: Redefining spanish shorthand >>
@@ -2446,7 +2370,8 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 21.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 21.
- [29] (./desarrollo/desarrollo-problemas.tex
+ [29]
+(./desarrollo/desarrollo-problemas.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand >>
@@ -2472,14 +2397,14 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 6.
 
-<imagenes/punpckhdq.png, id=668, 661.47125pt x 324.21124pt>
+<imagenes/punpckhdq.png, id=672, 661.47125pt x 324.21124pt>
 File: imagenes/punpckhdq.png Graphic file (type png)
 
 <use imagenes/punpckhdq.png>
 Package pdftex.def Info: imagenes/punpckhdq.png used on input line 18.
 (pdftex.def)             Requested size: 496.10222pt x 243.15784pt.
 
-<imagenes/punpckldq.png, id=669, 661.47125pt x 324.21124pt>
+<imagenes/punpckldq.png, id=673, 661.47125pt x 324.21124pt>
 File: imagenes/punpckldq.png Graphic file (type png)
 
 <use imagenes/punpckldq.png>
@@ -2523,14 +2448,14 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 30.
 
-<imagenes/callgrind-c.png, id=680, 301.8778pt x 181.42781pt>
+<imagenes/callgrind-c.png, id=684, 301.8778pt x 181.42781pt>
 File: imagenes/callgrind-c.png Graphic file (type png)
 
 <use imagenes/callgrind-c.png>
 Package pdftex.def Info: imagenes/callgrind-c.png used on input line 36.
 (pdftex.def)             Requested size: 241.50256pt x 145.14244pt.
 
-<imagenes/callgrind-asm.png, id=681, 291.33844pt x 181.42781pt>
+<imagenes/callgrind-asm.png, id=685, 291.33844pt x 181.42781pt>
 File: imagenes/callgrind-asm.png Graphic file (type png)
 
 <use imagenes/callgrind-asm.png>
@@ -2561,7 +2486,7 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 47.
  [31 <./imagenes/punpckldq.png> <./imagenes/callgrind-c.png>]
-<imagenes/callgrind-asm-seno-approx.png, id=691, 306.39468pt x 197.23688pt>
+<imagenes/callgrind-asm-seno-approx.png, id=695, 306.39468pt x 197.23688pt>
 File: imagenes/callgrind-asm-seno-approx.png Graphic file (type png)
 
 <use imagenes/callgrind-asm-seno-approx.png>
@@ -2569,7 +2494,7 @@ Package pdftex.def Info: imagenes/callgrind-asm-seno-approx.png used on input l
 ine 54.
 (pdftex.def)             Requested size: 245.11607pt x 157.78969pt.
 
-<imagenes/callgrind-c-seno-approx.png, id=692, 292.84406pt x 212.29312pt>
+<imagenes/callgrind-c-seno-approx.png, id=696, 292.84406pt x 212.29312pt>
 File: imagenes/callgrind-c-seno-approx.png Graphic file (type png)
 
 <use imagenes/callgrind-c-seno-approx.png>
@@ -2602,17 +2527,17 @@ Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 67.
  [32 <./imagenes/callgrind-asm.png> <./imagenes/callgrind-asm-seno-approx.png>]
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 69.
+(babel)             in language  on input line 70.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 69.
+(babel)             in language  on input line 70.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 69.
+(babel)             in language  on input line 70.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 69.
+(babel)             in language  on input line 70.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 69.
+(babel)             in language  on input line 70.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 69.
+(babel)             in language  on input line 70.
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2013/08/26 1.5b listings language file
@@ -2624,14 +2549,14 @@ File: lstlang2.sty 2013/08/26 1.5b listings language file
 File: lstlang3.sty 2013/08/26 1.5b listings language file
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 79.
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 81.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 80.
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/it' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 81.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 82.
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 96.
 Package babel Info: Redefining spanish shorthand >>
@@ -2645,54 +2570,55 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 96.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 96.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 96.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 96.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 96.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 96.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 96.
+ [33 <./imagenes/callgrind-c-seno-approx.png>]
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 100.
+(babel)             in language  on input line 97.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 100.
- [33 <./imagenes/callgrind-c-seno-approx.png>]))
+(babel)             in language  on input line 97.
+))
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 108.
+(babel)             in language  on input line 109.
  [34] (./resultados/resultados.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
@@ -2706,21 +2632,32 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1.
-
-(./resultados/resultados-copy.tex
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 13.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 13.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 13.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 13.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 13.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1.
-) (./resultados/resultados-delay.tex
+(babel)             in language  on input line 13.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 13.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 13.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 13.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 13.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 13.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 13.
+ [35]
+(./resultados/resultados-delay.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand >>
@@ -2743,7 +2680,7 @@ See the pgfplots package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.29 ...) (Beirut,26610728) (DiMarzio, 71669712)};
+l.31 ...) (Beirut,25138600) (DiMarzio, 72376280)};
                                                   
 This error message was generated by an \errmessage
 command, so I can't give any explicit help.
@@ -2759,17 +2696,426 @@ See the pgfplots package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.30 ...6) (Beirut,5151332) (DiMarzio, 13861582)};
+l.32 ...09) (Beirut,3569624) (DiMarzio, 9619156)};
                                                   
 (That was another \errmessage.)
 
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2013/08/26 1.5b listings language file
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.68 ...) (Beirut,67044508) (DiMarzio,164298331)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.69 ...3) (Beirut,30515995) (DiMarzio,91241548)};
+                                                  
+(That was another \errmessage.)
+
 )
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2013/08/26 1.5b listings language file
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 15.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 15.
+ [36] (./resultados/resultados-flanger.tex
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1.
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.31 ...(Beirut,136644752) (DiMarzio, 371752672)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.32 ...(Beirut,214741360) (DiMarzio, 581458944)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.69 ...) (Beirut,98608569) (DiMarzio,293681149)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.70 ...) (Beirut,30540123) (DiMarzio,108581732)};
+                                                  
+(That was another \errmessage.)
+
+)
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 17.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 17.
+ [37] (./resultados/resultados-vibrato.tex
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1.
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.31 ...(Beirut,121003160) (DiMarzio, 326084704)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.32 ...) (Beirut,11273407) (DiMarzio, 31488804)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.68 ... (Beirut,107759925) (DiMarzio,314160583)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.69 ...) (Beirut,36644203) (DiMarzio,124786110)};
+                                                  
+(That was another \errmessage.)
+
+)
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 19.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 19.
+ [38] (./resultados/resultados-bitcrusher.tex
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1.
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.31 ...) (Beirut,30549640) (DiMarzio, 84020784)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.32 ...5) (Beirut,4749857) (DiMarzio, 14452590)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.69 ...) (Beirut,49948174) (DiMarzio,163708326)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.70 ...4) (Beirut,22976589) (DiMarzio,89227240)};
+                                                  
+(That was another \errmessage.)
+
+)
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 21.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 21.
+ [39] (./resultados/resultados-wahwah.tex
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1.
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.31 ...(Beirut,173768288) (DiMarzio, 462280256)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.32 ...81) (Beirut,2542485) (DiMarzio, 6787702)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.69 ... (Beirut,104512747) (DiMarzio,307812022)};
+                                                  
+(That was another \errmessage.)
+
+
+! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
+ defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
+as been misspelled?.
+
+See the pgfplots package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.70 ...) (Beirut,37857604) (DiMarzio,128058337)};
+                                                  
+(That was another \errmessage.)
+
 ))
-(./resultados/resultados-flanger.tex
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 111.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 111.
+ [40] (./analisis/analisis.tex
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1.
 Package babel Info: Redefining spanish shorthand >>
@@ -2783,324 +3129,83 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1.
 
+<imagenes/delay-overhead-libsndfile.png, id=779, 334.67892pt x 402.64714pt>
+File: imagenes/delay-overhead-libsndfile.png Graphic file (type png)
 
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
+<use imagenes/delay-overhead-libsndfile.png>
+Package pdftex.def Info: imagenes/delay-overhead-libsndfile.png used on input l
+ine 10.
+(pdftex.def)             Requested size: 234.27364pt x 281.85107pt.
 
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.29 ...(Beirut,136644752) (DiMarzio, 371752672)};
-                                                  
-(That was another \errmessage.)
-
-
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
-
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.30 ...(Beirut,214741360) (DiMarzio, 581458944)};
-                                                  
-(That was another \errmessage.)
-
+<imagenes/delay-overhead-libsndfile-asm.png, id=781, 324.35464pt x 422.43536pt>
+File: imagenes/delay-overhead-libsndfile-asm.png Graphic file (type png)
+<use imagenes/delay-overhead-libsndfile-asm.png>
+Package pdftex.def Info: imagenes/delay-overhead-libsndfile-asm.png used on inp
+ut line 19.
+(pdftex.def)             Requested size: 227.04669pt x 295.70273pt.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
-[35]) (./resultados/resultados-vibrato.tex
+(babel)             in language  on input line 23.
+ [41 <./imagenes/delay-overhead-libsndfile.png>]
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 26.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 26.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 26.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 26.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 26.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1.
-
-
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
-
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.29 ...(Beirut,121003160) (DiMarzio, 326084704)};
-                                                  
-(That was another \errmessage.)
-
-
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
-
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.30 ...) (Beirut,11273407) (DiMarzio, 31488804)};
-                                                  
-(That was another \errmessage.)
-
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
-[36]) (./resultados/resultados-bitcrusher.tex
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1.
-
-
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
-
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.29 ...) (Beirut,30549640) (DiMarzio, 84020784)};
-                                                  
-(That was another \errmessage.)
-
-
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
-
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.30 ...5) (Beirut,4749857) (DiMarzio, 14452590)};
-                                                  
-(That was another \errmessage.)
-
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
-[37]) (./resultados/resultados-wahwah.tex
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1.
-
-
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
-
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.29 ...(Beirut,173768288) (DiMarzio, 462280256)};
-                                                  
-(That was another \errmessage.)
-
-
-! Package pgfplots Error: Sorry, the input coordinate `Guitar.wav' has not been
- defined with 'symbolic x coords={Guitar,Gibson,Beirut, DiMarzio}... Maybe it h
-as been misspelled?.
-
-See the pgfplots package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.30 ...81) (Beirut,2542485) (DiMarzio, 6787702)};
-                                                  
-(That was another \errmessage.)
-
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 34.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 34.
-[38]))
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 110.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 110.
- [39] (./analisis/analisis.tex
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1.
+(babel)             in language  on input line 26.
 )
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 114.
- [40]
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 114.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 114.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 114.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 114.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 114.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 114.
+(babel)             in language  on input line 115.
+ [42 <./imagenes/delay-overhead-libsndfile-asm.png>]
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand >>
@@ -3114,134 +3219,147 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 115.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 152.
+(babel)             in language  on input line 116.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 152.
+(babel)             in language  on input line 116.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 152.
+(babel)             in language  on input line 116.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 152.
+(babel)             in language  on input line 116.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 152.
+(babel)             in language  on input line 116.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 152.
+(babel)             in language  on input line 116.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 153.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 153.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 153.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 153.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 153.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 153.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 171.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 171.
- [41]
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 174.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 174.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 174.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 174.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 174.
+(babel)             in language  on input line 172.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 174.
+(babel)             in language  on input line 172.
+ [43]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 175.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 175.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 175.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 175.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 175.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 175.
 
 
 AED: lastpage setting LastPage
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 184.
-[42]
+(babel)             in language  on input line 187.
+[44]
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 184.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 184.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 184.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 184.
+(babel)             in language  on input line 187.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 187.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 187.
  (./Informe.aux
 LaTeX Info: Redefining \. on input line 23.
 LaTeX Info: Redefining \% on input line 23.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 184.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 184.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 187.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 187.
 Package rerunfilecheck Info: File `Informe.out' has not changed.
-(rerunfilecheck)             Checksum: 1450982524C8D3D4CBEE40CBF7A9BB1C;4200.
+(rerunfilecheck)             Checksum: 64DEEE3E1F3D2CDB7D2145EA46FBB637;4222.
 
 
-LaTeX Warning: There were undefined references.
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 184.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 187.
  ) 
 Here is how much of TeX's memory you used:
- 25774 strings out of 493304
- 551084 string characters out of 6139871
- 744636 words of memory out of 5000000
- 28344 multiletter control sequences out of 15000+600000
+ 25674 strings out of 493304
+ 550720 string characters out of 6139871
+ 746847 words of memory out of 5000000
+ 28312 multiletter control sequences out of 15000+600000
  9531 words of font info for 34 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 63i,17n,84p,1062b,2085s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 63i,19n,84p,1062b,2231s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt
-10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb
->
-Output written on Informe.pdf (42 pages, 644922 bytes).
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on Informe.pdf (44 pages, 742679 bytes).
 PDF statistics:
- 997 PDF objects out of 1000 (max. 8388607)
- 913 compressed objects within 10 object streams
- 322 named destinations out of 1000 (max. 500000)
- 584 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 950 PDF objects out of 1000 (max. 8388607)
+ 861 compressed objects within 9 object streams
+ 259 named destinations out of 1000 (max. 500000)
+ 594 words of extra memory for PDF output out of 10000 (max. 10000000)
 

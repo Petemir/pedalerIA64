@@ -1,6 +1,7 @@
-\subsection{wahwah}
+\subsection{WahWah}
 \label{subsec:resultados-wahwah} 
 
+\begin{figure}[H]
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
@@ -23,6 +24,7 @@
     nodes near coords={%
             \pgfmathprintnumber{\rawy}% Print unclipped values
         },
+    every node near coord/.append style={font=\tiny, inner sep=1pt},        
     axis lines*=left,
     clip=false
     ]
@@ -31,24 +33,65 @@
 \legend{C, ASM}
 \end{axis}
 \end{tikzpicture}
+\caption{WahWah Libreria Tiempo.h}
+\label{fig:resultados-wahwah-tiempo}
 \end{center}
+\end{figure}
 
-\lstset{language=bash}
-\begin{lstlisting}[frame=single]
-./main guitar.wav guitar-wahwah-c-100iter-0.08-424-2853-2931.wav 
-					100 -w 0.08 424 2853 2931
-./main guitar.wav guitar-wahwah-asm-100iter-0.08-424-2853-2931.wav 
-					100 -W 0.08 424 2853 2931
-./main gibson.wav gibson-wahwah-c-100iter-0.06-541-3003-2937.wav 
-					100 -w 0.06 541 3003 2937
-./main gibson.wav gibson-wahwah-asm-100iter-0.06-541-3003-2937.wav 
-					100 -W 0.06 541 3003 2937
-./main beirut.wav beirut-wahwah-c-100iter-0.07-690-2532-1963.wav 
-					100 -w 0.07 690 2532 1963
-./main beirut.wav beirut-wahwah-asm-100iter-0.07-690-2532-1963.wav 
-					100 -W 0.07 690 2532 1963
-./main DiMarzio.wav DiMarzio-wahwah-c-100iter-0.1-554-2689-2109.wav 
-					100 -w 0.1 554 2689 2109
-./main DiMarzio.wav DiMarzio-wahwah-asm-100iter-0.1-554-2689-2109.wav 
-					100 -W 0.1 554 2689 2109
-\end{lstlisting} 
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    ybar=4pt,
+    bar width=12pt,
+    x=3cm,
+    ymin=0,
+    axis on top,
+    %ymax=12,
+    xtick=data,
+    enlarge x limits=0.2,
+    symbolic x coords={Guitar,Gibson,Beirut, DiMarzio},
+    legend style={at={(0.5,1.0)}, anchor=north,legend columns=1},   
+    %restrict y to domain*=0:14, % Cut values off at 14
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    after end axis/.code={ % Draw line indicating break
+      \draw [ultra thick, white, decoration={snake, amplitude=1pt}, decorate] (rel axis cs:0,1.05) -- (rel axis cs:1,1.05);
+    },
+    nodes near coords={%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    every node near coord/.append style={font=\tiny, inner sep=1pt},
+    axis lines*=left,
+    clip=false
+    ]
+\addplot coordinates {(Guitar.wav,48520481) (Gibson,20563226) (Beirut,104512747) (DiMarzio,307812022)};
+\addplot coordinates {(Guitar.wav,17128662) (Gibson,5968514) (Beirut,37857604) (DiMarzio,128058337)};
+\legend{C, ASM}
+\end{axis}
+\end{tikzpicture}
+\caption{WahWah Callgrind}
+\label{fig:resultados-wahwah-callgrind}
+\end{center}
+\end{figure}
+
+%\lstset{language=bash}
+%\begin{lstlisting}[frame=single]
+%./main guitar.wav guitar-wahwah-c-100iter-0.08-424-2853-2931.wav 
+%					100 -w 0.08 424 2853 2931
+%./main guitar.wav guitar-wahwah-asm-100iter-0.08-424-2853-2931.wav 
+%					100 -W 0.08 424 2853 2931
+%./main gibson.wav gibson-wahwah-c-100iter-0.06-541-3003-2937.wav 
+%					100 -w 0.06 541 3003 2937
+%./main gibson.wav gibson-wahwah-asm-100iter-0.06-541-3003-2937.wav 
+%					100 -W 0.06 541 3003 2937
+%./main beirut.wav beirut-wahwah-c-100iter-0.07-690-2532-1963.wav 
+%					100 -w 0.07 690 2532 1963
+%./main beirut.wav beirut-wahwah-asm-100iter-0.07-690-2532-1963.wav 
+%					100 -W 0.07 690 2532 1963
+%./main DiMarzio.wav DiMarzio-wahwah-c-100iter-0.1-554-2689-2109.wav 
+%					100 -w 0.1 554 2689 2109
+%./main DiMarzio.wav DiMarzio-wahwah-asm-100iter-0.1-554-2689-2109.wav 
+%					100 -W 0.1 554 2689 2109
+%\end{lstlisting} 

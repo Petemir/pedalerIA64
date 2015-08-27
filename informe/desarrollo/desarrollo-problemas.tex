@@ -17,19 +17,19 @@ Analizando el set de instrucciones disponibles, se encontraron \textbf{punpckchd
     \centering
     \includegraphics[scale=0.75]{imagenes/punpckhdq.png}
     \label{fig:punpckhdq}
-    \caption{}
+    \caption{ }
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.75]{imagenes/punpckldq.png}
     \label{fig:punpckldq}
-    \caption{}
+    \caption{ }
 \end{figure}
 
 \subsection{Seno}
 \label{subsec:desarrollo-problemas-seno}
-En las primeras versiones finales de algunos efectos (flanger, wahwah, vibrato), se utilizó la librería \fullref{subsec:ssemath} para poder utilizar el seno sobre un vector de valores. Sin embargo, el análisis de rendimiento mediante la librería \textbf{Tiempo.h} reveló que los efectos en Assembler eran considerablemente más lentos que los de C, aunque las razones no eran claras. Se realizó entonces un análisis mediante una herramienta de profiling, \fullref{subsec:callgrind}. Los resultados de este análisis se ven en las siguientes imágenes:
+En las primeras versiones finales de algunos efectos (flanger, wahwah, vibrato), se utilizó la librería \fullref{subsec:ssemath} para poder utilizar el seno sobre un vector de valores. Sin embargo, el análisis de rendimiento mediante la librería \textbf{tiempo.h} reveló que los efectos en Assembler eran considerablemente más lentos que los de C, aunque las razones no eran claras. Se realizó entonces un análisis mediante una herramienta de profiling, \fullref{subsec:callgrind}. Los resultados de este análisis se ven en las siguientes imágenes:
 
 \begin{figure}[H]
     \centering
@@ -56,7 +56,7 @@ Utilizando la rutina alternativa para el seno (\ref{subsec:desarrollo-seno}) en 
     \caption{Efecto Vibrato (seno aproximado) en ASM, argumentos 0.001 y 4.3}
 \end{figure}
 
-Se puede ver que se logró el efecto buscado: se redujo el costo de aplicar el efecto en \textbf{ASM} muy por debajo de su contraparte en \textbf{C}. Si bien resulta injusto comparar un seno aproximado con el provisto por la librería \textbf{math.h}, utilizar la rutina aproximada en \textbf{C} no da buenos resultados:
+Se puede ver que se logró el efecto buscado: se redujo el costo de aplicar el efecto en \textbf{ASM} muy por debajo de su contraparte en \textbf{C}. Si bien resulta injusto comparar un seno aproximado con el provisto por la librería \textbf{math.h}, utilizar la rutina aproximada en \textbf{C} no da buenos resultados, siendo conveniente en este lenguaje utilizar \textit{sinf} (de \textbf{math.h}):
 
 \begin{figure}[H]
     \centering
@@ -65,6 +65,7 @@ Se puede ver que se logró el efecto buscado: se redujo el costo de aplicar el e
     \caption{Efecto Vibrato (seno aproximado) en C, argumentos 0.001 y 4.3}
 \end{figure}
 
+El código para alternar en \textbf{Assembler} entre la librería (\textbf{ssemath}) o el seno aproximada, sigue disponible en el archivo \textbf{effects\_asm.c}, donde hay que comentar las lineas de la que se esté usando actualmente (p.ej., \textit{flanger\_index\_calc}, y descomentar el ciclo que se encuentra justo en las líneas anteriores.
 
 \subsection{Restas versus división}
 \label{subsec:desarrollo-problemas-modulo}
