@@ -7,7 +7,7 @@ Por otro lado, el costo total de instrucciones con \textit{callgrind} incluye ta
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{imagenes/delay-overhead-libsndfile.png}
+    \includegraphics[scale=0.68]{imagenes/delay-overhead-libsndfile.png}
     \label{fig:delay-overhead-libsndfile}
     \caption{Delay libsndfile Overhead C}
 \end{figure}
@@ -16,7 +16,7 @@ En la figura \ref{fig:delay-overhead-libsndfile}, la columna de la izquierda, co
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{imagenes/delay-overhead-libsndfile-asm.png}
+    \includegraphics[scale=0.68]{imagenes/delay-overhead-libsndfile-asm.png}
     \label{fig:delay-overhead-libsndfile-asm}
     \caption{Delay libsndfile Overhead ASM}
 \end{figure}
@@ -31,7 +31,7 @@ El único resultado (y la razón por la que se puso \textit{casi} al inicio del 
 Cabe destacar que en varios de los efectos (Vibrato, WahWah por ejemplo) se requiere en un ciclo N acceder a muestras no contiguas del ciclo N-1, lo que imposibilita en gran medida una paralelización completa, ya que el acceso a esos índices específicos se hace por separado, aumentando considerablemente la cantidad de accesos a memoria, lo que ocasiona cierta pérdida de rendimiento (aunque por suerte, no lo suficiente como para haber ocasionado problemas, por lo que se vio en los resultados).
 
 \subsection{Conclusiones}
-El TP probó ser bastante largo, por el proceso de desarrollo en sí, explicado en \fullref{subsec:intro-desarrollo}. El proceso iterativo de encontrar un algoritmo inteligible que provocara un efecto convincente y adecuado (que no es fácil, dado que muchas soluciones son privadas), aplicar el primer acercamiento en R/M/S, bajarlo de nivel a C y hacer que funcione leyendo un archivo de a partes (lo que llevó a pensar algunas soluciones específicas, como el caso del buffer circular en Vibrato), para finalmente ver cómo paralelizarlo en Assembler, es bastante largo.
+El TP probó ser bastante largo, por el proceso de desarrollo en sí, explicado en \fullref{subsec:intro-desarrollo}. El proceso iterativo de encontrar un algoritmo inteligible que provocara un efecto convincente y adecuado (que no es fácil, dado que muchas soluciones son privadas), aplicar el primer acercamiento en \textbf{MRS}, bajarlo de nivel a C y hacer que funcione leyendo un archivo de a partes (lo que llevó a pensar algunas soluciones específicas, como el caso del buffer circular en Vibrato), para finalmente ver cómo paralelizarlo en Assembler, es bastante largo.
 
 A la vez, hubo muchas versiones de cada uno de los efectos, basadas en las mejoras que se iban haciendo en unos y que hacían dar cuenta que era posible mejorar los previamente hechos. Por ejemplo, en un principio en el código en \textbf{assembler} había dos ciclos completamente distintos para manejar archivos de entrada \textbf{stereo} y \textbf{mono} por el otro lado (recordemos que en el primer caso, es necesario ``convertirlo a mono'' para poder tener un canal libre en la salida y guardar la señal húmeda allí). Durante el desarrollo de un efecto posterior, se pensó en una solución más fácil: sólo separar el manejo de llevar la entrada desde memoria a un registro, y a partir de ahí las operaciones iban a ser como si se estuviera trabajando sobre una señal mono. Esta mejora se hizo retroactiva a los primeros efectos diseñados, lo que agregó bastante tiempo al desarrollo, pero redujo y simplificó el código de manera notables. Otra mejora fue la estandarización de los nombres de los registros en los distintos efectos.
 
@@ -39,4 +39,6 @@ Por otro lado, programar en \textbf{assembler} no es para nada fácil. Hubo bast
 
 A pesar de estas ``contras'', que hicieron el trabajo muchísimo más extenso de lo que se pensaba (y que en varios casos hizo replantear si no era conveniente dar el final), uno está satisfecho con los resultados obtenidos. Si bien en algunos casos fue desesperanzante ver que un algoritmo en \textbf{ASM} era más lento que en \textbf{C}, con la aplicación del profiler (conocimiento adquirido durante el \textbf{TP}) se pudo descubrir exactamente dónde estaba el problema, y luego pensar cómo mejorarlo (\ref{subsec:desarrollo-problemas-seno}, \ref{subsec:desarrollo-problemas-modulo}). Los efectos son algunos de los que se pueden encontrar en casi cualquier pedalera o aplicación de audio, y el resultado obtenido con los mismos es fidedigno al uso de otras alternativas, por lo que se logró auditivamente lo que se quería.
 
-Los conocimientos adquiridos (sobre ASM, profiling, debugging, audio y hasta temas de GUI) fueron varios (lo que llevaba a una constante revisión de lo ya hecho), y es un orgullo haber podido juntar dos intereses propios (programación, y música) en un mismo trabajo, lujo que uno no siempre puede darse en la carrera, o en el ámbito laboral.
+Los conocimientos adquiridos (sobre ASM, profiling, debugging, audio y hasta temas de GUI) fueron varios (lo que llevaba a una constante revisión de lo ya hecho), y es un orgullo haber podido juntar dos intereses propios (programación, y música) en un mismo trabajo, lujo que uno no siempre puede darse en la carrera, o en el ámbito laboral.\vspace{\baselineskip}
+
+Como puntos a mejorar, personalmente me hubiera gustado poder hacer algunos más efectos, pero encontrar cómo se consigue ese resultado auditivo no me resultó particularmente fácil (muchas veces se encuentran graficados con circuitos electrónicos, lo cual escapa a mi entendimiento y hubiera sido un camino muy a la deriva para el contexto del \textbf{TP}). Por otro lado, me gustaría probar eventualmente (ya que me gustaría seguir con algunas cosas de esto como hobbie, y no apremiado por los tiempos como sucedió en este caso) la inclusión de un ARDUINO (con potenciómetros para el manejo de los argumentos, como muestra la \textbf{GUI} desarrollada) para ver cómo se comportan los algoritmos en tiempo real (algo que, nuevamente, el apuro por cerrar el \textbf{TP} imposibilitó saciar esa curiosidad). 
