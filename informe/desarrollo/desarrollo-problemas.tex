@@ -71,7 +71,7 @@ El código para alternar en \textbf{Assembler} entre la librería (\textbf{ssema
 \label{subsec:desarrollo-problemas-modulo}
 Uno de los requerimientos de la rutina del seno aproximado es que el argumento de la función se debe encontrar entre $(-\pi,\pi)$. Como se puede ver, eso lleva a que en la figura \ref{fig:callgrind-asm-27512} tenga un alto costo lo concerniente a la operación módulo. 
 
-En un principio, para el código en \textbf{ASM}, se llevaban los argumentos del seno al rango mencionado mediante restas. Sin embargo, como los argumentos podían estar bastante lejos del intervalo $(-\pi, \pi)$ (pues dependen del índice de la muestra, que puede ser un número muy grande aún en archivos de algunos pocos segundos), el número de saltos que se hacían en el siguiente pedazo de código perjudicaba bastante el rendimiento:\vspace{\baselineskip}
+En un principio, para el código en \textbf{ASM}, se llevaban los argumentos del seno al rango mencionado mediante restas. Sin embargo, como los argumentos podían estar bastante lejos del intervalo $(-\pi, \pi)$ (pues dependen del índice de la muestra, que puede ser un número muy grande aún en archivos de algunos pocos segundos), mediante el uso del profiler se vio que el número de saltos que se hacían en el siguiente pedazo de código perjudicaba bastante el rendimiento:\vspace{\baselineskip}
 
 \lstset{language=[x86masm]Assembler}
 \begin{lstlisting}[frame=single]

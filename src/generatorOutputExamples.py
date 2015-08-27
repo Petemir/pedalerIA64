@@ -46,9 +46,9 @@ if __name__ == '__main__':
                     cmd = effect[0].lower()
                 else:
                     cmd = effect[0].upper()
-                cmdToExecute = ["/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/output/'+filename,
+                cmdToExecute = ["/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/outputExamples/'+filename,
                 str(cantIter), "-"+cmd," ".join(args)]
-                cmdToExecuteWithValgrind = ["valgrind", "--tool=callgrind", "--callgrind-out-file=/home/petemir/Projects/orga2dantooine/pedalerIA64/src/callgrind/"+filename+".out", "--dump-instr=yes", "--collect-jumps=yes", "/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/output/'+filename,
+                cmdToExecuteWithValgrind = ["valgrind", "--tool=callgrind", "--callgrind-out-file=/home/petemir/Projects/orga2dantooine/pedalerIA64/src/callgrind/"+filename+".out", "--dump-instr=yes", "--collect-jumps=yes", "/home/petemir/Projects/orga2dantooine/pedalerIA64/src/main", '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/inputExamples/'+inputFile, '/home/petemir/Projects/orga2dantooine/pedalerIA64/src/outputExamples/'+filename,
                 str(cantIter), "-"+cmd," ".join(args)]
 
                 #print(" ".join(cmdToExecuteWithValgrind))

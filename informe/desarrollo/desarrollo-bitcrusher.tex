@@ -3,7 +3,7 @@
 
 \subsubsection{Descripción}
 \label{subsec:desarrollo-bitcrusher-desc}
-En la sección \fullref{subsec:intro-audio} se habló sobre dos medidas de audio digital que son quienes determinan la \textit{calidad} del sonido: la frecuencia de muestreo (\textit{sampling rate}) y la resolución de la muestra (\textit{bit rate}). El efecto \textbf{bitcrusher} provoca una distorsión de la señal original, reduciendo tanto el muestreo (se toma en la señal húmeda una de cada cierta cantidad de muestras de la señal original, \textbf{downsampling}) como la cantidad de bits con la que se puede expresar cada muestra.
+En la sección \fullref{subsec:intro-audio} se habló sobre dos medidas de audio digital que son quienes determinan la \textit{calidad} del sonido: la frecuencia de muestreo (\textit{sampling rate}) y la resolución de la muestra (\textit{bit rate}). El efecto \textbf{bitcrusher} provoca una distorsión de la señal original, reduciendo tanto el muestreo (se toma en la señal húmeda una de cada cierta cantidad de muestras de la señal original, \textbf{downsampling}) como la cantidad de bits con la que se puede expresar cada muestra (\textbf{quantization}).
 
 Los resultados de este efecto muchas veces hacen recordar a la música de los primeros juegos de consola (también conocidas como \textbf{chiptunes}), pues eran generadas con chips de 8 bits.
 
@@ -26,7 +26,23 @@ Los resultados de la comparación entre las versiones en \textbf{C} y \textbf{AS
 
 \lstset{language=C}
 \begin{lstlisting}[frame=single]
-??
+Argumentos: bits, freq
+step = 1/2^(bits);
+phasor = last = 0;
+normFreq = freq/archivoEntrada.samplerate
+
+Para cada muestra
+  phasor = phasor + normFreq;
+  if (phasor >= 1.0) { 	
+  // downsampling, tomo 1 muestra de cada cierta cantidad
+    phasor = phasor - 1.0; 
+    last = step * floor( input(i)/step + 0.5 );
+    // quantization, reduzco la calidad 
+  }
+
+  dataBuffOut.canalDerecho = last
+  dataBuffOut.canalIzquierdo = dataBuffIn.muestraCicloActual
+
 \end{lstlisting}
 
 \subsubsection{Comando}
