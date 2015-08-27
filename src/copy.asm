@@ -25,7 +25,7 @@ section .text
         cmp length,0   ; ya recorrí todo el buffer?
         je fin
         cmp length,4  ; caso borde: cantidad de frames impar
-        je odd_frames
+        jle odd_frames
 
         movaps input, [dataBuffIn]
         movaps [dataBuffOut], input
@@ -37,8 +37,8 @@ section .text
         jmp cycle
 
     odd_frames:
-        movd input, [dataBuffIn]
-        movd [dataBuffOut], input
+        movss input, [dataBuffIn]
+        movss [dataBuffOut], input
 
         add dataBuffIn, 4
         add dataBuffOut, 4
