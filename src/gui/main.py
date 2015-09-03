@@ -62,7 +62,7 @@ class Effects():
         delayTitle = self.getTitleWidget('Delay (0-15ms):')
         delayValue = self.getValueWidget(delayDial)
 
-        rateDial = self.getDialWidget('flanger_rate', 10, 100, 0.01)
+        rateDial = self.getDialWidget('flanger_rate', 10, 500, 0.01)
         rateTitle = self.getTitleWidget('Rate (0.1-5Hz):')
         rateValue = self.getValueWidget(rateDial)
 

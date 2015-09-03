@@ -16,7 +16,7 @@ void imprimir_ayuda() {
     printf("(Rango para delay: a entre 0.0 y 5.0s, b entre 0.00 y 1.00 \n");
     printf("-f a b c\t Flanging (en C)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
     printf("-F a b c\t Flanging (en ASM)\t\t\t a: segundos de delay (float), b: flanger rate (float), c: amplificacion (float)\n");
-    printf("(Rango para flanging: a entre 0.003s y 0.015s, b entre 0.10 y 1.00Hz, c entre 0.65 y 0.75)\n");
+    printf("(Rango para flanging: a entre 0.003s y 0.015s, b entre 0.10 y 5.00Hz, c entre 0.65 y 0.75)\n");
     printf("-v a b \t\t Vibrato (en C)\t\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
     printf("-v a b \t\t Vibrato (en C)\t\t\t\t a: segundos de delay (float), b: modulation rate (float)\n");
     printf("(Rango para vibrato: a entre 0.000s y 0.003s, b entre 0.10 y 5.00Hz\n");
